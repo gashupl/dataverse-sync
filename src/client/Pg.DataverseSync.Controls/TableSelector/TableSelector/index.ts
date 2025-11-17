@@ -1,5 +1,6 @@
+import { Theme } from "@fluentui/react-theme";
 import { IInputs, IOutputs } from "./generated/ManifestTypes";
-import { HelloWorld, IHelloWorldProps } from "./HelloWorld";
+import { TableSelectorControl, ITableSelectorControlProps } from "./TableSelectorControl";
 import * as React from "react";
 
 export class TableSelector implements ComponentFramework.ReactControl<IInputs, IOutputs> {
@@ -33,9 +34,13 @@ export class TableSelector implements ComponentFramework.ReactControl<IInputs, I
      * @returns ReactElement root react element for the control
      */
     public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement {
-        const props: IHelloWorldProps = { name: 'Power Apps' };
+        const props: ITableSelectorControlProps = { 
+            name: 'Power Apps', 
+            isDisabled: false ,
+            theme : context?.fluentDesignLanguage?.tokenTheme as Theme, 
+            isCanvasApp: context?.parameters?.isCanvas?.raw == "Yes" };
         return React.createElement(
-            HelloWorld, props
+            TableSelectorControl, props
         );
     }
 
