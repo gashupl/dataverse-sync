@@ -14,7 +14,12 @@ namespace Pg.DataverseSync.Domain.Services
 
         public List<Table> GetUnsynchronizedTables()
         {
-            throw new NotImplementedException();
+            return new List<Table>
+            {
+                new Table { Name = "Account", SchemaName = "account" },
+                new Table { Name = "Contact", SchemaName = "contact" },
+                new Table { Name = "Lead", SchemaName = "lead" }
+            };
         }
     }
 }
