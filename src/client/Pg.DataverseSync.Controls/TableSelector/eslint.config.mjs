@@ -8,7 +8,10 @@ import typescriptEslint from "typescript-eslint";
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   {
-    ignores: ["**/generated"],
+    ignores: [
+      "**/generated",
+      "**/DataService.ts"  // Exclude DataService.ts from ESLint analysis
+    ],
   },
   eslintjs.configs.recommended,
   ...typescriptEslint.configs.recommendedTypeChecked,

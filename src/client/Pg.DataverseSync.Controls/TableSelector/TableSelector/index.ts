@@ -35,10 +35,12 @@ export class TableSelector implements ComponentFramework.ReactControl<IInputs, I
      */
     public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement {
         const props: ITableSelectorControlProps = { 
-            name: 'Power Apps', 
-            isDisabled: false ,
-            theme : context?.fluentDesignLanguage?.tokenTheme as Theme, 
-            isCanvasApp: context?.parameters?.isCanvas?.raw == "Yes" };
+            controlContext: context, 
+            name: context?.parameters?.tableName?.raw ?? "", 
+            isDisabled: false,
+            theme: context?.fluentDesignLanguage?.tokenTheme as Theme, 
+            isCanvasApp: context?.parameters?.isCanvas?.raw === "Yes" 
+        };
         return React.createElement(
             TableSelectorControl, props
         );
