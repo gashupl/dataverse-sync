@@ -1,20 +1,23 @@
 
 export interface IDataService {
-    getAvailableTables(onSuccess: (records: ComponentFramework.WebApi.RetrieveMultipleResponse) => void, onError: (error: string) => void): void;
+    getAvailableTables(): Promise<ITableInfo[]>;
+}
+
+export interface ITableInfo {
+    Name: string;
+    SchemaName: string;
 }
 
 export class DataService implements IDataService {
 
-    private webApi: ComponentFramework.WebApi; 
+    private webApi: ComponentFramework.WebApi;
     //private context: ComponentFramework.Context<any>;
 
     constructor(webApi: ComponentFramework.WebApi) {
         this.webApi = webApi;
     }
-//Check: https://danielbergsten.wordpress.com/2022/01/31/calling-a-custom-api-from-pcf-custom-control/
-    getAvailableTables(
-        onSuccess: (records: ComponentFramework.WebApi.RetrieveMultipleResponse) => void, 
-        onError: (error: string) => void): void {
+
+    async getAvailableTables(): Promise<ITableInfo[]> {
 
         let execute_pg_getunsynchronizedtables_Request = {
             getMetadata: function () {
@@ -26,30 +29,54 @@ export class DataService implements IDataService {
             }
         };
 
-        const anyWebAPI = this.webApi as any; 
-
-        // anyWebAPI.createRecord("account", { name: "Sample Account" }).then(
-        //     function (success: any) {
-        //         console.log("Account created with ID: " + success.id);
-        //     },
-        //     function (error: any) {
-        //         console.log(error.message);
-        //     }
-        // );  
-        anyWebAPI.execute(execute_pg_getunsynchronizedtables_Request).then(
-	        function success(response : any) {
+        const anyWebAPI = this.webApi as any;
+        try {
+            var result = await anyWebAPI.execute(execute_pg_getunsynchronizedtables_Request);
+            if (result.ok) {
                 console.log("Custom API executed successfully.");
-                if (response.ok) { return response.json(); }
+                var jsonResponse = await result.json();
+                if (jsonResponse) {
+                    try {
+                        console.log("Extracting data from response body.");
+                        var tables: ITableInfo[] = jsonResponse["tables"];
+                        console.log(`${tables.length} tables retrieved.`);
+                        return tables;
+                    }
+                    catch (error) {
+                        console.log("Error parsing response body.");
+                        throw new Error("Failed to parse response body");
+                    }
                 }
-            ).then(function (responseBody : any) {
-                console.log("Extracting data from response body.");
-                var result = responseBody;
+                else {
+                    console.log("Cannot extract data from response body");
+                    throw new Error("Cannot extract data from response body");
+                }
+            }
+            else {
+                console.log("Error executing custom API.");
                 console.log(result);
-                var tables = result["tables"]; // Edm.String
-                console.log(tables);
-            }).catch(function (error: any) {
-                console.log(error.message);
-            });
+                throw new Error(`Custom API execution failed with status: ${result.status}`);
+            }
+        } catch (error) {
+            console.error("Unhandled error in getAvailableTables:", error);
+            // Return empty array or re-throw based on your error handling strategy
+            return []; // or: throw error;
+        }
+
+        // anyWebAPI.execute(execute_pg_getunsynchronizedtables_Request).then(
+        //     function success(response : any) {
+        //         console.log("Custom API executed successfully.");
+        //         if (response.ok) { return response.json(); }
+        //         }
+        //     ).then(function (responseBody : any) {
+        //         console.log("Extracting data from response body.");
+        //         var result = responseBody;
+        //         console.log(result);
+        //         var tables = result["tables"]; // Edm.String
+        //         console.log(tables);
+        //     }).catch(function (error: any) {
+        //         console.log(error.message);
+        //     });
     }
 
 }
