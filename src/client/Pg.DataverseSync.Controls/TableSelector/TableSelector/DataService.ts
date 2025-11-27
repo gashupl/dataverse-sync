@@ -62,21 +62,5 @@ export class DataService implements IDataService {
             // Return empty array or re-throw based on your error handling strategy
             return []; // or: throw error;
         }
-
-        // anyWebAPI.execute(execute_pg_getunsynchronizedtables_Request).then(
-        //     function success(response : any) {
-        //         console.log("Custom API executed successfully.");
-        //         if (response.ok) { return response.json(); }
-        //         }
-        //     ).then(function (responseBody : any) {
-        //         console.log("Extracting data from response body.");
-        //         var result = responseBody;
-        //         console.log(result);
-        //         var tables = result["tables"]; // Edm.String
-        //         console.log(tables);
-        //     }).catch(function (error: any) {
-        //         console.log(error.message);
-        //     });
     }
-
 }
