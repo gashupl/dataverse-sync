@@ -2,6 +2,7 @@ import { Theme } from "@fluentui/react-theme";
 import { IInputs, IOutputs } from "./generated/ManifestTypes";
 import { TableSelectorControl, ITableSelectorControlProps } from "./TableSelectorControl";
 import * as React from "react";
+import { DataService, DataServiceMock } from "./DataService";
 
 export class TableSelector implements ComponentFramework.ReactControl<IInputs, IOutputs> {
     private notifyOutputChanged: () => void;
@@ -34,12 +35,18 @@ export class TableSelector implements ComponentFramework.ReactControl<IInputs, I
      * @returns ReactElement root react element for the control
      */
     public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement {
-        const props: ITableSelectorControlProps = { 
-            controlContext: context, 
-            name: context?.parameters?.tableName?.raw ?? "", 
+
+    const dataService = this.isRunningOnLocalhost(context) 
+        ? new DataServiceMock() 
+        : new DataService(context.webAPI);
+
+        const props: ITableSelectorControlProps = {
+            controlContext: context,
+            name: context?.parameters?.tableName?.raw ?? "",
             isDisabled: false,
-            theme: context?.fluentDesignLanguage?.tokenTheme as Theme, 
-            isCanvasApp: context?.parameters?.isCanvas?.raw === "Yes" 
+            theme: context?.fluentDesignLanguage?.tokenTheme as Theme,
+            isCanvasApp: context?.parameters?.isCanvas?.raw === "Yes",
+            dataService: dataService
         };
         return React.createElement(
             TableSelectorControl, props
@@ -51,7 +58,7 @@ export class TableSelector implements ComponentFramework.ReactControl<IInputs, I
      * @returns an object based on nomenclature defined in manifest, expecting object[s] for property marked as "bound" or "output"
      */
     public getOutputs(): IOutputs {
-        return { };
+        return {};
     }
 
     /**
@@ -60,5 +67,20 @@ export class TableSelector implements ComponentFramework.ReactControl<IInputs, I
      */
     public destroy(): void {
         // Add code to cleanup control if necessary
+    }
+
+    private isRunningOnLocalhost(context: ComponentFramework.Context<IInputs>): boolean {
+        try {
+            if (typeof window !== 'undefined' && window.location) {
+                const hostname = window.location.hostname;
+                if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('localhost')) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (error) {
+            console.log('Error detecting environment, defaulting to non-localhost mode:', error);
+            return false;
+        }
     }
 }

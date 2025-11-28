@@ -8,7 +8,8 @@ export interface ITableSelectorControlProps {
   name?: string;
   isDisabled: boolean,
   theme?: Theme
-  isCanvasApp?: boolean
+  isCanvasApp?: boolean, 
+  dataService: IDataService
 }
 
 const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
@@ -40,8 +41,7 @@ export class TableSelectorControl extends React.Component<ITableSelectorControlP
     this.isDisabled = props.isDisabled;
     this.theme = props.theme;
     this.isCanvasApp = props.isCanvasApp;
-
-    this.dataService = new DataService(props.controlContext.webAPI);
+    this.dataService = props.dataService;
   }
 
   componentDidMount(): void {

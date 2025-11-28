@@ -62,3 +62,13 @@ export class DataService implements IDataService {
         }
     }
 }
+
+export class DataServiceMock implements IDataService {
+    async getAvailableTables(): Promise<ITableInfo[]> {
+        return Promise.resolve([
+            { Name: "Local Account", SchemaName: "account_local" },
+            { Name: "Local Contact", SchemaName: "contact_local" },
+            { Name: "Local Lead", SchemaName: "lead_local" }
+        ]);
+    }
+}
