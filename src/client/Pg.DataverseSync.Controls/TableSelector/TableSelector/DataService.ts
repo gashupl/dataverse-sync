@@ -11,7 +11,6 @@ export interface ITableInfo {
 export class DataService implements IDataService {
 
     private webApi: ComponentFramework.WebApi;
-    //private context: ComponentFramework.Context<any>;
 
     constructor(webApi: ComponentFramework.WebApi) {
         this.webApi = webApi;
@@ -59,8 +58,7 @@ export class DataService implements IDataService {
             }
         } catch (error) {
             console.error("Unhandled error in getAvailableTables:", error);
-            // Return empty array or re-throw based on your error handling strategy
-            return []; // or: throw error;
+            return [];
         }
     }
 }
