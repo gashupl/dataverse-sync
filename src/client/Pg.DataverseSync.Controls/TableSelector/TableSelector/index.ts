@@ -45,7 +45,7 @@ export class TableSelector implements ComponentFramework.ReactControl<IInputs, I
 
         const props: ITableSelectorControlProps = {
             controlContext: context,
-            name: this.tableSchemaName,
+            tableSchemaName: this.tableSchemaName,
             isDisabled: false,
             theme: context?.fluentDesignLanguage?.tokenTheme as Theme,
             isCanvasApp: context?.parameters?.isCanvas?.raw === "Yes",

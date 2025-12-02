@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { FluentProvider, Input, Combobox, Option, Theme } from '@fluentui/react-components';
 import { IInputs } from './generated/ManifestTypes';
-import { DataService, IDataService } from './DataService';
+import { DataService, IDataService, ITableInfo } from './DataService';
 
 export interface ITableSelectorControlProps {
   controlContext: ComponentFramework.Context<IInputs>;
-  name?: string;
+  tableSchemaName?: string;
   isDisabled: boolean,
   theme?: Theme
   isCanvasApp?: boolean, 
   dataService: IDataService
 }
 
-const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
-  item => ({ label: item, value: item })
-);
+// const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
+//   item => ({ label: item, value: item })
+// );
 
 // Static styles object since we can't use hooks in class components
 const styles = {
@@ -24,9 +24,19 @@ const styles = {
   }
 };
 
+interface ITableSelectorControState {
+  selectedTableName: string;
+  tables: ITableInfo[];
+}
+
 export class TableSelectorControl extends React.Component<ITableSelectorControlProps> {
 
-  private name?: string;
+  state: ITableSelectorControState = {
+    selectedTableName: "", 
+    tables: []
+  }
+
+  private tableSchemaName?: string;
   private isDisabled: boolean;
   private theme?: Theme;
   private isCanvasApp?: boolean;
@@ -36,12 +46,17 @@ export class TableSelectorControl extends React.Component<ITableSelectorControlP
   constructor(props: ITableSelectorControlProps) {
     super(props);
 
-    // Assign constructor parameters from props
-    this.name = props.name;
+    this.tableSchemaName = props.tableSchemaName; //Selected table schema name
     this.isDisabled = props.isDisabled;
     this.theme = props.theme;
     this.isCanvasApp = props.isCanvasApp;
     this.dataService = props.dataService;
+
+     // Initialize state
+    this.state = {
+      selectedTableName: "",
+      tables: []
+    };
   }
 
   componentDidMount(): void {
@@ -56,7 +71,8 @@ export class TableSelectorControl extends React.Component<ITableSelectorControlP
         return tables; 
         //Example of tables data:
         // [{"Name":"Account","SchemaName":"account"},
-        // {"Name":"Contact","SchemaName":"contact"},{"Name":"Lead","SchemaName":"lead"}]
+        // {"Name":"Contact","SchemaName":"contact"},
+        // {"Name":"Lead","SchemaName":"lead"}]
       })
       .catch((error) => {
         console.error('Error loading tables:', error);
@@ -88,19 +104,20 @@ export class TableSelectorControl extends React.Component<ITableSelectorControlP
             placeholder="Select an option..."
             aria-label="Table selector"
           >
-            {data.map((item) => (
+            {
+            this.state.tables.map((item) => (
               <Option
-                key={item.value}
-                value={item.value}
-                text={item.label}
+                key={item.SchemaName}
+                value={item.SchemaName}
+                text={`${item.SchemaName} (${item.Name})`}
                 style={styles.root}
               >
-                <span style={styles.root}>{item.label}</span>
+                <span style={styles.root}>{`${item.SchemaName} (${item.Name})`}</span>
               </Option>
             ))}
           </Combobox>
           : <Input
-            value={this.name}
+            value={this.tableSchemaName}
             appearance='filled-darker'
             style={styles.root}
             readOnly={this.isDisabled}
