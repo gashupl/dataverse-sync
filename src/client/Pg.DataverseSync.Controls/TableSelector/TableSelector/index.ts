@@ -6,6 +6,7 @@ import { DataService, DataServiceMock } from "./DataService";
 
 export class TableSelector implements ComponentFramework.ReactControl<IInputs, IOutputs> {
     private notifyOutputChanged: () => void;
+    private tableSchemaName: string | undefined;
 
     /**
      * Empty constructor.
@@ -36,13 +37,15 @@ export class TableSelector implements ComponentFramework.ReactControl<IInputs, I
      */
     public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement {
 
-    const dataService = this.isRunningOnLocalhost(context) 
-        ? new DataServiceMock() 
-        : new DataService(context.webAPI);
+        this.tableSchemaName = context?.parameters?.tableName?.raw ?? "";
+
+        const dataService = this.isRunningOnLocalhost(context) 
+            ? new DataServiceMock() 
+            : new DataService(context.webAPI);
 
         const props: ITableSelectorControlProps = {
             controlContext: context,
-            name: context?.parameters?.tableName?.raw ?? "",
+            name: this.tableSchemaName,
             isDisabled: false,
             theme: context?.fluentDesignLanguage?.tokenTheme as Theme,
             isCanvasApp: context?.parameters?.isCanvas?.raw === "Yes",
@@ -58,13 +61,16 @@ export class TableSelector implements ComponentFramework.ReactControl<IInputs, I
      * @returns an object based on nomenclature defined in manifest, expecting object[s] for property marked as "bound" or "output"
      */
     public getOutputs(): IOutputs {
-        return {};
+		return {
+			tableName: this.tableSchemaName 
+		  };
     }
 
-    /**
-     * Called when the control is to be removed from the DOM tree. Controls should use this call for cleanup.
-     * i.e. cancelling any pending remote calls, removing listeners, etc.
-     */
+    private onChange(value: string): void{
+        this.tableSchemaName = value; 
+        this.notifyOutputChanged(); 
+    }
+
     public destroy(): void {
         // Add code to cleanup control if necessary
     }
