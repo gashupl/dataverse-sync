@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FluentProvider, Input, Combobox, Option, Theme } from '@fluentui/react-components';
+import { FluentProvider, Input, Combobox, Option, Theme, OptionOnSelectData, SelectionEvents } from '@fluentui/react-components';
 import { IInputs } from './generated/ManifestTypes';
 import { DataService, IDataService, ITableInfo } from './DataService';
 
@@ -9,7 +9,8 @@ export interface ITableSelectorControlProps {
   isDisabled: boolean,
   theme?: Theme
   isCanvasApp?: boolean, 
-  dataService: IDataService
+  dataService: IDataService, 
+  onChange: (value: string) => void; 
 }
 
 // const data = ['Eugenia', 'Bryan', 'Linda', 'Nancy', 'Lloyd', 'Alice', 'Julia', 'Albert'].map(
@@ -66,6 +67,7 @@ export class TableSelectorControl extends React.Component<ITableSelectorControlP
       .then((tables) => {
         console.log(tables);
 
+        const tablesArray = Array.isArray(tables) ? tables : [];
         this.setState({ tables: tables });
 
         return tables; 
@@ -76,7 +78,20 @@ export class TableSelectorControl extends React.Component<ITableSelectorControlP
       })
       .catch((error) => {
         console.error('Error loading tables:', error);
+         this.setState({ tables: [] });
       });
+  }
+
+  private handleComboboxChange = (event: SelectionEvents, data: OptionOnSelectData)=> {
+    const selectedValue = data.optionValue;
+    
+    // Update local state
+    this.setState({ selectedTableName: selectedValue });
+    
+    // Call the parent's onChange callback
+    if (this.props.onChange) {
+      this.props.onChange(selectedValue ?? "");
+    }
   }
 
   render(): React.ReactElement {
@@ -89,6 +104,9 @@ export class TableSelectorControl extends React.Component<ITableSelectorControlP
         colorCompoundBrandStrokeSelected: this.theme?.colorNeutralStroke1Selected,
       }
       : this.theme;
+
+       // Add safety check for tables array
+    const tablesArray = Array.isArray(this.state.tables) ? this.state.tables : [];
 
     return (
       <FluentProvider theme={myTheme} >
@@ -103,9 +121,10 @@ export class TableSelectorControl extends React.Component<ITableSelectorControlP
             disabled={this.isDisabled && this.isCanvasApp === true}
             placeholder="Select an option..."
             aria-label="Table selector"
+            onOptionSelect={this.handleComboboxChange}
           >
             {
-            this.state.tables.map((item) => (
+            tablesArray.map((item) => (
               <Option
                 key={item.SchemaName}
                 value={item.SchemaName}

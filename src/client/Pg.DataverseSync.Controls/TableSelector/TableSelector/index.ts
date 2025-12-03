@@ -49,7 +49,8 @@ export class TableSelector implements ComponentFramework.ReactControl<IInputs, I
             isDisabled: false,
             theme: context?.fluentDesignLanguage?.tokenTheme as Theme,
             isCanvasApp: context?.parameters?.isCanvas?.raw === "Yes",
-            dataService: dataService
+            dataService: dataService, 
+            onChange: this.onChange.bind(this)
         };
         return React.createElement(
             TableSelectorControl, props

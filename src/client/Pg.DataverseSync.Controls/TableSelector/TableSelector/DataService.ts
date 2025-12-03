@@ -37,7 +37,8 @@ export class DataService implements IDataService {
                 if (jsonResponse) {
                     try {
                         console.log("Extracting data from response body.");
-                        var tables: ITableInfo[] = jsonResponse["tables"];
+                        var jsonString = jsonResponse["tables"];
+                        var tables: ITableInfo[] = JSON.parse(jsonString);
                         console.log(`${tables.length} tables retrieved.`);
                         return tables;
                     }
