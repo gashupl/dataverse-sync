@@ -37,7 +37,12 @@ export class TableSelector implements ComponentFramework.ReactControl<IInputs, I
      */
     public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement {
 
+        let isDisabled = false;
         this.tableSchemaName = context?.parameters?.tableName?.raw ?? "";
+
+        if(this.tableSchemaName && this.tableSchemaName.length > 0){
+            isDisabled = true;
+        }
 
         const dataService = this.isRunningOnLocalhost(context) 
             ? new DataServiceMock() 
@@ -46,7 +51,7 @@ export class TableSelector implements ComponentFramework.ReactControl<IInputs, I
         const props: ITableSelectorControlProps = {
             controlContext: context,
             tableSchemaName: this.tableSchemaName,
-            isDisabled: false,
+            isDisabled: isDisabled,
             theme: context?.fluentDesignLanguage?.tokenTheme as Theme,
             isCanvasApp: context?.parameters?.isCanvas?.raw === "Yes",
             dataService: dataService, 
