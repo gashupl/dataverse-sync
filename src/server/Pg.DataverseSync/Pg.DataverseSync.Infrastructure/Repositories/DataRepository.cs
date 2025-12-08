@@ -3,8 +3,10 @@ using Pg.DataverseSync.Model;
 using System;
 using System.Collections.Generic;
 using Pg.DataverseSync.Domain.Repositories;
-using System.Web.UI.WebControls;
 using System.Linq;
+using Pg.DataverseSync.Domain.Dto;
+using Microsoft.Xrm.Sdk.Metadata;
+using Pg.DataverseSync.Infrastructure.Core;
 
 namespace Pg.DataverseSync.Infrastructure.Repositories
 {
@@ -32,9 +34,32 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
             }
         }
 
-        public List<Table> GetTablesFromMetadata()
+        public List<Table> GetStandardTablesFromMetadata()
         {
-            throw new NotImplementedException();
+            var tables = new List<Table>();
+
+            var request = new Microsoft.Xrm.Sdk.Messages.RetrieveAllEntitiesRequest
+            {
+                EntityFilters = EntityFilters.Entity,
+                RetrieveAsIfPublished = true
+            };
+
+            var response = (Microsoft.Xrm.Sdk.Messages.RetrieveAllEntitiesResponse)_service.Execute(request);
+
+            foreach (var entity in response.EntityMetadata)
+            {
+                // Exclude Virtual and Elastic tables
+                if (entity.TableType == TableTypes.Standard)
+                {
+                    tables.Add(new Table
+                    {
+                        Name = entity.DisplayName?.UserLocalizedLabel?.Label ?? entity.LogicalName,
+                        SchemaName = entity.LogicalName
+                    });
+                }
+            }
+
+            return tables;
         }
 
     }

@@ -169,6 +169,10 @@
     <Analyzer Include="..\packages\xunit.analyzers.1.7.0\analyzers\dotnet\cs\xunit.analyzers.fixes.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Pg.DataverseSync.Domain\Pg.DataverseSync.Domain.csproj">
+      <Project>{3CC9405F-CF3F-4FF1-B5C9-0C50A4696B89}</Project>
+      <Name>Pg.DataverseSync.Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Pg.DataverseSync.Infrastructure\Pg.DataverseSync.Infrastructure.csproj">
       <Project>{37F2CCA9-B19D-4ECD-ABD1-51E9D0D987AC}</Project>
       <Name>Pg.DataverseSync.Infrastructure</Name>

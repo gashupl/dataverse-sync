@@ -1,12 +1,12 @@
+using Pg.DataverseSync.Domain.Dto;
 using Pg.DataverseSync.Model;
 using System.Collections.Generic;
-using System.Web.UI.WebControls;
 
 namespace Pg.DataverseSync.Domain.Repositories
 {
     public interface IRepository
     {
-        List<Table> GetTablesFromMetadata();
+        List<Table> GetStandardTablesFromMetadata();
         List<pg_synctable> GetActiveSynchronizedTables();
     }
 }

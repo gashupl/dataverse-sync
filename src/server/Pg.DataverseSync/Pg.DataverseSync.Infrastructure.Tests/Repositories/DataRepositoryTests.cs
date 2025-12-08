@@ -1,5 +1,7 @@
 using FakeXrmEasy;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
+using Pg.DataverseSync.Infrastructure.Core;
 using Pg.DataverseSync.Infrastructure.Repositories;
 using Pg.DataverseSync.Infrastructure.Tests.Core;
 using Pg.DataverseSync.Model;
@@ -36,10 +38,51 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
             Assert.NotNull(result);
             Assert.Single(result);
             Assert.Equal("pg_sample1", result[0].pg_name);
-        }   
+        }
+
+        [Fact]
+        public void GetTablesFromMetadata_ReturnsExpectedTables()
+        {
+            var context = new XrmFakedContext();
+            var service = context.GetFakedOrganizationService();
+
+            // Mock the Execute method for RetrieveAllEntitiesRequest
+            context.AddExecutionMock<RetrieveAllEntitiesRequest>(req =>
+            {
+                var response = new RetrieveAllEntitiesResponse
+                {
+                    Results = new ParameterCollection
+                    {
+                        ["EntityMetadata"] = new[]
+                        {
+                    new Microsoft.Xrm.Sdk.Metadata.EntityMetadata
+                    {
+                        LogicalName = "pg_standardtable",
+                        DisplayName = new Label("Standard Table", 1033),
+                        TableType = TableTypes.Standard
+                    },
+                    new Microsoft.Xrm.Sdk.Metadata.EntityMetadata
+                    {
+                        LogicalName = "pg_sampleelastictable",
+                        DisplayName = new Label("Elastic Table", 1033),
+                        TableType = TableTypes.Elastic
+                    }
+                }
+                    }
+                };
+                return response;
+            });
+
+            var repository = new DataRepository(new FakeOrganizationServiceFactory(service));
+            var tables = repository.GetStandardTablesFromMetadata();
+
+            Assert.NotNull(tables);
+            Assert.Single(tables);
+            Assert.Contains(tables, t => t.SchemaName == "pg_standardtable");
+        }
 
 
-        public IOrganizationServiceFactory InitDataServiceFactory()
+        private IOrganizationServiceFactory InitDataServiceFactory()
         {
             var context = new XrmFakedContext(); 
             context.ProxyTypesAssembly = Assembly.GetAssembly(typeof(pg_synctable));
