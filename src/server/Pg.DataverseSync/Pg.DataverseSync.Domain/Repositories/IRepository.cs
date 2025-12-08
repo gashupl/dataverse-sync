@@ -7,7 +7,7 @@ namespace Pg.DataverseSync.Domain.Repositories
     public interface IRepository
     {
         List<Table> GetTablesFromMetadata();
-        List<pg_synctable> GetSynchronizedTables();
+        List<pg_synctable> GetActiveSynchronizedTables();
     }
 }
 
