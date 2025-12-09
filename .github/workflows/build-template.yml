@@ -45,12 +45,12 @@ jobs:
   
       - name: Install npm dependencies (PCF)
         run: |
-          cd ${{ env.PCF_CONTROL_FOLDER }}
+          cd ${{ env.PCF_CONTROL_FOLDER }}\TableSelector
           npm install
 
       - name: Build npm project (PCF)
         run: |
-          cd ${{ env.PCF_CONTROL_FOLDER }}
+          cd ${{ env.PCF_CONTROL_FOLDER }}\TableSelector
           npm run build
           
       - name: Restore NuGet packages
