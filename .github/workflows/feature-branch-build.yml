@@ -12,59 +12,15 @@ permissions:
   
 jobs:
   build:
+    uses: ./.github/workflows/build-template.yml
+    with:
+      node-version: '24'
+      run-tests: true
 
+  # Additional job that extends the base build
+  deploy:
+    needs: build
     runs-on: windows-latest
-
-    env:
-      VS_SOLUTION_PATH: src\server\Pg.DataverseSync\Pg.DataverseSync.sln
-      TEST_ASSEMBLY_PATH: src\server\Pg.DataverseSync\**\bin\Release\*.Tests.dll
-      PCF_CONTROL_FOLDER: src\client\Pg.DataverseSync.Controls
-      VSTEST_CONSOLE: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
-
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '24'
-  
-      - name: Install npm dependencies (Table Selector PCF)
-        run: |
-          cd ${{ env.PCF_CONTROL_FOLDER }}\TableSelector 
-          npm install
-
-      - name: Build npm project (Table Selector PCF)
-        run: |
-          cd ${{ env.PCF_CONTROL_FOLDER }}\TableSelector 
-          npm run build
-          
-      - name: Restore NuGet packages
-        run: nuget restore ${{ env.VS_SOLUTION_PATH }}
-
-      - name: Build solution
-        run: msbuild ${{ env.VS_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
-
-      - name: Run xUnit tests with Visual Studio 2022 Test Runner
-        run: |
-          $testAssemblies = Get-ChildItem -Path "${{ env.TEST_ASSEMBLY_PATH }}" -Recurse
-          foreach ($assembly in $testAssemblies) {
-            & "${{ env.VSTEST_CONSOLE }}" $assembly.FullName /Logger:trx
-          }
-
-      - name: Publish Test Results
-        uses: dorny/test-reporter@v1
-        if: always()  # Ensures test results are published even if tests fail
-        with:
-          name: xUnit Test Results
-          path: "**/*.trx"
-          reporter: dotnet-trx
+      - name: Additional deployment step
+        run: echo "Running additional deployment step..."
