@@ -16,3 +16,11 @@ jobs:
     with:
       node-version: '24'
       run-tests: true
+
+  # Additional job that extends the base build
+  deploy:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Additional deployment step
+        run: echo "Running additional deployment step..."
