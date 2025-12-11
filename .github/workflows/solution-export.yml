@@ -2,19 +2,7 @@
 name: Solution Export
 
 on:
-  schedule:
-    - cron: '0 0 1 1 *'  # January 1st only
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to export from'
-        required: true
-        default: 'dev'
-        type: choice
-        options:
-          - dev
-          - test
-          - prod
+  workflow_dispatch:  # Allows manual triggering
 
 permissions:
   contents: write  # Allows writing to repository
