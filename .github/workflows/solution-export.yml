@@ -2,6 +2,8 @@
 name: Solution Export
 
 on:
+  schedule:
+    - cron: '0 0 1 1 *'  # January 1st only
   workflow_dispatch:
     inputs:
       environment:
