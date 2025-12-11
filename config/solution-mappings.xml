@@ -1,0 +1,4 @@
+<Mapping>
+    <!-- Map the web resources folder relative to the solutions\master\obj\debug\metadata\src\WebResources folder -->
+    <!-- <Folder map="WebResources\pg_" to="..\..\..\..\..\src\WebResources\pg_" /> -->
+</Mapping>

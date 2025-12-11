@@ -1,0 +1,116 @@
+# This workflow exports and unpacks a Dataverse solution
+name: Solution Export
+
+on:
+  workflow_dispatch:  # Allows manual triggering
+
+permissions:
+  contents: write  # Allows writing to repository
+  pull-requests: write  # Allows creating PRs
+
+jobs:
+  export-solution:
+    runs-on: windows-latest
+    
+    env:
+      SOLUTION_NAME: DataverseSync
+      SOLUTION_FOLDER: solutions
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Power Platform CLI
+        uses: microsoft/powerplatform-actions/actions-install@v1
+        with:
+          add-tools-to-path: true
+
+      - name: Authenticate to Power Platform
+        uses: microsoft/powerplatform-actions/auth@v1
+        with:
+          client-id: ${{ vars.POWERPLATFORM_CLIENT_ID }}
+          tenant-id: ${{ vars.POWERPLATFORM_TENANT_ID }}
+          client-secret: ${{ secrets.POWERPLATFORM_CLIENT_SECRET }}
+          environment-url: ${{ vars.POWERPLATFORM_ENVIRONMENT_URL }}
+          
+      - name: Export solution from Dataverse
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          environment-url: ${{ vars.POWERPLATFORM_ENVIRONMENT_URL }}
+          solution-name: ${{ env.SOLUTION_NAME }}
+          solution-output-file: ${{ env.SOLUTION_NAME }}.zip
+          managed: false
+
+      - name: Clean solution folder
+        run: |
+          if (Test-Path "${{ env.SOLUTION_FOLDER }}") {
+            Remove-Item -Path "${{ env.SOLUTION_FOLDER }}" -Recurse -Force
+          }
+
+      - name: Unpack solution
+        uses: microsoft/powerplatform-actions/unpack-solution@v1
+        with:
+          solution-file: ${{ env.SOLUTION_NAME }}.zip
+          solution-folder: ${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}
+          solution-type: 'Unmanaged'
+          overwrite-files: true      
+          mapping-file: config/solution-mappings.xml
+
+      - name: Remove temporary files
+        run: |
+          Remove-Item -Path "${{ env.SOLUTION_NAME }}.zip" -Force -ErrorAction SilentlyContinue
+
+      - name: Generate branch name with timestamp
+        id: branch-name
+        run: |
+          $timestamp = (Get-Date).ToString("yyyy.MM.dd.HH.mm.ss")
+          $branchName = "solution-export/$timestamp"
+          echo "BRANCH_NAME=$branchName" >> $env:GITHUB_OUTPUT
+          echo "Generated branch name: $branchName"
+
+      - name: Create and switch to new branch
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git checkout -b "${{ steps.branch-name.outputs.BRANCH_NAME }}"
+
+      - name: Commit and push changes
+        run: |
+          git add ${{ env.SOLUTION_FOLDER }}/
+          if (git diff --staged --quiet) {
+            Write-Host "No changes to commit"
+            exit 0
+          } else {
+            git commit -m "Automated solution export: ${{ env.SOLUTION_NAME }} from ${{ github.event.inputs.environment }} environment"
+            git push origin "${{ steps.branch-name.outputs.BRANCH_NAME }}"
+            Write-Host "Changes committed and pushed to branch: ${{ steps.branch-name.outputs.BRANCH_NAME }}"
+          }
+
+      - name: Create Pull Request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pullRequest } = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Solution Export: ${process.env.SOLUTION_NAME} (${context.payload.inputs.environment})`,
+              head: '${{ steps.branch-name.outputs.BRANCH_NAME }}',
+              base: 'main',
+              body: `
+              ## Automated Solution Export
+              
+              **Solution:** ${process.env.SOLUTION_NAME}
+              **Environment:** ${context.payload.inputs.environment}
+              **Export Time:** ${{ steps.branch-name.outputs.BRANCH_NAME }}
+              
+              ### Excluded Components:
+              - Plugin: pg_Pg.DataverseSync.Plugins
+              - PCF Control: pg_Pg.DataverseSync.Controls.TableSelector
+              
+              This PR was automatically created by the solution export workflow.
+              `
+            });
+            
+            console.log(`Pull Request created: #${pullRequest.number}`);
