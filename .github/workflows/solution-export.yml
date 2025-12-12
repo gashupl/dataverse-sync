@@ -30,18 +30,18 @@ jobs:
       - name: Debug authentication variables
         run: |
           Write-Host "Checking authentication variables..."
-          Write-Host "Environment URL provided: $('${{ vars.POWERPLATFORM_ENVIRONMENT_URL }}' -ne '')"
-          Write-Host "Client ID provided: $('${{ vars.POWERPLATFORM_CLIENT_ID }}' -ne '')"
-          Write-Host "Tenant ID provided: $('${{ vars.POWERPLATFORM_TENANT_ID }}' -ne '')"
-          Write-Host "Client Secret provided: $('${{ secrets.POWERPLATFORM_CLIENT_SECRET }}' -ne '')"
+          Write-Host "Environment URL provided: $('${{ vars.DATAVERSE_URL }}' -ne '')"
+          Write-Host "Client ID provided: $('${{ vars.DEVOPS_APPID }}' -ne '')"
+          Write-Host "Tenant ID provided: $('${{ vars.DATAVERSE_TENANT_ID }}' -ne '')"
+          Write-Host "Client Secret provided: $('${{ secrets.DEVOPS_SECRET }}' -ne '')"
 
       - name: Export solution from Dataverse
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
-          app-id: ${{ vars.POWERPLATFORM_CLIENT_ID }}
-          tenant-id: ${{ vars.POWERPLATFORM_TENANT_ID }}
-          client-secret: ${{ secrets.POWERPLATFORM_CLIENT_SECRET }}
-          environment-url: ${{ vars.POWERPLATFORM_ENVIRONMENT_URL }}
+          app-id: ${{ vars.DEVOPS_APPID }}
+          tenant-id: ${{ vars.DATAVERSE_TENANT_ID}}
+          client-secret: ${{ secrets.DEVOPS_SECRET }}
+          environment-url: ${{ vars.DATAVERSE_URL }}
           solution-name: ${{ env.SOLUTION_NAME }}
           solution-output-file: ${{ env.SOLUTION_NAME }}.zip
           managed: true
