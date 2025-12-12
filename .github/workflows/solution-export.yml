@@ -27,6 +27,14 @@ jobs:
         with:
           add-tools-to-path: true
 
+      - name: Debug authentication variables
+        run: |
+          Write-Host "Checking authentication variables..."
+          Write-Host "Environment URL provided: $('${{ vars.POWERPLATFORM_ENVIRONMENT_URL }}' -ne '')"
+          Write-Host "Client ID provided: $('${{ vars.POWERPLATFORM_CLIENT_ID }}' -ne '')"
+          Write-Host "Tenant ID provided: $('${{ vars.POWERPLATFORM_TENANT_ID }}' -ne '')"
+          Write-Host "Client Secret provided: $('${{ secrets.POWERPLATFORM_CLIENT_SECRET }}' -ne '')"
+
       - name: Export solution from Dataverse
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
