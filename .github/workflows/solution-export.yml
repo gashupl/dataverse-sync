@@ -27,21 +27,16 @@ jobs:
         with:
           add-tools-to-path: true
 
-      - name: Authenticate to Power Platform
-        uses: microsoft/powerplatform-actions/auth@v1
-        with:
-          client-id: ${{ vars.POWERPLATFORM_CLIENT_ID }}
-          tenant-id: ${{ vars.POWERPLATFORM_TENANT_ID }}
-          client-secret: ${{ secrets.POWERPLATFORM_CLIENT_SECRET }}
-          environment-url: ${{ vars.POWERPLATFORM_ENVIRONMENT_URL }}
-          
       - name: Export solution from Dataverse
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
+          app-id: ${{ vars.POWERPLATFORM_CLIENT_ID }}
+          tenant-id: ${{ vars.POWERPLATFORM_TENANT_ID }}
+          client-secret: ${{ secrets.POWERPLATFORM_CLIENT_SECRET }}
           environment-url: ${{ vars.POWERPLATFORM_ENVIRONMENT_URL }}
           solution-name: ${{ env.SOLUTION_NAME }}
           solution-output-file: ${{ env.SOLUTION_NAME }}.zip
-          managed: false
+          managed: true
 
       - name: Clean solution folder
         run: |
