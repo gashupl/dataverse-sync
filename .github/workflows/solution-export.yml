@@ -71,6 +71,7 @@ jobs:
           $timestamp = (Get-Date).ToString("yyyy.MM.dd.HH.mm.ss")
           $branchName = "solution-export/$timestamp"
           echo "BRANCH_NAME=$branchName" >> $env:GITHUB_OUTPUT
+          echo "TIMESTAMP=$timestamp" >> $env:GITHUB_OUTPUT
           echo "Generated branch name: $branchName"
 
       - name: Create and switch to new branch
@@ -98,15 +99,14 @@ jobs:
             const { data: pullRequest } = await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `Solution Export: ${process.env.SOLUTION_NAME} (${context.payload.inputs.environment})`,
+              title: `Solution Export: ${process.env.SOLUTION_NAME} (${{ steps.branch-name.outputs.TIMESTAMP }})`,
               head: '${{ steps.branch-name.outputs.BRANCH_NAME }}',
               base: 'main',
               body: `
               ## Automated Solution Export
               
               **Solution:** ${process.env.SOLUTION_NAME}
-              **Environment:** ${context.payload.inputs.environment}
-              **Export Time:** ${{ steps.branch-name.outputs.BRANCH_NAME }}
+              **Export Time:** ${{ steps.branch-name.outputs.TIMESTAMP }}
               
               ### Excluded Components:
               - Plugin: pg_Pg.DataverseSync.Plugins
