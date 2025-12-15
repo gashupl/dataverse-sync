@@ -57,7 +57,7 @@ jobs:
         with:
           solution-file: ${{ env.SOLUTION_NAME }}.zip
           solution-folder: ${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}
-          solution-type: 'Unmanaged'
+          solution-type: 'Managed'
           overwrite-files: true      
           map-file: config/solution-mappings.xml
 
