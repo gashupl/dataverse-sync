@@ -59,7 +59,7 @@ jobs:
           solution-folder: ${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}
           solution-type: 'Unmanaged'
           overwrite-files: true      
-          mapping-file: config/solution-mappings.xml
+          map-file: config/solution-mappings.xml
 
       - name: Remove temporary files
         run: |
