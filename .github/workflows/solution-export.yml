@@ -57,14 +57,17 @@ jobs:
         with:
           solution-file: ${{ env.SOLUTION_NAME }}.zip
           solution-folder: ${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}
-          solution-type: 'Managed'
+          solution-type: 'Both'
           overwrite-files: true      
-          map-file: config/solution-mappings.xml
+          #map-file: config/solution-mappings.xml
 
-      - name: Remove temporary files
+      - name: Remove temporary and unwanted files
         run: |
           Remove-Item -Path "${{ env.SOLUTION_NAME }}.zip" -Force -ErrorAction SilentlyContinue
-
+          Remove-Item -Path "${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}/Controls/pg_Pg.DataverseSync.Controls.TableSelector/ControlManifest.xml" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}_managed/Controls/pg_Pg.DataverseSync.Controls.TableSelector/ControlManifest.xml" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}/Controls/pg_Pg.DataverseSync.Controls.TableSelector/bundle.js" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}_managed/Controls/pg_Pg.DataverseSync.Controls.TableSelector/bundle.js" -Force -ErrorAction SilentlyContinue
       - name: Generate branch name with timestamp
         id: branch-name
         run: |

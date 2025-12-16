@@ -1,7 +1,4 @@
 <Mapping>
-    <!-- <Folder map="Controls\pg_Pg.DataverseSync.Controls.TableSelector\ControlManifest.xml" to="..\..\src\client\Pg.DataverseSync.Controls.TableSelector\out\controls\TableSelector\ControlManifest.xml" />
-    <Folder map="Controls\pg_Pg.DataverseSync.Controls.TableSelector\bundle.js" to="..\..\src\client\Pg.DataverseSync.Controls.TableSelector\out\controls\TableSelector\bundle.js" /> -->
-    <Exclude>
-        <path>"Controls\pg_Pg.DataverseSync.Controls.TableSelector</path>
-    </Exclude>
+    <Folder map="Controls\pg_Pg.DataverseSync.Controls.TableSelector\ControlManifest.xml" to="..\..\src\client\Pg.DataverseSync.Controls.TableSelector\out\controls\TableSelector\ControlManifest.xml" />
+    <Folder map="Controls\pg_Pg.DataverseSync.Controls.TableSelector\bundle.js" to="..\..\src\client\Pg.DataverseSync.Controls.TableSelector\out\controls\TableSelector\bundle.js" />
 </Mapping>
