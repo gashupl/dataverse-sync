@@ -63,18 +63,26 @@ jobs:
             Remove-Item -Path "${{ env.SOLUTION_FOLDER }}" -Recurse -Force
           }
 
-      - name: Unpack solution
+      - name: Unpack unmanaged solution
         uses: microsoft/powerplatform-actions/unpack-solution@v1
         with:
           solution-file: ${{ env.SOLUTION_NAME }}.zip
           solution-folder: ${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}
-          solution-type: 'Both'
-          overwrite-files: true      
-          #map-file: config/solution-mappings.xml
+          solution-type: 'Unmanaged'
+          overwrite-files: true
+
+      - name: Unpack managed solution  
+        uses: microsoft/powerplatform-actions/unpack-solution@v1
+        with:
+          solution-file: ${{ env.SOLUTION_NAME }}_managed.zip
+          solution-folder: ${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}_managed
+          solution-type: 'Managed'
+          overwrite-files: true
 
       - name: Remove temporary and unwanted files
         run: |
           Remove-Item -Path "${{ env.SOLUTION_NAME }}.zip" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "${{ env.SOLUTION_NAME }}_managed.zip" -Force -ErrorAction SilentlyContinue
           Remove-Item -Path "${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}/Controls/pg_Pg.DataverseSync.Controls.TableSelector/ControlManifest.xml" -Force -ErrorAction SilentlyContinue
           Remove-Item -Path "${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}_managed/Controls/pg_Pg.DataverseSync.Controls.TableSelector/ControlManifest.xml" -Force -ErrorAction SilentlyContinue
           Remove-Item -Path "${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}/Controls/pg_Pg.DataverseSync.Controls.TableSelector/bundle.js" -Force -ErrorAction SilentlyContinue
