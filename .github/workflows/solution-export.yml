@@ -35,7 +35,18 @@ jobs:
           Write-Host "Tenant ID provided: $('${{ vars.DATAVERSE_TENANT_ID }}' -ne '')"
           Write-Host "Client Secret provided: $('${{ secrets.DEVOPS_SECRET }}' -ne '')"
 
-      - name: Export solution from Dataverse
+      - name: Export managed solution from Dataverse
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          app-id: ${{ vars.DEVOPS_APPID }}
+          tenant-id: ${{ vars.DATAVERSE_TENANT_ID}}
+          client-secret: ${{ secrets.DEVOPS_SECRET }}
+          environment-url: ${{ vars.DATAVERSE_URL }}
+          solution-name: ${{ env.SOLUTION_NAME }}
+          solution-output-file: ${{ env.SOLUTION_NAME }}_managed.zip
+          managed: true
+
+      - name: Export unmanaged solution from Dataverse
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
           app-id: ${{ vars.DEVOPS_APPID }}
@@ -44,7 +55,7 @@ jobs:
           environment-url: ${{ vars.DATAVERSE_URL }}
           solution-name: ${{ env.SOLUTION_NAME }}
           solution-output-file: ${{ env.SOLUTION_NAME }}.zip
-          managed: true
+          managed: false
 
       - name: Clean solution folder
         run: |
