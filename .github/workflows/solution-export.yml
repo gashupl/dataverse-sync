@@ -27,18 +27,32 @@ jobs:
         with:
           add-tools-to-path: true
 
-      - name: Authenticate to Power Platform
-        uses: microsoft/powerplatform-actions/auth@v1
-        with:
-          client-id: ${{ vars.POWERPLATFORM_CLIENT_ID }}
-          tenant-id: ${{ vars.POWERPLATFORM_TENANT_ID }}
-          client-secret: ${{ secrets.POWERPLATFORM_CLIENT_SECRET }}
-          environment-url: ${{ vars.POWERPLATFORM_ENVIRONMENT_URL }}
-          
-      - name: Export solution from Dataverse
+      - name: Debug authentication variables
+        run: |
+          Write-Host "Checking authentication variables..."
+          Write-Host "Environment URL provided: $('${{ vars.DATAVERSE_URL }}' -ne '')"
+          Write-Host "Client ID provided: $('${{ vars.DEVOPS_APPID }}' -ne '')"
+          Write-Host "Tenant ID provided: $('${{ vars.DATAVERSE_TENANT_ID }}' -ne '')"
+          Write-Host "Client Secret provided: $('${{ secrets.DEVOPS_SECRET }}' -ne '')"
+
+      - name: Export managed solution from Dataverse
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
-          environment-url: ${{ vars.POWERPLATFORM_ENVIRONMENT_URL }}
+          app-id: ${{ vars.DEVOPS_APPID }}
+          tenant-id: ${{ vars.DATAVERSE_TENANT_ID}}
+          client-secret: ${{ secrets.DEVOPS_SECRET }}
+          environment-url: ${{ vars.DATAVERSE_URL }}
+          solution-name: ${{ env.SOLUTION_NAME }}
+          solution-output-file: ${{ env.SOLUTION_NAME }}_managed.zip
+          managed: true
+
+      - name: Export unmanaged solution from Dataverse
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          app-id: ${{ vars.DEVOPS_APPID }}
+          tenant-id: ${{ vars.DATAVERSE_TENANT_ID}}
+          client-secret: ${{ secrets.DEVOPS_SECRET }}
+          environment-url: ${{ vars.DATAVERSE_URL }}
           solution-name: ${{ env.SOLUTION_NAME }}
           solution-output-file: ${{ env.SOLUTION_NAME }}.zip
           managed: false
@@ -49,25 +63,37 @@ jobs:
             Remove-Item -Path "${{ env.SOLUTION_FOLDER }}" -Recurse -Force
           }
 
-      - name: Unpack solution
+      - name: Unpack unmanaged solution
         uses: microsoft/powerplatform-actions/unpack-solution@v1
         with:
           solution-file: ${{ env.SOLUTION_NAME }}.zip
           solution-folder: ${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}
           solution-type: 'Unmanaged'
-          overwrite-files: true      
-          mapping-file: config/solution-mappings.xml
+          overwrite-files: true
 
-      - name: Remove temporary files
+      - name: Unpack managed solution  
+        uses: microsoft/powerplatform-actions/unpack-solution@v1
+        with:
+          solution-file: ${{ env.SOLUTION_NAME }}_managed.zip
+          solution-folder: ${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}_managed
+          solution-type: 'Managed'
+          overwrite-files: true
+
+      - name: Remove temporary and unwanted files
         run: |
           Remove-Item -Path "${{ env.SOLUTION_NAME }}.zip" -Force -ErrorAction SilentlyContinue
-
+          Remove-Item -Path "${{ env.SOLUTION_NAME }}_managed.zip" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}/Controls/pg_Pg.DataverseSync.Controls.TableSelector/ControlManifest.xml" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}_managed/Controls/pg_Pg.DataverseSync.Controls.TableSelector/ControlManifest.xml" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}/Controls/pg_Pg.DataverseSync.Controls.TableSelector/bundle.js" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}_managed/Controls/pg_Pg.DataverseSync.Controls.TableSelector/bundle.js" -Force -ErrorAction SilentlyContinue
       - name: Generate branch name with timestamp
         id: branch-name
         run: |
           $timestamp = (Get-Date).ToString("yyyy.MM.dd.HH.mm.ss")
           $branchName = "solution-export/$timestamp"
           echo "BRANCH_NAME=$branchName" >> $env:GITHUB_OUTPUT
+          echo "TIMESTAMP=$timestamp" >> $env:GITHUB_OUTPUT
           echo "Generated branch name: $branchName"
 
       - name: Create and switch to new branch
@@ -95,15 +121,14 @@ jobs:
             const { data: pullRequest } = await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `Solution Export: ${process.env.SOLUTION_NAME} (${context.payload.inputs.environment})`,
+              title: `Solution Export: ${process.env.SOLUTION_NAME} (${{ steps.branch-name.outputs.TIMESTAMP }})`,
               head: '${{ steps.branch-name.outputs.BRANCH_NAME }}',
               base: 'main',
               body: `
               ## Automated Solution Export
               
               **Solution:** ${process.env.SOLUTION_NAME}
-              **Environment:** ${context.payload.inputs.environment}
-              **Export Time:** ${{ steps.branch-name.outputs.BRANCH_NAME }}
+              **Export Time:** ${{ steps.branch-name.outputs.TIMESTAMP }}
               
               ### Excluded Components:
               - Plugin: pg_Pg.DataverseSync.Plugins
