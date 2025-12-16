@@ -1,0 +1,15 @@
+<customapi uniquename="pg_getunsynchronizedtables">
+  <allowedcustomprocessingsteptype>2</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Get unsynchronized tables (query tables metadata from Dataverse and remove tables with synchronization already enabled).">
+    <label description="Get unsynchronized tables (query tables metadata from Dataverse and remove tables with synchronization already enabled)." languagecode="1033" />
+  </description>
+  <displayname default="Get Unsynchronized Tables">
+    <label description="Get Unsynchronized Tables" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>1</isfunction>
+  <isprivate>0</isprivate>
+  <name>pg_getunsynchronizedtables</name>
+  <workflowsdkstepenabled>0</workflowsdkstepenabled>
+</customapi>

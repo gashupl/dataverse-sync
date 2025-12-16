@@ -1,0 +1,11 @@
+<customapiresponseproperty uniquename="tables">
+  <description default="Unsynchronized Tables">
+    <label description="Unsynchronized Tables" languagecode="1033" />
+  </description>
+  <displayname default="Tables">
+    <label description="Tables" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <name>tables</name>
+  <type>10</type>
+</customapiresponseproperty>

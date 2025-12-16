@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<EntityRelationships xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <EntityRelationship Name="lk_pg_synctable_createdby" />
+  <EntityRelationship Name="lk_pg_synctable_modifiedby" />
+  <EntityRelationship Name="organization_pg_synctable" />
+</EntityRelationships>
