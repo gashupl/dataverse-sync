@@ -18,7 +18,7 @@ on:
         required: false
         type: boolean
         default: false
-        description: 'Whether to build and export Power Platform solution'
+        description: 'Build Power Platform solution'
 
 jobs:
   build:
@@ -94,7 +94,7 @@ jobs:
           solution-file: ${{ env.SOLUTION_NAME }}_managed.zip
           solution-folder: ${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}_managed
           solution-type: 'Managed'
-          map-file: config/solution-mappings.map
+          map-file: config/solution-mappings.xml
 
       - name: Upload solution artifact
         if: ${{ inputs.build-powerplatform-solution }}
