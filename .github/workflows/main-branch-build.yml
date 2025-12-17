@@ -5,11 +5,11 @@ on:
     branches: [ "main" ]
   workflow_dispatch:  # Allows manual triggering
     inputs:
-      build-powerplatform-solution:
+      release-powerplatform-solution:
         required: false
         type: boolean
         default: false
-        description: 'Build Power Platform solution'
+        description: 'Release Power Platform solution'
         
 permissions:
   contents: read  # Allows reading repository contents
@@ -22,7 +22,7 @@ jobs:
     with:
       node-version: '24'
       run-tests: true
-      build-powerplatform-solution: ${{ inputs.build-powerplatform-solution || false }}
+      build-powerplatform-solution: true
 
   # Additional job that extends the base build
   deploy:
