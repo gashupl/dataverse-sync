@@ -14,6 +14,11 @@ on:
         type: boolean
         default: true
         description: 'Whether to run tests'
+      build-powerplatform-solution:
+        required: false
+        type: boolean
+        default: false
+        description: 'Whether to build and export Power Platform solution'
 
 jobs:
   build:
@@ -24,7 +29,8 @@ jobs:
       TEST_ASSEMBLY_PATH: src\server\Pg.DataverseSync\**\bin\Release\*.Tests.dll
       PCF_CONTROL_FOLDER: src\client\Pg.DataverseSync.Controls
       VSTEST_CONSOLE: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe
-
+      SOLUTION_NAME: DataverseSync
+      SOLUTION_FOLDER: solutions
 
     steps:
       - name: Checkout repository
@@ -74,3 +80,26 @@ jobs:
           name: xUnit Test Results
           path: "**/*.trx"
           reporter: dotnet-trx
+
+      - name: Setup Power Platform CLI
+        if: ${{ inputs.build-powerplatform-solution }}
+        uses: microsoft/powerplatform-actions/actions-install@v1
+        with:
+          add-tools-to-path: true
+
+      - name: Pack managed solution  
+        if: ${{ inputs.build-powerplatform-solution }}
+        uses: microsoft/powerplatform-actions/pack-solution@v1
+        with:
+          solution-file: ${{ env.SOLUTION_NAME }}_managed.zip
+          solution-folder: ${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}_managed
+          solution-type: 'Managed'
+          map-file: config/solution-mappings.map
+
+      - name: Upload solution artifact
+        if: ${{ inputs.build-powerplatform-solution }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: powerplatform-solution
+          path: ${{ env.SOLUTION_NAME }}_managed.zip
+          retention-days: 14
