@@ -100,6 +100,6 @@ jobs:
         if: ${{ inputs.build-powerplatform-solution }}
         uses: actions/upload-artifact@v4
         with:
-          name: powerplatform-solution
+          name: DataverseSync
           path: ${{ env.SOLUTION_NAME }}_managed.zip
           retention-days: 14
