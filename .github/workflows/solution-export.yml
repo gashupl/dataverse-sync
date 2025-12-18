@@ -30,7 +30,7 @@ jobs:
       - name: Debug authentication variables
         run: |
           Write-Host "Checking authentication variables..."
-          Write-Host "Environment URL provided: $('${{ vars.DATAVERSE_URL }}' -ne '')"
+          Write-Host "Environment URL provided: $('${{ vars.DATAVERSE_SOURCE_URL }}' -ne '')"
           Write-Host "Client ID provided: $('${{ vars.DEVOPS_APPID }}' -ne '')"
           Write-Host "Tenant ID provided: $('${{ vars.DATAVERSE_TENANT_ID }}' -ne '')"
           Write-Host "Client Secret provided: $('${{ secrets.DEVOPS_SECRET }}' -ne '')"
@@ -41,7 +41,7 @@ jobs:
           app-id: ${{ vars.DEVOPS_APPID }}
           tenant-id: ${{ vars.DATAVERSE_TENANT_ID}}
           client-secret: ${{ secrets.DEVOPS_SECRET }}
-          environment-url: ${{ vars.DATAVERSE_URL }}
+          environment-url: ${{ vars.DATAVERSE_SOURCE_URL }}
           solution-name: ${{ env.SOLUTION_NAME }}
           solution-output-file: ${{ env.SOLUTION_NAME }}_managed.zip
           managed: true
@@ -52,7 +52,7 @@ jobs:
           app-id: ${{ vars.DEVOPS_APPID }}
           tenant-id: ${{ vars.DATAVERSE_TENANT_ID}}
           client-secret: ${{ secrets.DEVOPS_SECRET }}
-          environment-url: ${{ vars.DATAVERSE_URL }}
+          environment-url: ${{ vars.DATAVERSE_SOURCE_URL }}
           solution-name: ${{ env.SOLUTION_NAME }}
           solution-output-file: ${{ env.SOLUTION_NAME }}.zip
           managed: false
