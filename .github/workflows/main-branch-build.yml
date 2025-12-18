@@ -26,8 +26,8 @@ jobs:
 
   # Additional job that extends the base build
   deploy:
+    if: ${{ inputs.release-powerplatform-solution == 'true' }}
     needs: build
-    runs-on: windows-latest
-    steps:
-      - name: Additional deployment step
-        run: echo "Running additional deployment step..."
+    uses: ./.github/workflows/release-template.yml
+    with:
+      target-dataverse-url: ${{ vars.DATAVERSE_TARGET_URL }}
