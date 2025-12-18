@@ -31,7 +31,7 @@ jobs:
       - name: Download solution artifact
         uses: actions/download-artifact@v4
         with:
-          name: powerplatform-solution
+          name: DataverseSync
           path: ./artifacts
 
       - name: Import managed solution to Dataverse
