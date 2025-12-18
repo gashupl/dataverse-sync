@@ -54,10 +54,5 @@ jobs:
           client-secret: ${{ secrets.DEVOPS_SECRET }}
           environment-url: ${{ inputs.target-dataverse-url }}
           solution-file: ./artifacts/${{ env.SOLUTION_NAME }}_managed.zip
-          stage-and-upgrade: true
-          
-      # - name: Import managed solution to Dataverse
-      #   run: |
-      #     pac auth create --applicationId "${{ vars.DEVOPS_APPID }}" --clientSecret "${{ secrets.DEVOPS_SECRET }}" --tenant "${{ vars.DATAVERSE_TENANT_ID }}" --environment "${{ inputs.target-dataverse-url }}"
-      #     pac solution import --path "./artifacts/${{ env.SOLUTION_NAME }}_managed.zip" --stage-and-upgrade
-      #   shell: pwsh
+          import-as-holding: false
+          #stage-and-upgrade: true
