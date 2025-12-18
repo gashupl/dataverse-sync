@@ -38,6 +38,14 @@ jobs:
           name: DataverseSync
           path: ./artifacts
 
+      - name: Debug authentication variables
+        run: |
+          Write-Host "Checking authentication variables..."
+          Write-Host "Environment URL provided: $('${{ vars.DATAVERSE_TARGET_URL }}' -ne '')"
+          Write-Host "Client ID provided: $('${{ vars.DEVOPS_APPID }}' -ne '')"
+          Write-Host "Tenant ID provided: $('${{ vars.DATAVERSE_TENANT_ID }}' -ne '')"
+          Write-Host "Client Secret provided: $('${{ secrets.DEVOPS_SECRET }}' -ne '')"
+
       - name: Import managed solution to Dataverse
         run: |
           pac auth create --applicationId "${{ vars.DEVOPS_APPID }}" --clientSecret "${{ secrets.DEVOPS_SECRET }}" --tenant "${{ vars.DATAVERSE_TENANT_ID }}" --environment "${{ inputs.target-dataverse-url }}"
