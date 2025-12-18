@@ -29,5 +29,6 @@ jobs:
     if: ${{ inputs.release-powerplatform-solution }}
     needs: build
     uses: ./.github/workflows/release-template.yml
+    secrets: inherit  # Pass all secrets to reusable workflow
     with:
       target-dataverse-url: ${{ vars.DATAVERSE_TARGET_URL }}
