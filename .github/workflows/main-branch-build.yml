@@ -26,7 +26,7 @@ jobs:
 
   # Additional job that extends the base build
   deploy:
-    if: ${{ inputs.release-powerplatform-solution == 'true' }}
+    if: ${{ inputs.release-powerplatform-solution }}
     needs: build
     uses: ./.github/workflows/release-template.yml
     with:
