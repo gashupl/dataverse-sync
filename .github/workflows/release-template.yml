@@ -10,6 +10,10 @@ on:
         default: ''
         description: 'Target Dataverse environment URL'
 
+permissions:
+  #id-token: write  # Required for OIDC authentication
+  contents: read   # Required to access repository contents
+
 jobs:
   build:
     runs-on: windows-latest
