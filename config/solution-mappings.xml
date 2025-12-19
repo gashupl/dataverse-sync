@@ -1,5 +1,3 @@
 <Mapping>
-    <FileToFile map="Controls\pg_Pg.DataverseSync.Controls.TableSelector\ControlManifest.xml" to="..\..\src\client\Pg.DataverseSync.Controls\TableSelector\out\controls\TableSelector\ControlManifest.xml" />
-    <FileToFile map="Controls\pg_Pg.DataverseSync.Controls.TableSelector\bundle.js" to="..\..\src\client\Pg.DataverseSync.Controls\TableSelector\out\controls\TableSelector\bundle.js" />
     <FileToFile map="pluginpackages\pg_Pg.DataverseSync.Plugins\package\pg_Pg.DataverseSync.Plugins.nupkg" to="..\..\src\server\Pg.DataverseSync\Pg.DataverseSync.Plugins\bin\Release\Pg.DataverseSync.Plugins.1.0.0.nupkg" /> 
 </Mapping>
