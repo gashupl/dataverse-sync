@@ -4,7 +4,13 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch:  # Allows manual triggering
-
+    inputs:
+      release-powerplatform-solution:
+        required: false
+        type: boolean
+        default: false
+        description: 'Release Power Platform solution'
+        
 permissions:
   contents: read  # Allows reading repository contents
   checks: write  # Allows writing test reports
@@ -16,11 +22,13 @@ jobs:
     with:
       node-version: '24'
       run-tests: true
+      build-powerplatform-solution: true
 
   # Additional job that extends the base build
   deploy:
+    if: ${{ inputs.release-powerplatform-solution }}
     needs: build
-    runs-on: windows-latest
-    steps:
-      - name: Additional deployment step
-        run: echo "Running additional deployment step..."
+    uses: ./.github/workflows/release-template.yml
+    secrets: inherit  # Pass all secrets to reusable workflow
+    with:
+      target-dataverse-url: ${{ vars.DATAVERSE_TARGET_URL }}

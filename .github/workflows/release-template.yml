@@ -1,0 +1,58 @@
+# Workflow template for releasing Power Platform solutions into target environment
+name: Build Template
+
+on:
+  workflow_call:
+    inputs:
+      target-dataverse-url:
+        required: true
+        type: string
+        default: ''
+        description: 'Target Dataverse environment URL'
+
+permissions:
+  #id-token: write  # Required for OIDC authentication
+  contents: read   # Required to access repository contents
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    env:
+      SOLUTION_NAME: DataverseSync
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Power Platform CLI
+        uses: microsoft/powerplatform-actions/actions-install@v1
+        with:
+          add-tools-to-path: true
+
+      - name: Download solution artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: DataverseSync
+          path: ./artifacts
+
+      - name: Debug authentication variables
+        run: |
+          Write-Host "Checking authentication variables..."
+          Write-Host "Environment URL provided: $('${{ vars.DATAVERSE_TARGET_URL }}' -ne '')"
+          Write-Host "Client ID provided: $('${{ vars.DEVOPS_APPID }}' -ne '')"
+          Write-Host "Tenant ID provided: $('${{ vars.DATAVERSE_TENANT_ID }}' -ne '')"
+          Write-Host "Client Secret provided: $('${{ secrets.DEVOPS_SECRET }}' -ne '')"
+
+      - name: Import managed solution to Dataverse
+        uses: microsoft/powerplatform-actions/import-solution@v1
+        with:
+          app-id: ${{ vars.DEVOPS_APPID }}
+          tenant-id: ${{ vars.DATAVERSE_TENANT_ID}}
+          client-secret: ${{ secrets.DEVOPS_SECRET }}
+          environment-url: ${{ inputs.target-dataverse-url }}
+          solution-file: ./artifacts/${{ env.SOLUTION_NAME }}_managed.zip
+          import-as-holding: false
+          #stage-and-upgrade: true
