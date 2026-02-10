@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Pg.DataverseSync.Engine.Functions/Pg.DataverseSync.Engine.Functions.csproj" Id="6c793aa4-3f9b-44bf-97b3-41339159953d" />
+  <Project Path="Pg.DataverseSync.Engine.Source/Pg.DataverseSync.Engine.Source.csproj" Id="f457758e-b193-4a9e-9f56-6972031959e2" />
+</Solution>

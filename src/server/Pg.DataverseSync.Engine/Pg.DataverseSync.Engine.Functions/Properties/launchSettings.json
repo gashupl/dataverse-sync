@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "Pg.DataverseSync.Engine.Functions": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7230"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "containerRunArguments": "--init",
+      "httpPort": 32940,
+      "useSSL": false
+    }
+  }
+}
