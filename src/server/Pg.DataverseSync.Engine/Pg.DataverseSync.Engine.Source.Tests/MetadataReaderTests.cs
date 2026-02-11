@@ -4,7 +4,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Pg.DataverseSync.Engine.Functions.Core.Exceptions;
+using Pg.DataverseSync.Engine.Core.Exceptions;
 using System.ServiceModel;
 
 namespace Pg.DataverseSync.Engine.Source.Tests

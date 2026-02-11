@@ -3,7 +3,7 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using Pg.DataverseSync.Engine.Functions.Core.Exceptions;
+using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Source.Model;
 using System.ServiceModel;
 

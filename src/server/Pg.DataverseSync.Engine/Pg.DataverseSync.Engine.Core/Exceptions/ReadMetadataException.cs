@@ -1,4 +1,4 @@
-﻿namespace Pg.DataverseSync.Engine.Functions.Core.Exceptions
+﻿namespace Pg.DataverseSync.Engine.Core.Exceptions
 {
     public class ReadMetadataException : Exception
     {
