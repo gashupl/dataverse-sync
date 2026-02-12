@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pg.DataverseSync.Engine.Core\Pg.DataverseSync.Engine.Core.csproj" />
+  </ItemGroup>
+
 </Project>

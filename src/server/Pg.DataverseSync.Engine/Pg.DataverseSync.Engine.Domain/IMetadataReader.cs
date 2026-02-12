@@ -1,4 +1,5 @@
-﻿using Pg.DataverseSync.Engine.Source.Model;
+﻿using Pg.DataverseSync.Engine.Core.Model;
+
 namespace Pg.DataverseSync.Engine.Source
 {
     public interface IMetadataReader

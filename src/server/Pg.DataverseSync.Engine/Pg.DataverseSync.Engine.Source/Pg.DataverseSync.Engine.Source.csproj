@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Pg.DataverseSync.Engine.Core\Pg.DataverseSync.Engine.Core.csproj" />
+    <ProjectReference Include="..\Pg.DataverseSync.Engine.Domain\Pg.DataverseSync.Engine.Domain.csproj" />
   </ItemGroup>
 
 </Project>

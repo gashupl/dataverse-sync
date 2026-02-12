@@ -1,4 +1,4 @@
-﻿namespace Pg.DataverseSync.Engine.Source.Model
+﻿namespace Pg.DataverseSync.Engine.Core.Model
 {
     public class Column
     {
