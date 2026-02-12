@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="Pg.DataverseSync.Engine.Core/Pg.DataverseSync.Engine.Core.csproj" />
+  <Project Path="Pg.DataverseSync.Engine.Domain.Tests/Pg.DataverseSync.Engine.Domain.Tests.csproj" Id="e9064436-c638-48b1-8e15-93295dd364da" />
+  <Project Path="Pg.DataverseSync.Engine.Domain/Pg.DataverseSync.Engine.Domain.csproj" Id="8a0f7eae-edfe-441a-b0c2-0f25a852f73e" />
   <Project Path="Pg.DataverseSync.Engine.Functions.Tests/Pg.DataverseSync.Engine.Functions.Tests.csproj" Id="46533019-2435-41a4-a188-698142fd8b8c" />
   <Project Path="Pg.DataverseSync.Engine.Functions/Pg.DataverseSync.Engine.Functions.csproj" Id="6c793aa4-3f9b-44bf-97b3-41339159953d" />
   <Project Path="Pg.DataverseSync.Engine.Source.Tests/Pg.DataverseSync.Engine.Source.Tests.csproj" Id="0fab3d4f-4e94-4a6f-bd30-4e07dd4be9c3" />
