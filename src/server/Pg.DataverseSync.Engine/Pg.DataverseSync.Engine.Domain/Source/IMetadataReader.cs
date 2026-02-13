@@ -1,6 +1,6 @@
 ﻿using Pg.DataverseSync.Engine.Core.Model;
 
-namespace Pg.DataverseSync.Engine.Source
+namespace Pg.DataverseSync.Engine.Domain.Source
 {
     public interface IMetadataReader
     {
