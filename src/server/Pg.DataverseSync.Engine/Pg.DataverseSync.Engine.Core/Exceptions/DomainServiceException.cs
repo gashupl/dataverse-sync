@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Pg.DataverseSync.Engine.Core.Exceptions
+﻿namespace Pg.DataverseSync.Engine.Core.Exceptions
 {
     public class DomainServiceException : Exception
     {
