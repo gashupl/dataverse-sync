@@ -27,7 +27,8 @@ jobs:
     env:
       VS_DATAVERSE_SOLUTION_PATH: src\server\Pg.DataverseSync\Pg.DataverseSync.sln
       VS_AZURE_SOLUTION_PATH: src\server\Pg.DataverseSync.Engine\Pg.DataverseSync.Engine.slnx
-      TEST_ASSEMBLY_PATH: src\server\Pg.DataverseSync\**\bin\Release\*.Tests.dll
+      TEST_DATAVERSE_ASSEMBLY_PATH: src\server\Pg.DataverseSync\**\bin\Release\*.Tests.dll
+      TEST_AZURE_ASSEMBLY_PATH: src\server\Pg.DataverseSync.Engine\**\bin\Release\*.Tests.dll
       PCF_CONTROL_FOLDER: src\client\Pg.DataverseSync.Controls
       VSTEST_CONSOLE: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe
       SOLUTION_NAME: DataverseSync
@@ -76,18 +77,24 @@ jobs:
       - name: Build Dataverse solution
         run: msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
 
-      # - name: Restore Azure solution NuGet packages
-      #   run: nuget restore ${{ env.VS_AZURE_SOLUTION_PATH }}
+      - name: Restore Azure solution NuGet packages
+        run: nuget restore ${{ env.VS_AZURE_SOLUTION_PATH }}
 
-      # - name: Build Azure solution
-      #   run: msbuild ${{ env.VS_AZURE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
+      - name: Build Azure solution
+        run: msbuild ${{ env.VS_AZURE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
         
       - name: Run xUnit tests with Visual Studio 2022 Test Runner
         if: ${{ inputs.run-tests }}
         run: |
-          $testAssemblies = Get-ChildItem -Path "${{ env.TEST_ASSEMBLY_PATH }}" -Recurse
-          foreach ($assembly in $testAssemblies) {
-            & "${{ env.VSTEST_CONSOLE }}" $assembly.FullName /Logger:trx
+          $paths = @(
+            "${{ env.TEST_DATAVERSE_ASSEMBLY_PATH }}",
+            "${{ env.TEST_AZURE_ASSEMBLY_PATH }}"
+          )
+          foreach ($path in $paths) {
+            $testAssemblies = Get-ChildItem -Path $path -Recurse -ErrorAction SilentlyContinue
+            foreach ($assembly in $testAssemblies) {
+              & "${{ env.VSTEST_CONSOLE }}" $assembly.FullName /Logger:trx
+            }
           }
 
       - name: Publish Test Results
