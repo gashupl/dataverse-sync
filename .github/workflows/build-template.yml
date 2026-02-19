@@ -33,6 +33,7 @@ jobs:
       VSTEST_CONSOLE: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe
       SOLUTION_NAME: DataverseSync
       SOLUTION_FOLDER: solutions
+      FUNCTIONS_PACKAGE_NAME: DataverseSyncEngine
 
     steps:
       - name: Checkout repository
@@ -77,12 +78,15 @@ jobs:
       - name: Build Dataverse solution
         run: msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
 
-      - name: Restore Azure solution NuGet packages
-        run: nuget restore ${{ env.VS_AZURE_SOLUTION_PATH }}
+      # - name: Restore Azure solution NuGet packages
+      #   run: nuget restore ${{ env.VS_AZURE_SOLUTION_PATH }}
+
+      # - name: Build Azure solution
+      #   run: msbuild ${{ env.VS_AZURE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: Build Azure solution
-        run: msbuild ${{ env.VS_AZURE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
-        
+        run: dotnet build ${{ env.VS_AZURE_SOLUTION_PATH }} -c Release
+
       - name: Run xUnit tests with Visual Studio 2022 Test Runner
         if: ${{ inputs.run-tests }}
         run: |
@@ -124,6 +128,24 @@ jobs:
         if: ${{ inputs.build-powerplatform-solution }}
         uses: actions/upload-artifact@v4
         with:
-          name: DataverseSync
+          name: DataverseSyncSolution
           path: ${{ env.SOLUTION_NAME }}_managed.zip
+          retention-days: 14
+
+      - name: Publish Azure Functions project
+        run: |
+          $functionsProject = "src\server\Pg.DataverseSync.Engine\Pg.DataverseSync.Engine.Functions\Pg.DataverseSync.Engine.Functions.csproj"
+          dotnet publish $functionsProject -c Release -o publish\azure-functions --no-build
+
+      - name: Create Azure Functions deployment package
+        run: |
+          $publishPath = "publish\azure-functions"
+          $zipPath = "${{ env.FUNCTIONS_PACKAGE_NAME }}.zip"
+          Compress-Archive -Path "$publishPath\*" -DestinationPath $zipPath -Force
+        
+      - name: Upload Azure Functions deployment artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DataverseSyncEngine
+          path: ${{ env.FUNCTIONS_PACKAGE_NAME }}.zip
           retention-days: 14
