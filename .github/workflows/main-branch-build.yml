@@ -22,7 +22,7 @@ jobs:
     with:
       node-version: '24'
       run-tests: true
-      build-powerplatform-solution: true
+      artifacts-build-upload: true
 
   # Additional job that extends the base build
   deploy:

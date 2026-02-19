@@ -14,7 +14,7 @@ on:
         type: boolean
         default: true
         description: 'Whether to run tests'
-      build-powerplatform-solution:
+      artifacts-build-upload:
         required: false
         type: boolean
         default: false
@@ -63,7 +63,7 @@ jobs:
           npm run build
 
       - name: Copy PCF build output to solution folder
-        if: ${{ inputs.build-powerplatform-solution }}
+        if: ${{ inputs.artifacts-build-upload }}
         run: |
           $sourceDir = "${{ env.PCF_CONTROL_FOLDER }}\TableSelector\out\controls\TableSelector"
           $destDir = "${{ env.SOLUTION_FOLDER }}\${{ env.SOLUTION_NAME }}_managed\Controls\pg_Pg.DataverseSync.Controls.TableSelector"
@@ -110,13 +110,13 @@ jobs:
           reporter: dotnet-trx
 
       - name: Setup Power Platform CLI
-        if: ${{ inputs.build-powerplatform-solution }}
+        if: ${{ inputs.artifacts-build-upload }}
         uses: microsoft/powerplatform-actions/actions-install@v1
         with:
           add-tools-to-path: true
 
       - name: Pack managed solution  
-        if: ${{ inputs.build-powerplatform-solution }}
+        if: ${{ inputs.artifacts-build-upload }}
         uses: microsoft/powerplatform-actions/pack-solution@v1
         with:
           solution-file: ${{ env.SOLUTION_NAME }}_managed.zip
@@ -125,7 +125,7 @@ jobs:
           map-file: config/solution-mappings.xml
 
       - name: Upload solution artifact
-        if: ${{ inputs.build-powerplatform-solution }}
+        if: ${{ inputs.artifacts-build-upload }}
         uses: actions/upload-artifact@v4
         with:
           name: DataverseSyncSolution
@@ -133,17 +133,20 @@ jobs:
           retention-days: 14
 
       - name: Publish Azure Functions project
+        if: ${{ inputs.artifacts-build-upload }}
         run: |
           $functionsProject = "src\server\Pg.DataverseSync.Engine\Pg.DataverseSync.Engine.Functions\Pg.DataverseSync.Engine.Functions.csproj"
           dotnet publish $functionsProject -c Release -o publish\azure-functions --no-build
 
       - name: Create Azure Functions deployment package
+        if: ${{ inputs.artifacts-build-upload }}
         run: |
           $publishPath = "publish\azure-functions"
           $zipPath = "${{ env.FUNCTIONS_PACKAGE_NAME }}.zip"
           Compress-Archive -Path "$publishPath\*" -DestinationPath $zipPath -Force
         
       - name: Upload Azure Functions deployment artifact
+        if: ${{ inputs.artifacts-build-upload }}
         uses: actions/upload-artifact@v4
         with:
           name: DataverseSyncEngine
