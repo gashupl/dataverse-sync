@@ -6,5 +6,7 @@
   <Project Path="Pg.DataverseSync.Engine.Functions/Pg.DataverseSync.Engine.Functions.csproj" Id="6c793aa4-3f9b-44bf-97b3-41339159953d" />
   <Project Path="Pg.DataverseSync.Engine.Source.Tests/Pg.DataverseSync.Engine.Source.Tests.csproj" Id="0fab3d4f-4e94-4a6f-bd30-4e07dd4be9c3" />
   <Project Path="Pg.DataverseSync.Engine.Source/Pg.DataverseSync.Engine.Source.csproj" Id="f457758e-b193-4a9e-9f56-6972031959e2" />
+  <Project Path="Pg.DataverseSync.Engine.Target.SqlServer.Tests/Pg.DataverseSync.Engine.Target.SqlServer.Tests.csproj" Id="f1b1e9bc-c161-4d27-b063-d2b0aa009bec" />
+  <Project Path="Pg.DataverseSync.Engine.Target.SqlServer/Pg.DataverseSync.Engine.Target.SqlServer.csproj" Id="9497fcc6-fcd5-49cd-9a16-1a6cf23b2a0c" />
   <Project Path="Pg.DataverseSync.Engine.Target/Pg.DataverseSync.Engine.Target.csproj" Id="ac13c58c-7ec5-442c-a6d4-ba90fc68a260" />
 </Solution>
