@@ -2,7 +2,7 @@
 
 namespace Pg.DataverseSync.Engine.Target
 {
-    public interface IDataStructureRepository
+    public interface ITargetDataStructureService
     {
         UpsertTableResult UpsertTable(Table table); 
     }

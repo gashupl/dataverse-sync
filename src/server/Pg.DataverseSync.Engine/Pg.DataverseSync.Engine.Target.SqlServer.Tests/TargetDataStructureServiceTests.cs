@@ -2,13 +2,13 @@
 
 namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
 {
-    public class DatabaseSchemaRepositoryTests
+    public class TargetDataStructureServiceTests
     {
         [Fact]
         public void UpsertTable_ThrowsNotImplementedException()
         {
             // Arrange
-            var repository = new DatabaseSchemaRepository();
+            var repository = new TargetDataStructureService();
             var table = new Table("test", "Test", false);
 
             // Act & Assert

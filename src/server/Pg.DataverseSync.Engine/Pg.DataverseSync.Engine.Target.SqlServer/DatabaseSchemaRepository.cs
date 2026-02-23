@@ -1,12 +1,28 @@
-﻿using Pg.DataverseSync.Engine.Core.Model;
+﻿using Microsoft.Data.SqlClient;
 
 namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
-    public class DatabaseSchemaRepository : IDataStructureRepository
+    public class DatabaseSchemaRepository : IDatabaseSchemaRepository
     {
-        public UpsertTableResult UpsertTable(Table table)
+        private readonly string _connectionString;
+
+        public DatabaseSchemaRepository(string connectionString)
         {
-            throw new NotImplementedException();
+            _connectionString = connectionString;
         }
+
+        public bool TargetTableExists(string tableName)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand(
+                    "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = @TableName", connection);
+                command.Parameters.AddWithValue("@TableName", tableName);
+
+                return (int)command.ExecuteScalar() > 0;
+            }
+        }
+
     }
 }
