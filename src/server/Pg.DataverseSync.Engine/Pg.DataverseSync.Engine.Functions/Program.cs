@@ -18,7 +18,6 @@ builder.Services
     .ConfigureFunctionsApplicationInsights();
 
 // Register Dataverse service
-//TODO: Add Key Vault integration for connection string
 builder.Services.AddScoped<IOrganizationService>(sp =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
