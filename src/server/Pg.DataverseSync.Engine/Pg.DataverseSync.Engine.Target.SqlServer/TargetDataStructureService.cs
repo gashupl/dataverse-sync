@@ -4,6 +4,13 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
     public class TargetDataStructureService : ITargetDataStructureService
     {
+        private readonly IDatabaseSchemaRepository _databaseSchemaRepository;
+
+        public TargetDataStructureService(IDatabaseSchemaRepository databaseSchemaRepository)
+        {
+            _databaseSchemaRepository = databaseSchemaRepository;
+        }
+
         public UpsertTableResult UpsertTable(Table table)
         {
             throw new NotImplementedException();

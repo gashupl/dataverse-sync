@@ -1,4 +1,5 @@
-﻿using Pg.DataverseSync.Engine.Core.Model;
+﻿using NSubstitute;
+using Pg.DataverseSync.Engine.Core.Model;
 
 namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
 {
@@ -7,8 +8,9 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         [Fact]
         public void UpsertTable_ThrowsNotImplementedException()
         {
+            var mockRepo = Substitute.For<IDatabaseSchemaRepository>();
             // Arrange
-            var repository = new TargetDataStructureService();
+            var repository = new TargetDataStructureService(mockRepo);
             var table = new Table("test", "Test", false);
 
             // Act & Assert
