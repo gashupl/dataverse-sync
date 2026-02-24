@@ -1,4 +1,5 @@
 ﻿using Pg.DataverseSync.Engine.Core.Model;
+using Pg.DataverseSync.Engine.Domain.Target;
 
 namespace Pg.DataverseSync.Engine.Target.SqlServer
 {

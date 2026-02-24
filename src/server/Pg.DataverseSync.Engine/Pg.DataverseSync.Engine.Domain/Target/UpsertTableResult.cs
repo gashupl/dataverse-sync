@@ -1,4 +1,4 @@
-﻿namespace Pg.DataverseSync.Engine.Target
+﻿namespace Pg.DataverseSync.Engine.Domain.Target
 {
     public class UpsertTableResult
     {

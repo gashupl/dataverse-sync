@@ -13,9 +13,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <ProjectReference Include="..\Pg.DataverseSync.Engine.Target\Pg.DataverseSync.Engine.Target.csproj" />
+    <ProjectReference Include="..\Pg.DataverseSync.Engine.Domain\Pg.DataverseSync.Engine.Domain.csproj" />
   </ItemGroup>
 
 </Project>
