@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 using Pg.DataverseSync.Engine.Core.Model;
 using System.Diagnostics.CodeAnalysis;
 
@@ -9,30 +10,36 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
     public class DatabaseSchemaRepository : IDatabaseSchemaRepository
     {
         private readonly string _connectionString;
+        private readonly ILogger<DatabaseSchemaRepository> _logger;
 
-        public DatabaseSchemaRepository(string connectionString)
+        public DatabaseSchemaRepository(string connectionString, ILogger<DatabaseSchemaRepository> logger)
         {
             _connectionString = connectionString;
+            _logger = logger;
         }
 
         public SchemaModificationResult CreateTargetTable(Table table)
         {
-            //TODO: Implement error handling and return appropriate SchemaModificationResult based on the outcome of the operation.
+            _logger.LogInformation($"Creating table '{table.Name}' in target database...");
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand(CreateTableQueryGenerator.Generate(table), connection))
+                    _logger.LogInformation("Connection to target database established successfully.");
+
+                    var query = CreateTableQueryGenerator.Generate(table); 
+                    using (SqlCommand command = new SqlCommand(query, connection))
                     {
+                        _logger.LogInformation($"Executing query to create table: {query}");
                         command.ExecuteNonQuery();
-                       // _logger.LogInformation("Table created successfully.");
-                       return new SchemaModificationResult { Success = SchemaModificationResultEnum.Success };
+                        _logger.LogInformation("Table created successfully.");
+                        return new SchemaModificationResult { Success = SchemaModificationResultEnum.Success };
                     }
                 }
                 catch (Exception ex)
                 {
-                    // _logger.LogError($"An error occurred: {ex.Message}");
+                    _logger.LogError($"An error occurred: {ex.Message}");
                     return new SchemaModificationResult { Success = SchemaModificationResultEnum.Failure, Message = ex.Message };
                 }
             }
