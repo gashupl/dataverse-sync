@@ -1,7 +1,10 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
+    //See ADR-0001: docs/adr/0001-excluding-database-schema-repository-from-code-coverage.md
+    [ExcludeFromCodeCoverage]
     public class DatabaseSchemaRepository : IDatabaseSchemaRepository
     {
         private readonly string _connectionString;
