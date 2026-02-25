@@ -7,7 +7,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
     internal class CreateTableQueryGenerator
     {
-        //TODO: Add unit testing for this class
+        //TODO: Use mapping to map dataverse data types to sql server data types
         internal static string Generate(Table table)
         {
             StringBuilder query = new StringBuilder();

@@ -3,18 +3,23 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.DurableTask;
 using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
+using Pg.DataverseSync.Engine.Core.Model;
 using Pg.DataverseSync.Engine.Domain;
+using Pg.DataverseSync.Engine.Domain.Target;
 
 namespace Pg.DataverseSync.Engine.Functions;
 
 public class SyncEngineFunction
 {
     private readonly ISourceMetadataService _metadataService;
+    private readonly ITargetDataStructureService _targetDataStructureService;
     private readonly ILogger<SyncEngineFunction> _logger;
 
-    public SyncEngineFunction(ISourceMetadataService metadataService, ILogger<SyncEngineFunction> logger)
+    public SyncEngineFunction(ISourceMetadataService metadataService, 
+        ITargetDataStructureService targetDataStructureService, ILogger<SyncEngineFunction> logger)
     {
         _metadataService = metadataService;
+        _targetDataStructureService = targetDataStructureService;
         _logger = logger;
     }
 
@@ -26,7 +31,7 @@ public class SyncEngineFunction
         logger.LogInformation("Saying hello.");
         var outputs = new List<string>();
 
-        outputs.Add(await context.CallActivityAsync<string>(nameof(ReadMetadata), "ReadMetadata"));
+        outputs.Add(await context.CallActivityAsync<string>(nameof(SyncMetadata), "ReadMetadata"));
 
         // Replace name and input with values relevant for your Durable Functions Activity
         //outputs.Add(await context.CallActivityAsync<string>(nameof(SayHello), "Tokyo"));
@@ -45,13 +50,13 @@ public class SyncEngineFunction
         return $"Hello {name}!";
     }
 
-    [Function(nameof(ReadMetadata))]
-    public string ReadMetadata([ActivityTrigger] string input, FunctionContext executionContext)
+    [Function(nameof(SyncMetadata))]
+    public string SyncMetadata([ActivityTrigger] string input, FunctionContext executionContext)
     {
-        ILogger logger = executionContext.GetLogger(nameof(ReadMetadata));
+        ILogger logger = executionContext.GetLogger(nameof(SyncMetadata));
         logger.LogInformation("Reading metadata from Dataverse...");
 
-        var tables = _metadataService.GetTablesNames(); 
+        var tables = _metadataService.GetTables(); 
         
         if (tables == null)
         {
@@ -60,12 +65,15 @@ public class SyncEngineFunction
         }
         
         logger.LogInformation("Retrieved {TableCount} tables names from Dataverse.", tables.Count);
+
+        //tables.ForEach(table => _targetDataStructureService.UpsertTable(table));
+        
         return $"Retrieved {tables.Count} tables from Dataverse.";
     }
 
     [Function("Function1_HttpStart")]
     public async Task<HttpResponseData> HttpStart(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req,
+        [HttpTrigger(AuthorizationLevel.Admin, "get", "post")] HttpRequestData req,
         [DurableClient] DurableTaskClient client,
         FunctionContext executionContext)
     {

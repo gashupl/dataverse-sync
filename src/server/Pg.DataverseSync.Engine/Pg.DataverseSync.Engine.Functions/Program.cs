@@ -7,7 +7,9 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Engine.Domain;
 using Pg.DataverseSync.Engine.Domain.Source;
+using Pg.DataverseSync.Engine.Domain.Target;
 using Pg.DataverseSync.Engine.Source;
+using Pg.DataverseSync.Engine.Target.SqlServer;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -38,8 +40,11 @@ builder.Services.AddScoped<IOrganizationService>(sp =>
     return serviceClient;
 });
 
-// Register MetadataReader
 builder.Services.AddScoped<IMetadataReader, MetadataReader>();
 builder.Services.AddScoped<ISourceMetadataService, SourceMetadataService>();
+//TODO: Reference to target data structure service should be injected based on configuration
+//(e.g. SQL Server, Synapse, etc.) in the future
+builder.Services.AddScoped<IDatabaseSchemaRepository, DatabaseSchemaRepository>();
+builder.Services.AddScoped<ITargetDataStructureService, TargetDataStructureService>();
 
 builder.Build().Run();
