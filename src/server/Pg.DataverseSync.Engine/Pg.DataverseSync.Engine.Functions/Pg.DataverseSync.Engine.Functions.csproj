@@ -24,6 +24,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Pg.DataverseSync.Engine.Source\Pg.DataverseSync.Engine.Source.csproj" />
+    <ProjectReference Include="..\Pg.DataverseSync.Engine.Target.SqlServer\Pg.DataverseSync.Engine.Target.SqlServer.csproj" />
+    <ProjectReference Include="..\Pg.DataverseSync.Engine.Target\Pg.DataverseSync.Engine.Target.csproj" />
   </ItemGroup>
 
 </Project>

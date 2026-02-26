@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Pg.DataverseSync.Engine.Core.Exceptions;
+using Pg.DataverseSync.Engine.Core.Model;
 using Pg.DataverseSync.Engine.Domain.Source;
 
 namespace Pg.DataverseSync.Engine.Domain
@@ -14,19 +15,19 @@ namespace Pg.DataverseSync.Engine.Domain
             _logger = logger;
         }
 
-        public List<string> GetTablesNames()
+        public List<Table>? GetTables()
         {
-            _logger.LogInformation("Getting table names from source metadata service...");
+            _logger.LogInformation("Getting tables from source metadata service...");
             try
             {
                 var tables = _metadataReader.GetTables();
-                _logger.LogInformation("Successfully retrieved {Count} table names.", tables?.Count);
-                return tables?.Select(t => t.Name)?.ToList() ?? new List<string>();
+                _logger.LogInformation("Successfully retrieved {Count} table.", tables?.Count);
+                return tables; 
 
             }
             catch(ReadMetadataException ex)
             {
-                var message = "An error occurred while reading metadata for table names.";
+                var message = "An error occurred while reading metadata for tables.";
                 _logger.LogError(ex, message);
                 throw new DomainServiceException(message, ex);
             }
