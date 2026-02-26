@@ -3,6 +3,7 @@ using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Engine.Domain;
@@ -42,9 +43,23 @@ builder.Services.AddScoped<IOrganizationService>(sp =>
 
 builder.Services.AddScoped<IMetadataReader, MetadataReader>();
 builder.Services.AddScoped<ISourceMetadataService, SourceMetadataService>();
+
 //TODO: Reference to target data structure service should be injected based on configuration
 //(e.g. SQL Server, Synapse, etc.) in the future
-builder.Services.AddScoped<IDatabaseSchemaRepository, DatabaseSchemaRepository>();
+builder.Services.AddScoped<IDatabaseSchemaRepository>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var connectionString = configuration["SqlServerConnectionString"];
+
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("SqlServerConnectionString is not configured.");
+    }
+
+    var logger = sp.GetRequiredService<ILogger<DatabaseSchemaRepository>>();
+
+    return new DatabaseSchemaRepository(connectionString, logger);
+});
 builder.Services.AddScoped<ITargetDataStructureService, TargetDataStructureService>();
 
 builder.Build().Run();
