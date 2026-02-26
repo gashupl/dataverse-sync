@@ -5,7 +5,7 @@ using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
 using Pg.DataverseSync.Engine.Core.Model;
 using Pg.DataverseSync.Engine.Domain;
-using Pg.DataverseSync.Engine.Domain.Target;
+using Pg.DataverseSync.Engine.Target;
 
 namespace Pg.DataverseSync.Engine.Functions;
 

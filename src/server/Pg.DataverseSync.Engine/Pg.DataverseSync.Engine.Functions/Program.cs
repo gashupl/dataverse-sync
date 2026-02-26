@@ -8,7 +8,7 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Engine.Domain;
 using Pg.DataverseSync.Engine.Domain.Source;
-using Pg.DataverseSync.Engine.Domain.Target;
+using Pg.DataverseSync.Engine.Target;
 using Pg.DataverseSync.Engine.Source;
 using Pg.DataverseSync.Engine.Target.SqlServer;
 
