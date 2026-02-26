@@ -10,7 +10,7 @@ namespace Pg.DataverseSync.Engine.Domain.Tests
     public class SourceMetadataServiceTests
     {
         [Fact]
-        public void GetTablesNames_SuccessfullRequest_ReturnsTableNames()
+        public void GetTables_SuccessfullRequest_ReturnsTables()
         {
             // Arrange
             var mockMetadataReader = Substitute.For<IMetadataReader>();
@@ -28,20 +28,20 @@ namespace Pg.DataverseSync.Engine.Domain.Tests
             var service = new SourceMetadataService(mockMetadataReader, mockLogger);
 
             // Act
-            var result = service.GetTablesNames();
+            var result = service.GetTables();
 
             // Assert
             Assert.NotNull(result);
             Assert.Equal(3, result.Count);
-            Assert.Equal("account", result[0]);
-            Assert.Equal("contact", result[1]);
-            Assert.Equal("opportunity", result[2]);
+            Assert.Equal("account", result[0].Name);
+            Assert.Equal("contact", result[1].Name);
+            Assert.Equal("opportunity", result[2].Name);
 
             mockMetadataReader.Received(1).GetTables();
         }
 
         [Fact]
-        public void GetTablesNames_SuccessfullRequestReturnsNull_ReturnsEmptyList()
+        public void GetTables_SuccessfullRequestReturnsNull_ReturnsNull()
         {
             // Arrange
             var mockMetadataReader = Substitute.For<IMetadataReader>();
@@ -52,11 +52,10 @@ namespace Pg.DataverseSync.Engine.Domain.Tests
             var service = new SourceMetadataService(mockMetadataReader, mockLogger);
 
             // Act
-            var result = service.GetTablesNames();
+            var result = service.GetTables();
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Empty(result);
+            Assert.Null(result);
 
             mockMetadataReader.Received(1).GetTables();
         }
@@ -74,9 +73,9 @@ namespace Pg.DataverseSync.Engine.Domain.Tests
             var service = new SourceMetadataService(mockMetadataReader, mockLogger);
 
             // Act & Assert
-            var exception = Assert.Throws<DomainServiceException>(() => service.GetTablesNames());
+            var exception = Assert.Throws<DomainServiceException>(() => service.GetTables());
             
-            Assert.Equal("An error occurred while reading metadata for table names.", exception.Message);
+            Assert.Equal("An error occurred while reading metadata for tables.", exception.Message);
             Assert.Equal(readException, exception.InnerException);
 
             mockMetadataReader.Received(1).GetTables();

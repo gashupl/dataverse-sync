@@ -1,7 +1,9 @@
-﻿namespace Pg.DataverseSync.Engine.Domain
+﻿using Pg.DataverseSync.Engine.Core.Model;
+
+namespace Pg.DataverseSync.Engine.Domain
 {
     public interface ISourceMetadataService
     {
-        List<string> GetTablesNames();
+        List<Table> GetTables();
     }
 }

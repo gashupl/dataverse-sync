@@ -70,7 +70,54 @@ namespace Pg.DataverseSync.Engine.Source
 
         public List<Column> GetColumns(string tableName)
         {
-            throw new NotImplementedException(); 
+            _logger.LogInformation("Retrieving columns metadata from Dataverse table {tableName}...", tableName);
+
+            try
+            {
+                var request = new RetrieveEntityRequest
+                {
+                    LogicalName = tableName,
+                    EntityFilters = EntityFilters.Attributes,
+                    RetrieveAsIfPublished = true
+                };
+
+                var response = (RetrieveEntityResponse)_service.Execute(request);
+                var columns = new List<Column>();
+
+                foreach (var attributeMetadata in response.EntityMetadata.Attributes)
+                {
+                    string name = attributeMetadata.LogicalName;
+                    bool isPrimaryKey = attributeMetadata.IsPrimaryId.GetValueOrDefault(false);
+                    string? dataType = attributeMetadata.AttributeTypeName?.Value;
+
+                    columns.Add(new Column(name, dataType, isPrimaryKey, isNullable: true));
+                }
+
+                return columns;
+            }
+            catch (FaultException<OrganizationServiceFault> ex)
+            {
+                var msg = $"Dataverse service fault while retrieving columns metadata from  Dataverse table {tableName}. " +
+                    $"Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}";
+                _logger.LogError(ex, msg);
+                throw new ReadMetadataException(msg, ex);
+            }
+            catch (TimeoutException ex)
+            {
+                var msg = 
+                    $"Timeout while retrieving columns metadata from Dataverse table {tableName}. Consider increasing the timeout settings.";
+                _logger.LogError(ex, msg);
+                throw new ReadMetadataException(msg, ex);
+            }
+            catch (Exception ex)
+            {
+                var msg = 
+                    $"An unexpected error occurred while retrieving columns metadata from Dataverse table {tableName}";
+                _logger.LogError(ex, msg);
+                throw new ReadMetadataException(msg, ex);
+            }
+
+           
         }
     }
 }

@@ -109,6 +109,109 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             Assert.Contains("An unexpected error occurred while retrieving tables from Dataverse", exception.Message);
             Assert.IsType<Exception>(exception.InnerException);
         }
+
+        [Fact]
+        public void GetColumns_SuccessfullExecute_ReturnListOfColumns()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<MetadataReader>>();
+
+            var attribute1 = new StringAttributeMetadata
+            {
+                LogicalName = "name"
+            };
+
+            var attribute2 = new UniqueIdentifierAttributeMetadata
+            {
+                LogicalName = "accountid"
+            };
+
+            var entityMetadata = new EntityMetadata
+            {
+                LogicalName = "account"
+            };
+
+            typeof(EntityMetadata)
+                .GetProperty("Attributes")!
+                .SetValue(entityMetadata, new AttributeMetadata[] { attribute1, attribute2 });
+
+            var response = new RetrieveEntityResponse
+            {
+                Results = new ParameterCollection
+                {
+                    ["EntityMetadata"] = entityMetadata
+                }
+            };
+
+            mockService.Execute(Arg.Any<RetrieveEntityRequest>()).Returns(response);
+
+            var metadataReader = new MetadataReader(mockService, mockLogger);
+
+            // Act
+            var result = metadataReader.GetColumns("account");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+            Assert.Equal("name", result[0].Name);
+            Assert.Equal("StringType", result[0].DataType);
+            Assert.False(result[0].IsPrimaryKey);
+            Assert.True(result[0].IsNullable);
+            Assert.Equal("accountid", result[1].Name);
+            Assert.Equal("UniqueidentifierType", result[1].DataType);
+            Assert.False(result[1].IsPrimaryKey);
+            Assert.True(result[1].IsNullable);
+
+            mockService.Received(1).Execute(Arg.Any<RetrieveEntityRequest>());
+        }
+
+        [Fact]
+        public void GetColumns_FailedExecute_ThrowsFaultException()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<MetadataReader>>();
+            var faultException = new FaultException<OrganizationServiceFault>(new OrganizationServiceFault
+            {
+                ErrorCode = -2147220969,
+                Message = "An error occurred while processing the request."
+            });
+            mockService.Execute(Arg.Any<RetrieveEntityRequest>()).Throws(faultException);
+            var metadataReader = new MetadataReader(mockService, mockLogger);
+
+            // Act & Assert
+            var exception = Assert.Throws<ReadMetadataException>(() => metadataReader.GetColumns("account"));
+            Assert.IsType<FaultException<OrganizationServiceFault>>(exception.InnerException);
+        }
+
+        [Fact]
+        public void GetColumns_FailedExecute_ThrowsTimeoutException()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<MetadataReader>>();
+            mockService.Execute(Arg.Any<RetrieveEntityRequest>()).Throws(new TimeoutException("The operation has timed out."));
+            var metadataReader = new MetadataReader(mockService, mockLogger);
+
+            // Act & Assert
+            var exception = Assert.Throws<ReadMetadataException>(() => metadataReader.GetColumns("account"));
+            Assert.IsType<TimeoutException>(exception.InnerException);
+        }
+
+        [Fact]
+        public void GetColumns_FailedExecute_ThrowsGenericException()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<MetadataReader>>();
+            mockService.Execute(Arg.Any<RetrieveEntityRequest>()).Throws(new Exception("Unexpected error"));
+            var metadataReader = new MetadataReader(mockService, mockLogger);
+
+            // Act & Assert
+            var exception = Assert.Throws<ReadMetadataException>(() => metadataReader.GetColumns("account"));
+            Assert.IsType<Exception>(exception.InnerException);
+        }
     }
 }
 

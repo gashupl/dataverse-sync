@@ -3,11 +3,14 @@ using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Engine.Domain;
 using Pg.DataverseSync.Engine.Domain.Source;
+using Pg.DataverseSync.Engine.Target;
 using Pg.DataverseSync.Engine.Source;
+using Pg.DataverseSync.Engine.Target.SqlServer;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -18,7 +21,6 @@ builder.Services
     .ConfigureFunctionsApplicationInsights();
 
 // Register Dataverse service
-//TODO: Add Key Vault integration for connection string
 builder.Services.AddScoped<IOrganizationService>(sp =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
@@ -39,8 +41,25 @@ builder.Services.AddScoped<IOrganizationService>(sp =>
     return serviceClient;
 });
 
-// Register MetadataReader
 builder.Services.AddScoped<IMetadataReader, MetadataReader>();
 builder.Services.AddScoped<ISourceMetadataService, SourceMetadataService>();
+
+//TODO: Reference to target data structure service should be injected based on configuration
+//(e.g. SQL Server, Synapse, etc.) in the future
+builder.Services.AddScoped<IDatabaseSchemaRepository>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var connectionString = configuration["SqlServerConnectionString"];
+
+    if (string.IsNullOrEmpty(connectionString))
+    {
+        throw new InvalidOperationException("SqlServerConnectionString is not configured.");
+    }
+
+    var logger = sp.GetRequiredService<ILogger<DatabaseSchemaRepository>>();
+
+    return new DatabaseSchemaRepository(connectionString, logger);
+});
+builder.Services.AddScoped<ITargetDataStructureService, TargetDataStructureService>();
 
 builder.Build().Run();
