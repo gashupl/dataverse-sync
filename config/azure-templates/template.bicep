@@ -1,8 +1,6 @@
 // Azure Function App Bicep Template
 // Creates a Function App with Flex Consumption plan following Azure best practices
 
-//TODO: Verify if Log Analytic workspace is needed at this moment
-// as Application Insights can be created without it. If not needed, remove the Log Analytics resource and related properties from Application Insights.
 @description('The location/region for the resources')
 param location string
 
@@ -125,6 +123,24 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   }
   identity: {
     type: 'SystemAssigned'
+  }
+}
+
+// Enable basic authentication for FTP publishing
+resource functionAppFtpPolicy 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
+  parent: functionApp
+  name: 'ftp'
+  properties: {
+    allow: true
+  }
+}
+
+// Enable basic authentication for SCM/deployment publishing
+resource functionAppScmPolicy 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2023-12-01' = {
+  parent: functionApp
+  name: 'scm'
+  properties: {
+    allow: true
   }
 }
 
