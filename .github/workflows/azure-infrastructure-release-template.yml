@@ -1,0 +1,38 @@
+# Workflow template for releasing Azure infrastructure into target environment
+name: Azure Infrastructure Release Template
+
+on:
+  workflow_call:
+    inputs:      
+      environment:
+        required: true
+        type: string
+        default: 'test'
+        description: 'Azure environment to deploy to (e.g. dev, test, prod)'
+      subscription-id:
+        required: true
+        type: string
+        default: ''
+        description: 'Azure subscription ID to deploy to'
+
+permissions:
+  #id-token: write  # Required for OIDC authentication
+  contents: read   # Required to access repository contents
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    env:
+      SOLUTION_NAME: DataverseSync
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Deploy Azure Infrastructure
+        shell: pwsh
+        run: |
+          .\config\azure-templates\infrastructure-deploy.ps1 -Environment "${{ inputs.environment }}" -SubscriptionId "${{ inputs.subscription-id }}"
