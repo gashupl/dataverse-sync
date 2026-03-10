@@ -52,6 +52,11 @@ jobs:
           
           Write-Host "Azure Functions package extracted to: $extractPath"
 
+      - name: Azure CLI Login (App Registration)
+        uses: azure/login@v2
+        with:
+          creds: '{"clientId":"${{ vars.AZURE_SUBSCRIPTION_CONTRIBUTOR_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_SUBSCRIPTION_CONTRIBUTOR_SECRET }}","tenantId":"${{ vars.AZURE_TENANT_ID }}","subscriptionId":"${{ inputs.subscription-id }}"}'
+      
       - name: Deploy Azure Functions
         shell: pwsh
         run: |
