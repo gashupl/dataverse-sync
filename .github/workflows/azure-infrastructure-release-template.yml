@@ -16,7 +16,6 @@ on:
         description: 'Azure subscription ID to deploy to'
 
 permissions:
-  id-token: write   # Required for OIDC authentication
   contents: read    # Required to access repository contents
 
 jobs:
