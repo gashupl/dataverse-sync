@@ -1,5 +1,4 @@
 # Deploy Azure Function App using Bicep template
-# Simple deployment script for DataverseSync Function App
 
 param(
     [Parameter(Mandatory = $true)]

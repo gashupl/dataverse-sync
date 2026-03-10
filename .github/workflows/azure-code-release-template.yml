@@ -20,11 +20,10 @@ permissions:
   contents: read   # Required to access repository contents
 
 jobs:
-  build:
+  deploy-azure-code:
     runs-on: windows-latest
 
     env:
-      SOLUTION_NAME: DataverseSync
       FUNCTIONS_PACKAGE_NAME: DataverseSyncEngine
 
     steps:
