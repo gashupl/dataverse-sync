@@ -15,7 +15,7 @@ permissions:
   contents: read   # Required to access repository contents
 
 jobs:
-  build:
+  deploy-solution:
     runs-on: windows-latest
 
     env:

@@ -10,6 +10,16 @@ on:
         type: boolean
         default: false
         description: 'Release Power Platform solution'
+      release-azure-infrastructure:
+        required: false
+        type: boolean
+        default: false
+        description: 'Release Azure infrastructure'
+      release-azure-code:
+        required: false
+        type: boolean
+        default: false
+        description: 'Release Azure code'     
         
 permissions:
   contents: read  # Allows reading repository contents
@@ -22,13 +32,31 @@ jobs:
     with:
       node-version: '24'
       run-tests: true
-      build-powerplatform-solution: true
+      artifacts-build-upload: true
 
   # Additional job that extends the base build
-  deploy:
+  deploy-powerplatform-solution:
     if: ${{ inputs.release-powerplatform-solution }}
     needs: build
-    uses: ./.github/workflows/release-template.yml
+    uses: ./.github/workflows/power-platform-release-template.yml
     secrets: inherit  # Pass all secrets to reusable workflow
     with:
       target-dataverse-url: ${{ vars.DATAVERSE_TARGET_URL }}
+
+  deploy-azure-infrastructure:
+    if: ${{ inputs.release-azure-infrastructure }}
+    needs: build
+    uses: ./.github/workflows/azure-infrastructure-release-template.yml
+    secrets: inherit  # Pass all secrets to reusable workflow
+    with:
+      environment: 'test'
+      subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+  deploy-azure-code:
+    if: ${{ inputs.release-azure-code }}
+    needs: build
+    uses: ./.github/workflows/azure-code-release-template.yml
+    secrets: inherit  # Pass all secrets to reusable workflow
+    with:
+      environment: 'test'
+      subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}

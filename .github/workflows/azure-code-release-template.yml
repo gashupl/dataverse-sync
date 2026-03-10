@@ -1,0 +1,66 @@
+# Workflow template for releasing Azure infrastructure into target environment
+name: Azure Code Release Template
+
+on:
+  workflow_call:
+    inputs:      
+      environment:
+        required: true
+        type: string
+        default: 'test'
+        description: 'Azure environment to deploy to (e.g. dev, test, prod)'
+      subscription-id:
+        required: true
+        type: string
+        default: ''
+        description: 'Azure subscription ID to deploy to'
+
+permissions:
+  #id-token: write  # Required for OIDC authentication
+  contents: read   # Required to access repository contents
+
+jobs:
+  deploy-azure-code:
+    runs-on: windows-latest
+
+    env:
+      FUNCTIONS_PACKAGE_NAME: DataverseSyncEngine
+      EXTRACTED_FUNCTIONS_PATH: ./deploy/azure-functions
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Azure Functions artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.FUNCTIONS_PACKAGE_NAME }}
+          path: ./artifacts
+          
+      - name: Azure CLI Login (App Registration)
+        uses: azure/login@v2
+        with:
+          creds: '{"clientId":"${{ vars.AZURE_SUBSCRIPTION_CONTRIBUTOR_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_SUBSCRIPTION_CONTRIBUTOR_SECRET }}","tenantId":"${{ vars.AZURE_TENANT_ID }}","subscriptionId":"${{ inputs.subscription-id }}"}'
+      
+      - name: Deploy Azure Functions
+        shell: pwsh
+        run: |
+          # Deploy Azure Functions using Azure CLI zip deployment
+          $functionAppName = "func-dvsync-engine-${{ inputs.environment }}"
+          $resourceGroup = "rg-dvsync-${{ inputs.environment }}"
+          
+          Write-Host "Deploying Azure Functions to: $functionAppName"
+          Write-Host "Resource Group: $resourceGroup"
+          Write-Host "Subscription: ${{ inputs.subscription-id }}"
+          Write-Host "Environment: ${{ inputs.environment }}"
+          Write-Host "Zip file: ./artifacts/${{ env.FUNCTIONS_PACKAGE_NAME }}.zip"
+          
+          # Set subscription context
+          az account set --subscription "${{ inputs.subscription-id }}"
+          
+          Write-Host "Subscription context set to: ${{ inputs.subscription-id }}"
+
+          # Deploy using zip deployment
+          az functionapp deployment source config-zip --resource-group $resourceGroup --name $functionAppName --src "./artifacts/${{ env.FUNCTIONS_PACKAGE_NAME }}.zip"
