@@ -1,0 +1,9 @@
+{
+	"servers": {
+		"pg-dataverse-dev-mcp-server": {
+			"url": "https://pg-dataverse-dev.crm4.dynamics.com/api/mcp",
+			"type": "http"
+		}
+	},
+	"inputs": []
+}
