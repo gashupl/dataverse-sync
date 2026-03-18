@@ -418,3 +418,6 @@ FodyWeavers.xsd
 *.msm
 *.msp
 /src/server/Pg.DataverseSync.Engine/Pg.DataverseSync.Engine.Functions/Properties/serviceDependencies.local.json
+
+#Linux/Rider
+.idea/
