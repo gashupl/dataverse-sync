@@ -1,0 +1,19 @@
+name: Pull-Request-Quality-Check
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    types: [ opened, synchronize, reopened ]  # Runs on PR creation, updates, and reopens
+
+permissions:
+  contents: read  # Allows reading repository contents
+  checks: write  # Allows writing test reports
+  pull-requests: write  # Allows reporting results on PRs
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-template.yml
+    with:
+      node-version: '24'
+      run-tests: true
+      run-sonar-analysis: true

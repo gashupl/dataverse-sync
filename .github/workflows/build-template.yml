@@ -14,6 +14,11 @@ on:
         type: boolean
         default: true
         description: 'Whether to run tests'
+      run-sonar-analysis:
+        required: false
+        type: boolean
+        default: false
+        description: 'Whether to run SonarQube analysis'
       artifacts-build-upload:
         required: false
         type: boolean
