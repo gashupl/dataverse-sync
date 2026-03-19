@@ -73,7 +73,7 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar-scanner
 
       - name: Install SonarQube Cloud scanner
-        if: ${{ inputs.run-sonar-analysis }}
+        if: ${{ inputs.run-sonar-analysis && steps.cache-sonar-scanner.outputs.cache-hit != 'true'}}
         shell: powershell
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
