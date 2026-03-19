@@ -26,6 +26,7 @@ on:
         description: 'Build Power Platform solution'
 
 jobs:
+
   build:
     runs-on: windows-latest
 
@@ -45,6 +46,38 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        if: ${{ inputs.run-sonar-analysis }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu' # Alternative distribution options are available.
+
+      - name: Cache SonarQube Cloud packages
+        if: ${{ inputs.run-sonar-analysis }}
+        uses: actions/cache@v4
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache SonarQube Cloud scanner
+        if: ${{ inputs.run-sonar-analysis }}
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
+      - name: Install SonarQube Cloud scanner
+        if: ${{ inputs.run-sonar-analysis }}
+        shell: powershell
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
@@ -82,12 +115,6 @@ jobs:
 
       - name: Build Dataverse solution
         run: msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
-
-      # - name: Restore Azure solution NuGet packages
-      #   run: nuget restore ${{ env.VS_AZURE_SOLUTION_PATH }}
-
-      # - name: Build Azure solution
-      #   run: msbuild ${{ env.VS_AZURE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
 
       - name: Build Azure solution
         run: dotnet build ${{ env.VS_AZURE_SOLUTION_PATH }} -c Release

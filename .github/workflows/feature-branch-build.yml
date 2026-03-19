@@ -16,3 +16,4 @@ jobs:
     with:
       node-version: '24'
       run-tests: true
+      run-sonar-analysis: true

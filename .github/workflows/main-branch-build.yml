@@ -33,6 +33,7 @@ jobs:
       node-version: '24'
       run-tests: true
       artifacts-build-upload: true
+      run-sonar-analysis: true
 
   # Additional job that extends the base build
   deploy-powerplatform-solution:
