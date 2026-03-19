@@ -141,6 +141,27 @@ jobs:
           path: "**/*.trx"
           reporter: dotnet-trx
 
+      - name: Run SonarQube Analysis
+        if: ${{ inputs.run-sonar-analysis }}
+        shell: powershell
+        run: |
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin `
+            /k:"gashupl_dataverse-sync" `
+            /o:"gashupl" `
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.sources="src\server,src\client" `
+            /d:sonar.exclusions="**\*.Tests.csproj,**\Tests" `
+            /d:sonar.cs.opencover.reportsPaths="coverage\opencover.xml" `
+            /d:sonar.testExecutionReportPaths="**\*.trx" `
+            /d:sonar.test.reportPath="**\*.trx"
+          # Re-build Dataverse solution for SonarQube analysis
+          msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
+          
+          # Re-build Azure solution for SonarQube analysis
+          dotnet build ${{ env.VS_AZURE_SOLUTION_PATH }} -c Release
+
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
       - name: Setup Power Platform CLI
         if: ${{ inputs.artifacts-build-upload }}
         uses: microsoft/powerplatform-actions/actions-install@v1
