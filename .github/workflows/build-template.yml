@@ -150,10 +150,6 @@ jobs:
             /o:"gashupl" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.sources="src\server,src\client" `
-            /d:sonar.exclusions="**\*.Tests.csproj,**\Tests" `
-            /d:sonar.cs.opencover.reportsPaths="coverage\opencover.xml" `
-            /d:sonar.testExecutionReportPaths="**\*.trx" `
-            /d:sonar.test.reportPath="**\*.trx"
           # Re-build Dataverse solution for SonarQube analysis
           msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
           
