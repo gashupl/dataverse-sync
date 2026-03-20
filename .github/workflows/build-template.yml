@@ -145,7 +145,7 @@ jobs:
         if: ${{ inputs.run-sonar-analysis }}
         shell: powershell
         run: |
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin `
+          .\.sonar\scanner\dotnet-sonarscanner begin `
             /k:"gashupl_dataverse-sync" `
             /o:"gashupl" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
@@ -160,7 +160,7 @@ jobs:
           # Re-build Azure solution for SonarQube analysis
           dotnet build ${{ env.VS_AZURE_SOLUTION_PATH }} -c Release
 
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       - name: Setup Power Platform CLI
         if: ${{ inputs.artifacts-build-upload }}
