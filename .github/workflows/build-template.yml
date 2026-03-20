@@ -143,8 +143,6 @@ jobs:
 
       - name: Run SonarQube Analysis
         if: ${{ inputs.run-sonar-analysis }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin `
