@@ -18,3 +18,4 @@ jobs:
       node-version: '24'
       run-tests: true
       run-sonar-analysis: true
+      sonar-qualitygate-wait: true  # Wait for SonarQube quality gate and fail build if it fails
