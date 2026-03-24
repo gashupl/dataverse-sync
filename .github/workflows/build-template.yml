@@ -155,9 +155,11 @@ jobs:
             /o:"gashupl" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.sources="src\server,src\client" `
-            $(if (${{ inputs.sonar-qualitygate-wait }}) { 
-              "/d:sonar.qualitygate.wait=true /d:sonar.qualitygate.timeout=300" 
-            })
+            /d:sonar.qualitygate.wait=true `
+            /d:sonar.qualitygate.timeout=3000"
+            # $(if (${{ inputs.sonar-qualitygate-wait }}) { 
+              
+            # })
           # Re-build Dataverse solution for SonarQube analysis
           msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
           
@@ -165,15 +167,6 @@ jobs:
           dotnet build ${{ env.VS_AZURE_SOLUTION_PATH }} -c Release
 
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
-      - name: SonarQube Quality Gate Check
-        if: ${{ inputs.run-sonar-analysis && inputs.sonar-qualitygate-wait }}
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        with:
-          pollingTimeoutSec: 600
-          scanMetadataReportFile: .scannerwork/report-task.txt
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Setup Power Platform CLI
         if: ${{ inputs.artifacts-build-upload }}
