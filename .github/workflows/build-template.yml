@@ -166,6 +166,14 @@ jobs:
 
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
+      - name: SonarQube Quality Gate Check
+        if: ${{ inputs.run-sonar-analysis && inputs.sonar-qualitygate-wait }}
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          pollingTimeoutSec: 600
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Setup Power Platform CLI
         if: ${{ inputs.artifacts-build-upload }}
         uses: microsoft/powerplatform-actions/actions-install@v1
