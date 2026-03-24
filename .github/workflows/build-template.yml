@@ -24,6 +24,11 @@ on:
         type: boolean
         default: false
         description: 'Build Power Platform solution'
+      sonar-qualitygate-wait:
+        required: false
+        type: boolean
+        default: false
+        description: 'Wait for SonarQube quality gate and fail build if it fails'
 
 jobs:
 
@@ -150,6 +155,9 @@ jobs:
             /o:"gashupl" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.sources="src\server,src\client" `
+            $(if (${{ inputs.sonar-qualitygate-wait }}) { 
+              "/d:sonar.qualitygate.wait=true /d:sonar.qualitygate.timeout=300" 
+            })
           # Re-build Dataverse solution for SonarQube analysis
           msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
           
