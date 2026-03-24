@@ -156,7 +156,7 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.sources="src\server,src\client" `
             /d:sonar.qualitygate.wait=true `
-            /d:sonar.qualitygate.timeout=3000"
+            /d:sonar.qualitygate.timeout=3000
           # Re-build Dataverse solution for SonarQube analysis
           msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
           
