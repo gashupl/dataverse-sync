@@ -146,8 +146,25 @@ jobs:
           path: "**/*.trx"
           reporter: dotnet-trx
 
-      - name: Run SonarQube Analysis
-        if: ${{ inputs.run-sonar-analysis }}
+      - name: Run SonarQube Analysis (without quality gate wait)
+        if: ${{ inputs.run-sonar-analysis && !inputs.sonar-qualitygate-wait }}
+        shell: powershell
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin `
+            /k:"gashupl_dataverse-sync" `
+            /o:"gashupl" `
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.sources="src\server,src\client" 
+          # Re-build Dataverse solution for SonarQube analysis
+          msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
+          
+          # Re-build Azure solution for SonarQube analysis
+          dotnet build ${{ env.VS_AZURE_SOLUTION_PATH }} -c Release
+
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
+      - name: Run SonarQube Analysis (with quality gate wait)
+        if: ${{ inputs.run-sonar-analysis && inputs.sonar-qualitygate-wait }}
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin `
