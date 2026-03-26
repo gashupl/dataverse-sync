@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Pg.DataverseSync.Api.Db/Pg.DataverseSync.Api.Db.sqlproj" Id="fe171904-39e1-499f-9631-1f33540e8778">
+    <Build />
+    <Deploy />
+  </Project>
+</Solution>

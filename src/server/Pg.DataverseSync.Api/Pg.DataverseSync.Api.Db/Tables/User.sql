@@ -1,0 +1,11 @@
+﻿CREATE TABLE [Identity].[User]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	[Username] NVARCHAR(256) NOT NULL,
+	[Email] NVARCHAR(256) NOT NULL,
+	[PasswordHash] VARBINARY(MAX) NOT NULL,
+	[PasswordSalt] VARBINARY(MAX) NOT NULL,
+	[CreatedOn] DATETIME NOT NULL DEFAULT GETUTCDATE(),
+	CONSTRAINT [UQ_User_Username] UNIQUE ([Username]),
+	CONSTRAINT [UQ_User_Email] UNIQUE ([Email])
+)
