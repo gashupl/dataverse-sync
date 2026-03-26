@@ -4,7 +4,6 @@
   background-color: var(--bg);
   border-bottom: 1px solid var(--border);
   padding: 0;
-  sticky: top 0;
   z-index: 1000;
 }
 
@@ -15,6 +14,53 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 20px;
+}
+
+.logo-title-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Dataverse Logo Styles */
+.dataverse-logo {
+  color: var(--accent);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.dataverse-logo:hover {
+  transform: scale(1.05);
+}
+
+.dataverse-logo .logo-hub {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.dataverse-logo .logo-orbit {
+  animation: rotate 8s linear infinite;
+  transform-origin: 16px 16px;
+}
+
+.dataverse-logo .logo-flow {
+  animation: flow 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes flow {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.3; }
 }
 
 .app-title {
@@ -80,8 +126,17 @@
     padding: 10px 16px;
   }
   
+  .logo-title-container {
+    gap: 8px;
+  }
+  
+  .dataverse-logo {
+    width: 28px;
+    height: 28px;
+  }
+  
   .app-title {
-    font-size: 20px;
+    font-size: 18px;
   }
   
   .auth-buttons {
@@ -91,6 +146,22 @@
   .auth-btn {
     padding: 6px 12px;
     font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-title-container {
+    gap: 6px;
+  }
+  
+  .dataverse-logo {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .app-title {
+    font-size: 16px;
+    letter-spacing: 0.2px;
   }
 }
 
