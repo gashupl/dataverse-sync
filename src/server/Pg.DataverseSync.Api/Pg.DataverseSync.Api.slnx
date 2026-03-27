@@ -1,6 +1,9 @@
 <Solution>
+  <Project Path="Pg.DataverseSync.Api.AppHost/Pg.DataverseSync.Api.AppHost.csproj" Id="198ce97b-9e47-45cf-b976-d3b0da0dcd10" />
   <Project Path="Pg.DataverseSync.Api.Db/Pg.DataverseSync.Api.Db.sqlproj" Id="fe171904-39e1-499f-9631-1f33540e8778">
     <Build />
     <Deploy />
   </Project>
+  <Project Path="Pg.DataverseSync.Api.ServiceDefaults/Pg.DataverseSync.Api.ServiceDefaults.csproj" />
+  <Project Path="Pg.DataverseSync.Api/Pg.DataverseSync.Api.csproj" />
 </Solution>

@@ -417,7 +417,10 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+#My custom rules
 /src/server/Pg.DataverseSync.Engine/Pg.DataverseSync.Engine.Functions/Properties/serviceDependencies.local.json
+**/appsettings.Development.json
 
 #Linux/Rider
 .idea/
