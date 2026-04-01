@@ -1,5 +1,3 @@
-using Aspire.Hosting;
-
 var builder = DistributedApplication.CreateBuilder(args);
 
 //See ADR-0002: docs/adr/0002-db-container-auto-generation-resign.md

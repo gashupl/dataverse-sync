@@ -1,3 +1,8 @@
+using Pg.DataverseSync.Api.Application.Repositories;
+using Pg.DataverseSync.Api.Application.Services;
+using Pg.DataverseSync.Api.Application.Services.Interfaces;
+using Pg.DataverseSync.Api.Infrastructure.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
@@ -9,6 +14,8 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
