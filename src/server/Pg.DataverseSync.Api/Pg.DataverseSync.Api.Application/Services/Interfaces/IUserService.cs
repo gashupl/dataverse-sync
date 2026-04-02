@@ -5,6 +5,8 @@ namespace Pg.DataverseSync.Api.Application.Services.Interfaces
 {
     public interface IUserService
     {
-        public CreateUserResult CreateUser(User user); 
+        CreateUserResult CreateUser(User user);
+
+        (byte[] salt, byte[] hash) CreatePasswordHash(string password); 
     }
 }

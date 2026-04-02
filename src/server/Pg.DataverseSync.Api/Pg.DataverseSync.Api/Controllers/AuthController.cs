@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Pg.DataverseSync.Api.Application.Services.Interfaces;
+using Pg.DataverseSync.Api.Domain;
 using Pg.DataverseSync.Api.Models.Auth;
+using System.Security.Cryptography;
 
 namespace Pg.DataverseSync.Api.Controllers;
 
@@ -8,6 +11,13 @@ namespace Pg.DataverseSync.Api.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
+    private readonly IUserService _userService;
+
+    public AuthController(IUserService userService)
+    {
+        _userService = userService;
+    }
+
     /// <summary>
     /// Register a new user
     /// </summary>
@@ -19,13 +29,32 @@ public class AuthController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        // TODO: Validate email format
-        // TODO: Check if username/email already exists
-        // TODO: Hash password with salt
-        // TODO: Create user in database
-        // TODO: Generate JWT token
+        if (!System.Net.Mail.MailAddress.TryCreate(request.Email, out _))
+            return BadRequest("Invalid email format");
 
-        throw new NotImplementedException("User registration is not yet implemented");
+        var (salt, hash) = _userService.CreatePasswordHash(request.Password);
+
+        var user = new User
+        {
+            Username = request.Username,
+            Email = request.Email,
+            PasswordHash = hash,
+            PasswordSalt = salt,
+            CreatedOn = DateTime.UtcNow
+        };
+
+        var result = _userService.CreateUser(user);
+
+        if (!result.Success)
+            return Conflict(result.ErrorMessage);
+
+        return Ok(new AuthResponse
+        {
+            Success = true,
+            Message = "User created",
+            Token = null,
+            RefreshToken = null
+        });
     }
 
     /// <summary>
