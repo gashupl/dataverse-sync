@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Pg.DataverseSync.Api.Application.Services.Interfaces;
+using Pg.DataverseSync.Api.Application.Model;
 
 namespace Pg.DataverseSync.Api.Application.Services;
 
@@ -23,7 +24,7 @@ public class TokenService : ITokenService
         var secretKey = jwtSettings["SecretKey"];
         var issuer = jwtSettings["Issuer"];
         var audience = jwtSettings["Audience"];
-        var expirationMinutes = int.Parse(jwtSettings["ExpirationMinutes"] ?? "60");
+        var expirationMinutes = int.Parse(jwtSettings["ExpirationMinutes"] ?? "10");
 
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -49,5 +50,25 @@ public class TokenService : ITokenService
     {
         var randomBytes = RandomNumberGenerator.GetBytes(32);
         return Convert.ToBase64String(randomBytes);
+    }
+
+    public Task RevokeAllUserRefreshTokensAsync(int userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RevokeRefreshTokenAsync(string token)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<RefreshToken> StoreRefreshTokenAsync(int userId, string token, int expirationDays = 30)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<RefreshToken?> ValidateRefreshTokenAsync(string token)
+    {
+        throw new NotImplementedException();
     }
 }

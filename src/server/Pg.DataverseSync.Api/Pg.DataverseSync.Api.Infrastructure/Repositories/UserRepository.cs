@@ -20,6 +20,11 @@ namespace Pg.DataverseSync.Api.Infrastructure.Repositories
             return user.Id;
         }
 
+        public User? FindById(int id)
+        {
+            return _dbContext.Users.SingleOrDefault(user => user.Id == id);
+        }
+
         public User? FindByUsername(string username)
         {
             return _dbContext.Users.SingleOrDefault(user => user.Username == username);

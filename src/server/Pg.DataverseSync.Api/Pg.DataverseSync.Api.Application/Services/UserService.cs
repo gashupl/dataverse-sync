@@ -2,7 +2,6 @@
 using Pg.DataverseSync.Api.Application.Results;
 using Pg.DataverseSync.Api.Application.Services.Interfaces;
 using Pg.DataverseSync.Api.Domain;
-using System.Security.Cryptography;
 
 namespace Pg.DataverseSync.Api.Application.Services
 {
@@ -54,5 +53,9 @@ namespace Pg.DataverseSync.Api.Application.Services
             return _userRepository.FindByEmail(email);
         }
 
+        public User? GetUserDetailsById(int id)
+        {
+            return _userRepository.FindById(id);
+        }
     }
 }

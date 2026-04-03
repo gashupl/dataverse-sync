@@ -1,8 +1,9 @@
+using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Pg.DataverseSync.Api.Application.Services.Interfaces;
 using Pg.DataverseSync.Api.Domain;
 using Pg.DataverseSync.Api.Models.Auth;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Pg.DataverseSync.Api.Controllers;
 
@@ -62,7 +63,7 @@ public class AuthController : ControllerBase
     /// <param name="request">Login credentials</param>
     /// <returns>Authentication response with JWT and refresh tokens</returns>
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -82,6 +83,9 @@ public class AuthController : ControllerBase
         // Generate refresh token (if using refresh token flow)
         var refreshToken = _tokenService.GenerateRefreshToken();
 
+        // Store refresh token in DB
+        await _tokenService.StoreRefreshTokenAsync(user.Id, refreshToken, expirationDays: 30);
+
         return Ok(new AuthResponse
         {
             Success = true,
@@ -97,10 +101,14 @@ public class AuthController : ControllerBase
     /// <returns>Logout confirmation</returns>
     [Authorize]
     [HttpPost("logout")]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout([FromBody] LogoutRequest request)
     {
-        // TODO: Invalidate refresh token in database
-        // TODO: Optional: Add token to blacklist if using blacklist strategy
+        if (string.IsNullOrEmpty(request.RefreshToken))
+            return BadRequest("Refresh token is required");
+
+        // Invalidate refresh token in DB
+        await _tokenService.RevokeRefreshTokenAsync(request.RefreshToken);
+
 
         return Ok(new { message = "Logout successful" });
     }
@@ -110,16 +118,35 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <returns>New JWT token</returns>
     [HttpPost("refresh")]
-    public IActionResult Refresh([FromBody] RefreshTokenRequest request)
+    public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
     {
-        if (string.IsNullOrEmpty(request.RefreshToken))
-            return BadRequest("Refresh token is required");
+        // Validate refresh token from DB
+        var storedToken = await _tokenService.ValidateRefreshTokenAsync(request.RefreshToken);
 
-        // TODO: Validate refresh token
-        // TODO: Check if refresh token is not expired or blacklisted
-        // TODO: Generate new JWT token
+        if (storedToken is null || storedToken.RevokedAt is not null)
+            return Unauthorized(new { message = "Invalid or revoked refresh token" });
 
-        throw new NotImplementedException("Token refresh is not yet implemented");
+        if (storedToken.ExpiresAt < DateTime.UtcNow)
+            return Unauthorized(new { message = "Refresh token expired" });
+
+        var user = _userService.GetUserDetailsById(storedToken.UserId);
+        if (user is null)
+            return Unauthorized();
+
+        // Generate new tokens
+        var newJwt = _tokenService.GenerateJwtToken(user.Id, user.Username, user.Email);
+        var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+        // Revoke old refresh token and store new one
+        await _tokenService.RevokeRefreshTokenAsync(request.RefreshToken);
+        await _tokenService.StoreRefreshTokenAsync(user.Id, newRefreshToken);
+
+        return Ok(new AuthResponse
+        {
+            Success = true,
+            Token = newJwt,
+            RefreshToken = newRefreshToken
+        });
     }
 
     /// <summary>

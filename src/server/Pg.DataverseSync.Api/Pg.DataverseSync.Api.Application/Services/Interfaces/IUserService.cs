@@ -7,6 +7,8 @@ namespace Pg.DataverseSync.Api.Application.Services.Interfaces
     {
         CreateUserResult CreateUser(User user);
 
+        User? GetUserDetailsById(int id);
+
         User? GetUserDetailsByUsername(string username);
 
         User? GetUserDetailsByEmail(string email);

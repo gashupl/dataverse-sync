@@ -58,9 +58,11 @@
     <Folder Include="Properties" />
     <Folder Include="Tables" />
     <Folder Include="Schemas" />
+    <Folder Include="Keys" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
     <Build Include="Schemas\Identity.sql" />
+    <Build Include="Tables\RefreshToken.sql" />
   </ItemGroup>
 </Project>
