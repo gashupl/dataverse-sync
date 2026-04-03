@@ -6,16 +6,19 @@ using System.Security.Cryptography;
 using System.Text;
 using Pg.DataverseSync.Api.Application.Services.Interfaces;
 using Pg.DataverseSync.Api.Application.Model;
+using Pg.DataverseSync.Api.Application.Repositories;
 
 namespace Pg.DataverseSync.Api.Application.Services;
 
 public class TokenService : ITokenService
 {
     private readonly IConfiguration _configuration;
+    private readonly ITokenRepository _tokenRepository;
 
-    public TokenService(IConfiguration configuration)
+    public TokenService(IConfiguration configuration, ITokenRepository tokenRepository)
     {
         _configuration = configuration;
+        _tokenRepository = tokenRepository;
     }
 
     public string GenerateJwtToken(int userId, string username, string email)
@@ -52,23 +55,42 @@ public class TokenService : ITokenService
         return Convert.ToBase64String(randomBytes);
     }
 
-    public Task RevokeAllUserRefreshTokensAsync(int userId)
+    public async Task<RefreshToken> StoreRefreshTokenAsync(int userId, string token, int expirationDays = 30)
     {
-        throw new NotImplementedException();
+        var refreshToken = new RefreshToken
+        {
+            UserId = userId,
+            Token = token,
+            ExpiresAt = DateTime.UtcNow.AddDays(expirationDays),
+            CreatedAt = DateTime.UtcNow
+        };
+
+        return await _tokenRepository.CreateRefreshTokenAsync(refreshToken);
     }
 
-    public Task RevokeRefreshTokenAsync(string token)
+    public async Task<RefreshToken?> ValidateRefreshTokenAsync(string token)
     {
-        throw new NotImplementedException();
+        var refreshToken = await _tokenRepository.GetRefreshTokenByTokenAsync(token);
+
+        if (refreshToken is null)
+            return null;
+
+        if (refreshToken.RevokedAt is not null)
+            return null;
+
+        if (refreshToken.ExpiresAt < DateTime.UtcNow)
+            return null;
+
+        return refreshToken;
     }
 
-    public Task<RefreshToken> StoreRefreshTokenAsync(int userId, string token, int expirationDays = 30)
+    public async Task RevokeRefreshTokenAsync(string token)
     {
-        throw new NotImplementedException();
+        await _tokenRepository.RevokeTokenAsync(token);
     }
 
-    public Task<RefreshToken?> ValidateRefreshTokenAsync(string token)
+    public async Task RevokeAllUserRefreshTokensAsync(int userId)
     {
-        throw new NotImplementedException();
+        await _tokenRepository.RevokeAllUserTokensAsync(userId);
     }
 }
