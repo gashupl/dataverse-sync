@@ -155,12 +155,27 @@ public class AuthController : ControllerBase
     /// <returns>Current user information</returns>
     [Authorize]
     [HttpGet("me")]
-    public IActionResult GetCurrentUser()
+    public async Task<IActionResult> GetCurrentUser()
     {
-        // TODO: Extract user ID from JWT token claims
-        // TODO: Fetch user details from database
-        // TODO: Return user DTO without sensitive information
+        // Extract user ID from JWT token claims
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+            return Unauthorized(new { message = "Invalid token" });
 
-        throw new NotImplementedException("Get current user is not yet implemented");
+        // Fetch user details from database
+        var user = await _userService.GetUserDetailsByIdAsync(userId);
+        if (user is null)
+            return NotFound(new { message = "User not found" });
+
+        // Return user DTO without sensitive information
+        var userDto = new UserDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            CreatedOn = user.CreatedOn
+        };
+
+        return Ok(userDto);
     }
 }

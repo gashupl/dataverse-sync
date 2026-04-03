@@ -598,4 +598,187 @@ public class AuthControllerTests
     }
 
     #endregion
+
+    #region GetCurrentUser Tests
+
+    [Fact]
+    public async Task GetCurrentUser_ShouldReturnOk_WhenUserExists()
+    {
+        // Arrange
+        var user = new User
+        {
+            Id = 1,
+            Username = "testuser",
+            Email = "test@example.com",
+            CreatedOn = DateTime.UtcNow
+        };
+
+        _userService.GetUserDetailsByIdAsync(1).Returns(Task.FromResult<User?>(user));
+
+        // Mock the User.Claims to simulate authenticated request
+        var claims = new System.Security.Claims.ClaimsPrincipal(
+            new System.Security.Claims.ClaimsIdentity(new[]
+            {
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, "1"),
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, "testuser"),
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Email, "test@example.com")
+            }, "TestAuthentication"));
+
+        _authController.ControllerContext = new Microsoft.AspNetCore.Mvc.ControllerContext
+        {
+            HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
+            {
+                User = claims
+            }
+        };
+
+        // Act
+        var result = await _authController.GetCurrentUser();
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var userDto = Assert.IsType<UserDto>(okResult.Value);
+        Assert.Equal(1, userDto.Id);
+        Assert.Equal("testuser", userDto.Username);
+        Assert.Equal("test@example.com", userDto.Email);
+
+        await _userService.Received(1).GetUserDetailsByIdAsync(1);
+    }
+
+    [Fact]
+    public async Task GetCurrentUser_ShouldReturnNotFound_WhenUserDoesNotExist()
+    {
+        // Arrange
+        _userService.GetUserDetailsByIdAsync(1).Returns(Task.FromResult<User?>(null));
+
+        var claims = new System.Security.Claims.ClaimsPrincipal(
+            new System.Security.Claims.ClaimsIdentity(new[]
+            {
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, "1")
+            }, "TestAuthentication"));
+
+        _authController.ControllerContext = new Microsoft.AspNetCore.Mvc.ControllerContext
+        {
+            HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
+            {
+                User = claims
+            }
+        };
+
+        // Act
+        var result = await _authController.GetCurrentUser();
+
+        // Assert
+        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+        Assert.NotNull(notFoundResult.Value);
+
+        await _userService.Received(1).GetUserDetailsByIdAsync(1);
+    }
+
+    [Fact]
+    public async Task GetCurrentUser_ShouldReturnUnauthorized_WhenUserIdClaimIsMissing()
+    {
+        // Arrange
+        var claims = new System.Security.Claims.ClaimsPrincipal(
+            new System.Security.Claims.ClaimsIdentity(new[]
+            {
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, "testuser")
+            }, "TestAuthentication"));
+
+        _authController.ControllerContext = new Microsoft.AspNetCore.Mvc.ControllerContext
+        {
+            HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
+            {
+                User = claims
+            }
+        };
+
+        // Act
+        var result = await _authController.GetCurrentUser();
+
+        // Assert
+        var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
+        Assert.NotNull(unauthorizedResult.Value);
+
+        await _userService.DidNotReceive().GetUserDetailsByIdAsync(Arg.Any<int>());
+    }
+
+    [Fact]
+    public async Task GetCurrentUser_ShouldReturnUnauthorized_WhenUserIdClaimIsInvalid()
+    {
+        // Arrange
+        var claims = new System.Security.Claims.ClaimsPrincipal(
+            new System.Security.Claims.ClaimsIdentity(new[]
+            {
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, "invalid")
+            }, "TestAuthentication"));
+
+        _authController.ControllerContext = new Microsoft.AspNetCore.Mvc.ControllerContext
+        {
+            HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
+            {
+                User = claims
+            }
+        };
+
+        // Act
+        var result = await _authController.GetCurrentUser();
+
+        // Assert
+        var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result);
+        Assert.NotNull(unauthorizedResult.Value);
+
+        await _userService.DidNotReceive().GetUserDetailsByIdAsync(Arg.Any<int>());
+    }
+
+    [Fact]
+    public async Task GetCurrentUser_ShouldNotReturnSensitiveData()
+    {
+        // Arrange
+        var user = new User
+        {
+            Id = 1,
+            Username = "testuser",
+            Email = "test@example.com",
+            PasswordHash = [1, 2, 3, 4, 5],
+            PasswordSalt = [6, 7, 8, 9, 10],
+            CreatedOn = DateTime.UtcNow
+        };
+
+        _userService.GetUserDetailsByIdAsync(1).Returns(Task.FromResult<User?>(user));
+
+        var claims = new System.Security.Claims.ClaimsPrincipal(
+            new System.Security.Claims.ClaimsIdentity(new[]
+            {
+                new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, "1")
+            }, "TestAuthentication"));
+
+        _authController.ControllerContext = new Microsoft.AspNetCore.Mvc.ControllerContext
+        {
+            HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
+            {
+                User = claims
+            }
+        };
+
+        // Act
+        var result = await _authController.GetCurrentUser();
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var userDto = Assert.IsType<UserDto>(okResult.Value);
+
+        // Verify sensitive data is not exposed
+        Assert.Equal(1, userDto.Id);
+        Assert.Equal("testuser", userDto.Username);
+        Assert.Equal("test@example.com", userDto.Email);
+        Assert.Equal(user.CreatedOn, userDto.CreatedOn);
+
+        // UserDto should not have PasswordHash or PasswordSalt properties
+        var dtoType = userDto.GetType();
+        Assert.Null(dtoType.GetProperty("PasswordHash"));
+        Assert.Null(dtoType.GetProperty("PasswordSalt"));
+    }
+
+    #endregion
 }
