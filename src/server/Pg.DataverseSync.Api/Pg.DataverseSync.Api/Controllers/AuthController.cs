@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Pg.DataverseSync.Api.Application.Services.Interfaces;
 using Pg.DataverseSync.Api.Domain;
 using Pg.DataverseSync.Api.Models.Auth;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Pg.DataverseSync.Api.Controllers;
 
@@ -11,10 +11,12 @@ namespace Pg.DataverseSync.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly ITokenService _tokenService;
 
-    public AuthController(IUserService userService)
+    public AuthController(IUserService userService, ITokenService tokenService)
     {
         _userService = userService;
+        _tokenService = tokenService;
     }
 
     /// <summary>
@@ -31,16 +33,14 @@ public class AuthController : ControllerBase
         if (!System.Net.Mail.MailAddress.TryCreate(request.Email, out _))
             return BadRequest("Invalid email format");
 
-        var (salt, hash) = _userService.CreatePasswordHash(request.Password);
-
         var user = new User
         {
             Username = request.Username,
-            Email = request.Email,
-            PasswordHash = hash,
-            PasswordSalt = salt,
+            Email = request.Email, 
             CreatedOn = DateTime.UtcNow
         };
+
+        user.GeneratePasswordHash(request.Password);
 
         var result = _userService.CreateUser(user);
 
@@ -67,12 +67,28 @@ public class AuthController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        // TODO: Find user by username
-        // TODO: Verify password against stored hash
-        // TODO: Generate JWT token
-        // TODO: Generate refresh token (if using refresh token flow)
+        // Find user by username
+        var user = _userService.GetUserDetailsByUsername(request.Username);
+        if (user is null)
+            return Unauthorized(new { message = "Invalid credentials" });
 
-        throw new NotImplementedException("User login is not yet implemented");
+        // Verify password against stored hash
+        if (!user.VerifyPassword(request.Password))
+            return Unauthorized(new { message = "Invalid credentials" });
+
+        // Generate JWT token
+        var token = _tokenService.GenerateJwtToken(user.Id, user.Username, user.Email);
+
+        // Generate refresh token (if using refresh token flow)
+        var refreshToken = _tokenService.GenerateRefreshToken();
+
+        return Ok(new AuthResponse
+        {
+            Success = true,
+            Message = "Login successful",
+            Token = token,
+            RefreshToken = refreshToken
+        });
     }
 
     /// <summary>
@@ -83,10 +99,10 @@ public class AuthController : ControllerBase
     [HttpPost("logout")]
     public IActionResult Logout()
     {
-        // TODO: Invalidate refresh token
+        // TODO: Invalidate refresh token in database
         // TODO: Optional: Add token to blacklist if using blacklist strategy
 
-        throw new NotImplementedException("Logout is not yet implemented");
+        return Ok(new { message = "Logout successful" });
     }
 
     /// <summary>

@@ -17,7 +17,6 @@ namespace Pg.DataverseSync.Api.Application.Services
 
         public CreateUserResult CreateUser(User user)
         {
-            //TODO: Add error handling 
             if (_userRepository.FindByUsername(user.Username) is not null)
             {
                 return new CreateUserResult
@@ -45,16 +44,15 @@ namespace Pg.DataverseSync.Api.Application.Services
             };
         }
 
-        public (byte[] salt, byte[] hash) CreatePasswordHash(string password)
+        public User? GetUserDetailsByUsername(string username)
         {
-            var salt = RandomNumberGenerator.GetBytes(16);
-            var hash = Rfc2898DeriveBytes.Pbkdf2(
-                password,
-                salt,
-                600_000,
-                HashAlgorithmName.SHA256,
-                32);
-            return (salt, hash);
+            return _userRepository.FindByUsername(username);
         }
+
+        public User? GetUserDetailsByEmail(string email)
+        {
+            return _userRepository.FindByEmail(email);
+        }
+
     }
 }
