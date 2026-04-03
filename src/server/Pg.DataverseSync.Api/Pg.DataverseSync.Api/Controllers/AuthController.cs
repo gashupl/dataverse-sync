@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Pg.DataverseSync.Api.Application.Services.Interfaces;
 using Pg.DataverseSync.Api.Domain;
 using Pg.DataverseSync.Api.Models.Auth;
-using System.Security.Cryptography;
 
 namespace Pg.DataverseSync.Api.Controllers;
 
@@ -121,9 +120,4 @@ public class AuthController : ControllerBase
 
         throw new NotImplementedException("Get current user is not yet implemented");
     }
-}
-
-public class RefreshTokenRequest
-{
-    public string RefreshToken { get; set; } = string.Empty;
 }
