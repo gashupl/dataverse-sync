@@ -11,5 +11,6 @@
   <Project Path="Pg.DataverseSync.Api.Infrastructure.Tests/Pg.DataverseSync.Api.Infrastructure.Tests.csproj" Id="c916e0be-d595-4da3-8c1a-554c15049aa7" />
   <Project Path="Pg.DataverseSync.Api.Infrastructure/Pg.DataverseSync.Api.Infrastructure.csproj" Id="5d50eecc-5481-4526-8251-b8e3454a38c7" />
   <Project Path="Pg.DataverseSync.Api.ServiceDefaults/Pg.DataverseSync.Api.ServiceDefaults.csproj" />
+  <Project Path="Pg.DataverseSync.Api.Tests/Pg.DataverseSync.Api.Tests.csproj" Id="dd094ffa-3522-4d6f-a746-82294f4aee58" />
   <Project Path="Pg.DataverseSync.Api/Pg.DataverseSync.Api.csproj" />
 </Solution>
