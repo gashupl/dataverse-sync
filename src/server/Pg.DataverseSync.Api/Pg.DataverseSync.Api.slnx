@@ -5,6 +5,7 @@
     <Build />
     <Deploy />
   </Project>
+  <Project Path="Pg.DataverseSync.Api.Domain.Tests/Pg.DataverseSync.Api.Domain.Tests.csproj" Id="7b0030f1-7f59-4640-95d7-198b39a25195" />
   <Project Path="Pg.DataverseSync.Api.Domain/Pg.DataverseSync.Api.Domain.csproj" Id="ba1b76c9-ebc4-45d8-915a-d39a9c083592" />
   <Project Path="Pg.DataverseSync.Api.Infrastructure.Tests/Pg.DataverseSync.Api.Infrastructure.Tests.csproj" Id="c916e0be-d595-4da3-8c1a-554c15049aa7" />
   <Project Path="Pg.DataverseSync.Api.Infrastructure/Pg.DataverseSync.Api.Infrastructure.csproj" Id="5d50eecc-5481-4526-8251-b8e3454a38c7" />
