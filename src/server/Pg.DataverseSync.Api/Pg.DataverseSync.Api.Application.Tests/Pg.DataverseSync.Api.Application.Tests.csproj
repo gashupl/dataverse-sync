@@ -10,12 +10,13 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Pg.DataverseSync.Api.Domain\Pg.DataverseSync.Api.Domain.csproj" />
+    <ProjectReference Include="..\Pg.DataverseSync.Api.Application\Pg.DataverseSync.Api.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

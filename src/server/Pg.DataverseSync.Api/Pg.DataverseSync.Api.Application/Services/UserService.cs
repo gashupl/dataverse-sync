@@ -16,7 +16,7 @@ namespace Pg.DataverseSync.Api.Application.Services
 
         public async Task<CreateUserResult> CreateUser(User user)
         {
-            if (_userRepository.FindByUsernameAsync(user.Username) is not null)
+            if (await _userRepository.FindByUsernameAsync(user.Username) is not null)
             {
                 return new CreateUserResult
                 {
