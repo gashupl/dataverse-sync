@@ -14,9 +14,9 @@ namespace Pg.DataverseSync.Api.Application.Services
             _userRepository = userRepository;
         }
 
-        public CreateUserResult CreateUser(User user)
+        public async Task<CreateUserResult> CreateUser(User user)
         {
-            if (_userRepository.FindByUsername(user.Username) is not null)
+            if (_userRepository.FindByUsernameAsync(user.Username) is not null)
             {
                 return new CreateUserResult
                 {
@@ -25,7 +25,7 @@ namespace Pg.DataverseSync.Api.Application.Services
                 };
             }
 
-            if (_userRepository.FindByEmail(user.Email) is not null)
+            if (await _userRepository.FindByEmailAsync(user.Email) is not null)
             {
                 return new CreateUserResult
                 {
@@ -34,7 +34,7 @@ namespace Pg.DataverseSync.Api.Application.Services
                 };
             }
 
-            var userId = _userRepository.CreateUser(user);
+            var userId = await _userRepository.CreateUser(user);
 
             return new CreateUserResult
             {
@@ -43,19 +43,19 @@ namespace Pg.DataverseSync.Api.Application.Services
             };
         }
 
-        public User? GetUserDetailsByUsername(string username)
+        public async Task<User?> GetUserDetailsByUsernameAsync(string username)
         {
-            return _userRepository.FindByUsername(username);
+            return await _userRepository.FindByUsernameAsync(username);
         }
 
-        public User? GetUserDetailsByEmail(string email)
+        public async Task<User?> GetUserDetailsByEmailAsync(string email)
         {
-            return _userRepository.FindByEmail(email);
+            return await _userRepository.FindByEmailAsync(email);
         }
 
-        public User? GetUserDetailsById(int id)
+        public async Task<User?> GetUserDetailsByIdAsync(int id)
         {
-            return _userRepository.FindById(id);
+            return await _userRepository.FindByIdAsync(id);
         }
     }
 }

@@ -4,9 +4,9 @@ namespace Pg.DataverseSync.Api.Application.Repositories
 {
     public interface IUserRepository
     {
-        public int CreateUser(User user);
-        public User? FindByUsername(string username);
-        public User? FindByEmail(string email);
-        User? FindById(int id);
+        public Task<int> CreateUser(User user);
+        public Task<User?> FindByUsernameAsync(string username);
+        public Task<User?> FindByEmailAsync(string email);
+        public Task<User?> FindByIdAsync(int id);
     }
 }

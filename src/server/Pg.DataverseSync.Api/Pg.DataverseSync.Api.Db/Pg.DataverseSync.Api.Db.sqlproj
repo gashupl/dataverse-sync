@@ -58,7 +58,6 @@
     <Folder Include="Properties" />
     <Folder Include="Tables" />
     <Folder Include="Schemas" />
-    <Folder Include="Keys" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />

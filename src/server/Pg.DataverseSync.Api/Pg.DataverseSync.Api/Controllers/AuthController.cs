@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
     /// <param name="request">User registration details</param>
     /// <returns>Authentication response with JWT token</returns>
     [HttpPost("register")]
-    public IActionResult Register([FromBody] RegisterRequest request)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -43,7 +43,7 @@ public class AuthController : ControllerBase
 
         user.GeneratePasswordHash(request.Password);
 
-        var result = _userService.CreateUser(user);
+        var result = await _userService.CreateUser(user);
 
         if (!result.Success)
             return Conflict(result.ErrorMessage);
@@ -69,7 +69,7 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
 
         // Find user by username
-        var user = _userService.GetUserDetailsByUsername(request.Username);
+        var user = await _userService.GetUserDetailsByUsernameAsync(request.Username);
         if (user is null)
             return Unauthorized(new { message = "Invalid credentials" });
 
@@ -129,7 +129,7 @@ public class AuthController : ControllerBase
         if (storedToken.ExpiresAt < DateTime.UtcNow)
             return Unauthorized(new { message = "Refresh token expired" });
 
-        var user = _userService.GetUserDetailsById(storedToken.UserId);
+        var user = await _userService.GetUserDetailsByIdAsync(storedToken.UserId);
         if (user is null)
             return Unauthorized();
 

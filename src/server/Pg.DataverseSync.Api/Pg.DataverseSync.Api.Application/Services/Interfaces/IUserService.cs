@@ -5,12 +5,11 @@ namespace Pg.DataverseSync.Api.Application.Services.Interfaces
 {
     public interface IUserService
     {
-        CreateUserResult CreateUser(User user);
+        Task<CreateUserResult> CreateUser(User user); 
 
-        User? GetUserDetailsById(int id);
+        Task<User?> GetUserDetailsByIdAsync(int id);
 
-        User? GetUserDetailsByUsername(string username);
-
-        User? GetUserDetailsByEmail(string email);
+        Task<User?> GetUserDetailsByUsernameAsync(string username);     
+        Task<User?> GetUserDetailsByEmailAsync(string email);
     }
 }

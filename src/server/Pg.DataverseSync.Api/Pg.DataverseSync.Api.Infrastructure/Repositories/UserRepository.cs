@@ -1,6 +1,7 @@
 ﻿using Pg.DataverseSync.Api.Application.Repositories;
 using Pg.DataverseSync.Api.Domain;
 using Pg.DataverseSync.Api.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore; 
 
 namespace Pg.DataverseSync.Api.Infrastructure.Repositories
 {
@@ -13,26 +14,26 @@ namespace Pg.DataverseSync.Api.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public int CreateUser(User user)
+        public async Task<int> CreateUser(User user)
         {
             _dbContext.Users.Add(user);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return user.Id;
         }
 
-        public User? FindById(int id)
+        public async Task<User?> FindByIdAsync(int id)
         {
-            return _dbContext.Users.SingleOrDefault(user => user.Id == id);
+            return await _dbContext.Users.SingleOrDefaultAsync(user => user.Id == id);
         }
 
-        public User? FindByUsername(string username)
+        public async Task<User?> FindByUsernameAsync(string username)
         {
-            return _dbContext.Users.SingleOrDefault(user => user.Username == username);
+            return await _dbContext.Users.SingleOrDefaultAsync(user => user.Username == username);
         }
 
-        public User? FindByEmail(string email)
+        public async Task<User?> FindByEmailAsync(string email)
         {
-            return _dbContext.Users.SingleOrDefault(user => user.Email == email);
+            return await _dbContext.Users.SingleOrDefaultAsync(user => user.Email == email);
         }
     }
 }
