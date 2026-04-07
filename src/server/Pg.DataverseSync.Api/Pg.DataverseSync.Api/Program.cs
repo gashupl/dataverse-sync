@@ -4,6 +4,9 @@ using Pg.DataverseSync.Api.Application.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Pg.DataverseSync.Api.Infrastructure.Data;
 using Pg.DataverseSync.Api.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,36 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     var connectionString = builder.Configuration.GetConnectionString("sqldb")
         ?? throw new InvalidOperationException("Connection string 'sqldb' is not configured.");
     options.UseSqlServer(connectionString);
+});
+
+// Configure JWT Authentication
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+var jwtSecretKey = builder.Configuration["Jwt:SecretKey"];
+
+if (string.IsNullOrEmpty(jwtSecretKey))
+    throw new InvalidOperationException("JWT SecretKey is not configured.");
+
+var key = Encoding.UTF8.GetBytes(jwtSecretKey);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = true,
+        ValidIssuer = jwtIssuer,
+        ValidateAudience = true,
+        ValidAudience = jwtAudience,
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+    };
 });
 
 // Register application services
@@ -45,6 +78,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication(); // Add this BEFORE UseAuthorization
 app.UseAuthorization();
 
 app.MapControllers();

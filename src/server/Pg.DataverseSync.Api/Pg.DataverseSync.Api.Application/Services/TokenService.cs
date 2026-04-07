@@ -29,7 +29,7 @@ public class TokenService : ITokenService
         var audience = jwtSettings["Audience"];
         var expirationMinutes = int.Parse(jwtSettings["ExpirationMinutes"] ?? "10");
 
-        var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
