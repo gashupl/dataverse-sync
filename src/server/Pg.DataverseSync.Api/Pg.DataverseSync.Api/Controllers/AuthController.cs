@@ -11,6 +11,7 @@ namespace Pg.DataverseSync.Api.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
+    private const short _refreshTokenExpirationMinutes = 15;
     private readonly IUserService _userService;
     private readonly ITokenService _tokenService;
 
@@ -84,7 +85,7 @@ public class AuthController : ControllerBase
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         // Store refresh token in DB
-        await _tokenService.StoreRefreshTokenAsync(user.Id, refreshToken, expirationDays: 30);
+        await _tokenService.StoreRefreshTokenAsync(user.Id, refreshToken, _refreshTokenExpirationMinutes);
 
         return Ok(new AuthResponse
         {
@@ -139,7 +140,7 @@ public class AuthController : ControllerBase
 
         // Revoke old refresh token and store new one
         await _tokenService.RevokeRefreshTokenAsync(request.RefreshToken);
-        await _tokenService.StoreRefreshTokenAsync(user.Id, newRefreshToken);
+        await _tokenService.StoreRefreshTokenAsync(user.Id, newRefreshToken, _refreshTokenExpirationMinutes);
 
         return Ok(new AuthResponse
         {

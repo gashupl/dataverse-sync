@@ -55,13 +55,13 @@ public class TokenService : ITokenService
         return Convert.ToBase64String(randomBytes);
     }
 
-    public async Task<RefreshToken> StoreRefreshTokenAsync(int userId, string token, int expirationDays = 30)
+    public async Task<RefreshToken> StoreRefreshTokenAsync(int userId, string token, int expirationMinutes)
     {
         var refreshToken = new RefreshToken
         {
             UserId = userId,
             Token = token,
-            ExpiresAt = DateTime.UtcNow.AddDays(expirationDays),
+            ExpiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes),
             CreatedAt = DateTime.UtcNow
         };
 

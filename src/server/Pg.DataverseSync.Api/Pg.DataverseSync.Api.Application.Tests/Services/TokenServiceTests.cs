@@ -130,14 +130,14 @@ public class TokenServiceTests
         // Arrange
         var userId = 1;
         var token = "test-refresh-token";
-        var expirationDays = 30;
+        var expirationMinutes = 15;
 
         var expectedRefreshToken = new RefreshToken
         {
             Id = 1,
             UserId = userId,
             Token = token,
-            ExpiresAt = DateTime.UtcNow.AddDays(expirationDays),
+            ExpiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes),
             CreatedAt = DateTime.UtcNow
         };
 
@@ -145,7 +145,7 @@ public class TokenServiceTests
             .Returns(Task.FromResult(expectedRefreshToken));
 
         // Act
-        var result = await _tokenService.StoreRefreshTokenAsync(userId, token, expirationDays);
+        var result = await _tokenService.StoreRefreshTokenAsync(userId, token, expirationMinutes);
 
         // Assert
         Assert.NotNull(result);
@@ -160,18 +160,19 @@ public class TokenServiceTests
     }
 
     [Fact]
-    public async Task StoreRefreshTokenAsync_ShouldUseDefaultExpirationWhenNotProvided()
+    public async Task StoreRefreshTokenAsync_ShouldAcceptExpirationInMinutes()
     {
         // Arrange
         var userId = 1;
         var token = "test-refresh-token";
+        var expirationMinutes = 15;
 
         var expectedRefreshToken = new RefreshToken
         {
             Id = 1,
             UserId = userId,
             Token = token,
-            ExpiresAt = DateTime.UtcNow.AddDays(30),
+            ExpiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes),
             CreatedAt = DateTime.UtcNow
         };
 
@@ -179,12 +180,12 @@ public class TokenServiceTests
             .Returns(Task.FromResult(expectedRefreshToken));
 
         // Act
-        var result = await _tokenService.StoreRefreshTokenAsync(userId, token);
+        var result = await _tokenService.StoreRefreshTokenAsync(userId, token, expirationMinutes);
 
         // Assert
         await _tokenRepository.Received(1).CreateRefreshTokenAsync(Arg.Is<RefreshToken>(rt =>
-            rt.ExpiresAt >= DateTime.UtcNow.AddDays(29) &&
-            rt.ExpiresAt <= DateTime.UtcNow.AddDays(31)));
+            rt.ExpiresAt >= DateTime.UtcNow.AddMinutes(14) &&
+            rt.ExpiresAt <= DateTime.UtcNow.AddMinutes(16)));
     }
 
     [Fact]
@@ -356,11 +357,11 @@ public class TokenServiceTests
     }
 
     [Theory]
-    [InlineData(1)]
-    [InlineData(7)]
+    [InlineData(5)]
+    [InlineData(15)]
     [InlineData(30)]
-    [InlineData(90)]
-    public async Task StoreRefreshTokenAsync_ShouldAcceptVariousExpirationDays(int expirationDays)
+    [InlineData(60)]
+    public async Task StoreRefreshTokenAsync_ShouldAcceptVariousExpirationMinutes(int expirationMinutes)
     {
         // Arrange
         var userId = 1;
@@ -371,7 +372,7 @@ public class TokenServiceTests
             Id = 1,
             UserId = userId,
             Token = token,
-            ExpiresAt = DateTime.UtcNow.AddDays(expirationDays),
+            ExpiresAt = DateTime.UtcNow.AddMinutes(expirationMinutes),
             CreatedAt = DateTime.UtcNow
         };
 
@@ -379,7 +380,7 @@ public class TokenServiceTests
             .Returns(Task.FromResult(expectedRefreshToken));
 
         // Act
-        var result = await _tokenService.StoreRefreshTokenAsync(userId, token, expirationDays);
+        var result = await _tokenService.StoreRefreshTokenAsync(userId, token, expirationMinutes);
 
         // Assert
         Assert.NotNull(result);

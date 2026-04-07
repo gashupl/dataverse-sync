@@ -157,7 +157,7 @@ public class AuthControllerTests
         _userService.GetUserDetailsByUsernameAsync("testuser").Returns(Task.FromResult<User?>(user));
         _tokenService.GenerateJwtToken(1, "testuser", "test@example.com").Returns("jwt-token");
         _tokenService.GenerateRefreshToken().Returns("refresh-token");
-        _tokenService.StoreRefreshTokenAsync(1, "refresh-token", 30)
+        _tokenService.StoreRefreshTokenAsync(1, "refresh-token", 15)
             .Returns(Task.FromResult(new RefreshToken { Id = 1, Token = "refresh-token" }));
 
         // Act
@@ -174,7 +174,7 @@ public class AuthControllerTests
         await _userService.Received(1).GetUserDetailsByUsernameAsync("testuser");
         _tokenService.Received(1).GenerateJwtToken(1, "testuser", "test@example.com");
         _tokenService.Received(1).GenerateRefreshToken();
-        await _tokenService.Received(1).StoreRefreshTokenAsync(1, "refresh-token", 30);
+        await _tokenService.Received(1).StoreRefreshTokenAsync(1, "refresh-token", 15);
     }
 
     [Fact]
@@ -255,7 +255,7 @@ public class AuthControllerTests
         _userService.GetUserDetailsByUsernameAsync("testuser").Returns(Task.FromResult<User?>(user));
         _tokenService.GenerateJwtToken(1, "testuser", "test@example.com").Returns("jwt-token");
         _tokenService.GenerateRefreshToken().Returns("refresh-token");
-        _tokenService.StoreRefreshTokenAsync(1, "refresh-token", 30)
+        _tokenService.StoreRefreshTokenAsync(1, "refresh-token", 15)
             .Returns(Task.FromResult(new RefreshToken { Id = 1, Token = "refresh-token" }));
 
         // Act
@@ -265,7 +265,7 @@ public class AuthControllerTests
         await _tokenService.Received(1).StoreRefreshTokenAsync(
             Arg.Is<int>(id => id == 1),
             Arg.Is<string>(token => token == "refresh-token"),
-            Arg.Is<int>(days => days == 30));
+            Arg.Is<int>(minutes => minutes == 15));
     }
 
     #endregion
