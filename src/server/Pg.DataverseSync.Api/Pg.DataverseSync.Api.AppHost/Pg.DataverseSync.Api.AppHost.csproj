@@ -7,6 +7,10 @@
     <Nullable>enable</Nullable>
     <UserSecretsId>f5cf2711-c9da-481c-ac74-bc78ba2c455d</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.2.1" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pg.DataverseSync.Api\Pg.DataverseSync.Api.csproj" />
   </ItemGroup>
