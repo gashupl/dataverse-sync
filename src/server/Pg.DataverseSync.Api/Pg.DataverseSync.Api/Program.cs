@@ -19,6 +19,24 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
+// Configure CORS - read allowed origins from configuration
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+if (allowedOrigins != null && allowedOrigins.Length > 0)
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        });
+    });
+}
+
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("sqldb")
@@ -77,6 +95,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(); // Enable CORS
 
 app.UseAuthentication(); // Add this BEFORE UseAuthorization
 app.UseAuthorization();
