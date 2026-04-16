@@ -1,7 +1,9 @@
+using Microsoft.Extensions.Configuration;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
-const int webAppPort = 5173;
-const string sqlContainerName = "local_sql_2025";
+var webAppPort = builder.Configuration.GetValue<int>("WebApp:Port", 5173);
+var sqlContainerName = builder.Configuration.GetValue<string>("Docker:SqlContainerName") ?? "local_sql_2025";
 
 var webAppWorkingDirectory = Path.GetFullPath(
     Path.Combine(builder.AppHostDirectory, "../../../client/Pg.DataverseSync.Web"));
