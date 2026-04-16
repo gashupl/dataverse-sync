@@ -20,6 +20,7 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
   });
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,14 +53,19 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
       const response = await register(formData);
       
       if (response.success) {
+        setIsSuccess(true);
         onSuccess?.();
-        onClose();
       } else {
         setError(response.message || 'Registration failed');
       }
     } catch (error: any) {
       setError(error.message || 'Registration failed. Please try again.');
     }
+  };
+
+  const handleSuccessClose = () => {
+    setIsSuccess(false);
+    onClose();
   };
 
   const handleInputChange = (field: keyof RegisterRequest) => (
@@ -70,6 +76,44 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
       [field]: e.target.value,
     }));
   };
+
+  // Success view
+  if (isSuccess) {
+    return (
+      <div className="register-form-overlay" onClick={handleSuccessClose}>
+        <div className="register-form-modal" onClick={e => e.stopPropagation()}>
+          <div className="register-form-header">
+            <h2>Registration Successful! 🎉</h2>
+            <button 
+              className="close-button" 
+              onClick={handleSuccessClose}
+              aria-label="Close"
+            >
+              ×
+            </button>
+          </div>
+
+          <div className="register-form success-content">
+            <div className="success-message">
+              <div className="success-icon">✅</div>
+              <h3>Welcome, {formData.username}!</h3>
+              <p>Your account has been created successfully.</p>
+              <p>You are now logged in and ready to use DataverseSync.</p>
+            </div>
+
+            <div className="form-actions">
+              <button 
+                onClick={handleSuccessClose}
+                className="submit-button"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="register-form-overlay" onClick={onClose}>

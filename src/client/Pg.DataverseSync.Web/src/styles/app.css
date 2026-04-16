@@ -479,6 +479,38 @@
   }
 }
 
+/* Success message styles */
+.success-content {
+  text-align: center;
+}
+
+.success-message {
+  padding: 20px 0;
+}
+
+.success-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.success-message h3 {
+  color: var(--accent);
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.success-message p {
+  color: var(--text);
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.success-message p:last-child {
+  margin-bottom: 0;
+}
+
 #spacer {
   height: 88px;
   border-top: 1px solid var(--border);
