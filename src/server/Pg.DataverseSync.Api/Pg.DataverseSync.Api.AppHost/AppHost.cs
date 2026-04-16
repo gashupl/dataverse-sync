@@ -17,12 +17,6 @@ var api = builder.AddProject<Projects.Pg_DataverseSync_Api>("pg-dataversesync-ap
     .WithEnvironment("AllowedOrigins__0", $"http://localhost:{webAppPort.ToString()}")
     .WithEnvironment("AllowedOrigins__1", $"https://localhost:{webAppPort.ToString()}"); // Support both HTTP and HTTPS
 
-//// Diagnostic: Print the resolved path
-//builder.AddExecutable("print-path", "cmd", builder.AppHostDirectory, "/c", "echo", webAppWorkingDirectory);
-
-//// Diagnostic: Check if working directory is valid
-//builder.AddExecutable("check-web-directory", "cmd", webAppWorkingDirectory, "/c", "dir");
-
 webApp.WithReference(api)
     .WaitFor(api);
 
