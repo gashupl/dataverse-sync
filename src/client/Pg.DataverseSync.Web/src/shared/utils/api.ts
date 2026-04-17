@@ -39,20 +39,49 @@ class ApiClient {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
+    // Get auth token from localStorage
+    const token = localStorage.getItem('authToken');
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    // Add authorization header if token is available
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    // Merge any additional headers from options
+    if (options.headers) {
+      const optHeaders = new Headers(options.headers);
+      optHeaders.forEach((value, key) => {
+        headers[key] = value;
+      });
+    }
+
     try {
       const response = await fetch(url, {
         ...options,
         signal: controller.signal,
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
+        headers,
       });
 
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        let message: string;
+        try {
+          const errorBody = await response.json();
+          message = errorBody.message || errorBody.title || errorBody.detail || `Request failed with status ${response.status}`;
+        } catch {
+          message = response.status === 401
+            ? 'Invalid username or password'
+            : `Request failed with status ${response.status}`;
+        }
+
+        throw {
+          message,
+          status: response.status,
+        } as ApiError;
       }
 
       const data = await response.json();

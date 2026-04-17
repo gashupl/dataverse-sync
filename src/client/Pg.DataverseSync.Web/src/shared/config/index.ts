@@ -70,7 +70,7 @@ export const config: AppConfig = {
     version: getEnvVar('VITE_APP_VERSION', '1.0.0'),
   },
   api: {
-    baseUrl: getEnvVar('VITE_API_BASE_URL', 'http://localhost:5000/api'),
+    baseUrl: getEnvVar('VITE_API_BASE_URL', 'https://localhost:7116/api'),
     timeout: getNumberEnvVar('VITE_API_TIMEOUT', 30000),
   },
   auth: {

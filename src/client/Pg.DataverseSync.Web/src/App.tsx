@@ -1,3 +1,4 @@
+import { AuthProvider } from './application';
 import { MainLayout } from './ui/layouts/MainLayout';
 import { HomePage } from './ui/pages/HomePage';
 import './styles/app.css';
@@ -8,9 +9,11 @@ import './styles/app.css';
  */
 function App() {
   return (
-    <MainLayout>
-      <HomePage />
-    </MainLayout>
+    <AuthProvider>
+      <MainLayout>
+        <HomePage />
+      </MainLayout>
+    </AuthProvider>
   );
 }
 

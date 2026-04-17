@@ -8,11 +8,25 @@ export interface RegisterRequest {
   password: string;
 }
 
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface LogoutRequest {
+  refreshToken: string;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
 export interface AuthResponse {
   success: boolean;
   message: string;
   token?: string;
   refreshToken?: string;
+  user?: User;
 }
 
 export interface User {

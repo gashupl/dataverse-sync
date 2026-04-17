@@ -2,7 +2,7 @@
  * Authentication service for handling user authentication operations
  */
 import { apiClient } from '../../shared/utils/api';
-import type { RegisterRequest, AuthResponse } from '../../domain/entities/auth';
+import type { RegisterRequest, LoginRequest, LogoutRequest, AuthResponse, User } from '../../domain/entities/auth';
 
 export class AuthService {
   /**
@@ -10,7 +10,7 @@ export class AuthService {
    */
   async register(request: RegisterRequest): Promise<AuthResponse> {
     try {
-      const response = await apiClient.post<AuthResponse>('/auth/register', request);
+      const response = await apiClient.post<AuthResponse>('/Auth/register', request);
       return response.data;
     } catch (error) {
       console.error('Registration error:', error);
@@ -21,12 +21,9 @@ export class AuthService {
   /**
    * Login a user
    */
-  async login(username: string, password: string): Promise<AuthResponse> {
+  async login(request: LoginRequest): Promise<AuthResponse> {
     try {
-      const response = await apiClient.post<AuthResponse>('/auth/login', {
-        username,
-        password
-      });
+      const response = await apiClient.post<AuthResponse>('/Auth/login', request);
       return response.data;
     } catch (error) {
       console.error('Login error:', error);
@@ -39,12 +36,50 @@ export class AuthService {
    */
   async logout(): Promise<void> {
     try {
-      await apiClient.post('/auth/logout');
+      const refreshToken = this.getStoredRefreshToken();
+      if (refreshToken) {
+        const logoutRequest: LogoutRequest = { refreshToken };
+        await apiClient.post('/Auth/logout', logoutRequest);
+      }
       // Clear local storage
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('refreshToken');
+      this.clearTokens();
     } catch (error) {
       console.error('Logout error:', error);
+      // Even if logout fails on server, clear local tokens
+      this.clearTokens();
+      throw error;
+    }
+  }
+
+  /**
+   * Get current user info
+   */
+  async getCurrentUser(): Promise<User> {
+    try {
+      const response = await apiClient.get<User>('/Auth/me');
+      return response.data;
+    } catch (error) {
+      console.error('Get current user error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Refresh authentication token
+   */
+  async refreshToken(): Promise<AuthResponse> {
+    try {
+      const refreshToken = this.getStoredRefreshToken();
+      if (!refreshToken) {
+        throw new Error('No refresh token available');
+      }
+
+      const response = await apiClient.post<AuthResponse>('/Auth/refresh', {
+        refreshToken
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Token refresh error:', error);
       throw error;
     }
   }
@@ -64,6 +99,20 @@ export class AuthService {
    */
   getStoredToken(): string | null {
     return localStorage.getItem('authToken');
+  }
+
+  /**
+   * Get stored refresh token
+   */
+  getStoredRefreshToken(): string | null {
+    return localStorage.getItem('refreshToken');
+  }
+
+  /**
+   * Check if user is authenticated
+   */
+  isAuthenticated(): boolean {
+    return !!this.getStoredToken();
   }
 
   /**
