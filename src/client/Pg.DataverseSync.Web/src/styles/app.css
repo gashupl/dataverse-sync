@@ -562,12 +562,11 @@
 
 .logout-btn {
   background-color: transparent;
-  color: var(--text-secondary);
-  border: 2px solid var(--text-secondary);
+  color: var(--accent);
 }
 
 .logout-btn:hover:not(:disabled) {
-  background-color: var(--text-secondary);
+  background-color: var(--accent);
   color: var(--bg);
 }
 
