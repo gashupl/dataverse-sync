@@ -1,6 +1,8 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './application';
 import { MainLayout } from './ui/layouts/MainLayout';
 import { HomePage } from './ui/pages/HomePage';
+import { ProfilePage } from './ui/pages/ProfilePage';
 import './styles/app.css';
 
 /**
@@ -9,11 +11,16 @@ import './styles/app.css';
  */
 function App() {
   return (
-    <AuthProvider>
-      <MainLayout>
-        <HomePage />
-      </MainLayout>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <MainLayout>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Routes>
+        </MainLayout>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { config } from '../../../shared/config';
 import { useAuth } from '../../../application';
 import { RegisterForm } from '../features/RegisterForm';
@@ -58,7 +59,7 @@ export function AuthButtons() {
         <div className="user-info">
           {authState.user && (
             <span className="username">
-              Welcome, {authState.user.username}!
+              Welcome, <Link to="/profile" className="username-link">{authState.user.username}</Link>!
             </span>
           )}
         </div>

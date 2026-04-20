@@ -33,6 +33,7 @@ export interface User {
   id: string;
   username: string;
   email: string;
+  createdOn: string; 
 }
 
 export interface AuthState {

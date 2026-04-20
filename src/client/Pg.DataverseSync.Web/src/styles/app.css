@@ -560,6 +560,16 @@
   font-weight: 500;
 }
 
+.username-link {
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.username-link:hover {
+  opacity: 0.8;
+}
+
 .logout-btn {
   background-color: transparent;
   color: var(--accent);
@@ -656,4 +666,67 @@
   .login-form {
     padding: 16px;
   }
+}
+
+/* Profile Page Styles */
+.profile-page {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.profile-heading {
+  color: var(--accent);
+  font-size: 24px;
+  margin-bottom: 24px;
+}
+
+.profile-card {
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-label {
+  color: var(--fg);
+  opacity: 0.6;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-value {
+  color: var(--fg);
+  font-size: 16px;
+}
+
+.profile-back-btn {
+  margin-top: 24px;
+  background-color: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.profile-back-btn:hover {
+  background-color: var(--accent);
+  color: var(--bg);
+}
+
+.profile-error {
+  color: var(--error, #e74c3c);
+  margin-bottom: 16px;
 }
