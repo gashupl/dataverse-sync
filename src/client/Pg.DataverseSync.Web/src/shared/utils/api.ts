@@ -21,6 +21,7 @@ export interface ApiError {
 class ApiClient {
   private baseUrl: string;
   private timeout: number;
+  private refreshPromise: Promise<string | null> | null = null;
 
   constructor() {
     this.baseUrl = config.api.baseUrl;
@@ -32,7 +33,8 @@ class ApiClient {
    */
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    skipAuthRefresh = false
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`;
     
@@ -68,6 +70,14 @@ class ApiClient {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
+        // Attempt token refresh on 401, unless this is already a refresh-related request
+        if (response.status === 401 && !skipAuthRefresh && localStorage.getItem('refreshToken')) {
+          const newToken = await this.tryRefreshToken();
+          if (newToken) {
+            return this.request<T>(endpoint, options, true);
+          }
+        }
+
         let message: string;
         try {
           const errorBody = await response.json();
@@ -103,6 +113,47 @@ class ApiClient {
       
       throw error;
     }
+  }
+
+  /**
+   * Attempt to refresh the auth token. Deduplicates concurrent refresh calls.
+   */
+  private async tryRefreshToken(): Promise<string | null> {
+    if (this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    this.refreshPromise = (async () => {
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!refreshToken) return null;
+
+        const response = await this.request<{ success: boolean; token?: string; refreshToken?: string }>(
+          '/Auth/refresh',
+          { method: 'POST', body: JSON.stringify({ refreshToken }) },
+          true
+        );
+
+        if (response.data.success && response.data.token) {
+          localStorage.setItem('authToken', response.data.token);
+          if (response.data.refreshToken) {
+            localStorage.setItem('refreshToken', response.data.refreshToken);
+          }
+          return response.data.token;
+        }
+
+        return null;
+      } catch {
+        // Refresh failed — clear tokens so the user is logged out
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('refreshToken');
+        return null;
+      } finally {
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
   }
 
   /**
