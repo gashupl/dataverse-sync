@@ -2,8 +2,7 @@
   <Project Path="Pg.DataverseSync.Api.AppHost/Pg.DataverseSync.Api.AppHost.csproj" Id="198ce97b-9e47-45cf-b976-d3b0da0dcd10" />
   <Project Path="Pg.DataverseSync.Api.Application.Tests/Pg.DataverseSync.Api.Application.Tests.csproj" Id="9922a428-ed7f-46a7-ad08-d37d50d6f37e" />
   <Project Path="Pg.DataverseSync.Api.Application/Pg.DataverseSync.Api.Application.csproj" Id="56ddf520-89e1-4eb1-a2a2-9ae8b1765ded" />
-  <Project Path="Pg.DataverseSync.Api.Db/Pg.DataverseSync.Api.Db.sqlproj" Id="fe171904-39e1-499f-9631-1f33540e8778">
-    <Build />
+  <Project Path="Pg.DataverseSync.Api.Db/Pg.DataverseSync.Api.Db.sqlproj" Id="fe171904-39e1-499f-9631-1f33540e8778" Build="false">
     <Deploy />
   </Project>
   <Project Path="Pg.DataverseSync.Api.Domain.Tests/Pg.DataverseSync.Api.Domain.Tests.csproj" Id="7b0030f1-7f59-4640-95d7-198b39a25195" />
