@@ -19,8 +19,8 @@ export interface ApiError {
  * Base API client with configuration
  */
 class ApiClient {
-  private baseUrl: string;
-  private timeout: number;
+  private readonly baseUrl: string;
+  private readonly timeout: number;
   private refreshPromise: Promise<string | null> | null = null;
 
   constructor() {
