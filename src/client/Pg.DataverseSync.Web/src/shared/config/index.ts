@@ -57,8 +57,8 @@ function getBooleanEnvVar(key: string, fallback = false): boolean {
 function getNumberEnvVar(key: string, fallback: number): number {
   const value = getEnvVar(key);
   if (!value) return fallback;
-  const parsed = parseInt(value, 10);
-  return isNaN(parsed) ? fallback : parsed;
+  const parsed = Number.parseInt(value, 10);
+  return Number.isNaN(parsed) ? fallback : parsed;
 }
 
 /**
