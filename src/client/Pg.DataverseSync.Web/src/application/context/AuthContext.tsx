@@ -1,7 +1,7 @@
 /**
  * Authentication context for sharing auth state across components
  */
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { AuthService } from '../services/authService';
 import type { RegisterRequest, LoginRequest, AuthResponse, AuthState, User } from '../../domain/entities/auth';
@@ -19,7 +19,7 @@ export interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: { readonly children: ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     token: authService.getStoredToken(),
@@ -151,15 +151,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthState(prev => ({ ...prev, user }));
   }, []);
 
+  const contextValue = useMemo(() => ({
+    authState,
+    register,
+    login,
+    logout: handleLogout,
+    setUser,
+    refreshUserInfo,
+  }), [authState, register, login, handleLogout, setUser, refreshUserInfo]);
+
   return (
-    <AuthContext.Provider value={{
-      authState,
-      register,
-      login,
-      logout: handleLogout,
-      setUser,
-      refreshUserInfo,
-    }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
