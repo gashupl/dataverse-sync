@@ -257,10 +257,6 @@
   }
 }
 
-#docs {
-
-}
-
 #next-steps ul {
   list-style: none;
   padding: 0;
@@ -402,7 +398,7 @@
 .error-message {
   background-color: #fee;
   border: 1px solid #fcc;
-  color: #c66;
+  color: #b71c1c;
   padding: 12px;
   border-radius: 6px;
   margin-bottom: 20px;

@@ -9,10 +9,17 @@ export interface ApiResponse<T = any> {
   message?: string;
 }
 
-export interface ApiError {
-  message: string;
+export class ApiError extends Error {
   status: number;
   details?: any;
+
+  constructor(message: string, status: number, details?: any) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.details = details;
+    Object.setPrototypeOf(this, ApiError.prototype);
+  }
 }
 
 /**
@@ -29,6 +36,63 @@ class ApiClient {
   }
 
   /**
+   * Build headers with auth token and merge with provided options
+   */
+  private buildHeaders(options: RequestInit): Record<string, string> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    if (options.headers) {
+      const optHeaders = new Headers(options.headers);
+      optHeaders.forEach((value, key) => {
+        headers[key] = value;
+      });
+    }
+
+    return headers;
+  }
+
+  /**
+   * Extract error message from response or generate default
+   */
+  private async parseErrorMessage(response: Response): Promise<string> {
+    try {
+      const errorBody = await response.json();
+      return errorBody.message || errorBody.title || errorBody.detail || `Request failed with status ${response.status}`;
+    } catch {
+      return response.status === 401
+        ? 'Invalid username or password'
+        : `Request failed with status ${response.status}`;
+    }
+  }
+
+  /**
+   * Handle 401 response with token refresh attempt
+   */
+  private async handle401Response<T>(
+    endpoint: string,
+    options: RequestInit,
+    skipAuthRefresh: boolean
+  ): Promise<ApiResponse<T> | null> {
+    if (skipAuthRefresh || !localStorage.getItem('refreshToken')) {
+      return null;
+    }
+
+    const newToken = await this.tryRefreshToken();
+    if (newToken) {
+      return this.request<T>(endpoint, options, true);
+    }
+
+    return null;
+  }
+
+  /**
    * Make HTTP request with standard configuration
    */
   private async request<T>(
@@ -40,25 +104,7 @@ class ApiClient {
     
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeout);
-
-    // Get auth token from localStorage
-    const token = localStorage.getItem('authToken');
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    // Add authorization header if token is available
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    // Merge any additional headers from options
-    if (options.headers) {
-      const optHeaders = new Headers(options.headers);
-      optHeaders.forEach((value, key) => {
-        headers[key] = value;
-      });
-    }
+    const headers = this.buildHeaders(options);
 
     try {
       const response = await fetch(url, {
@@ -70,32 +116,18 @@ class ApiClient {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        // Attempt token refresh on 401, unless this is already a refresh-related request
-        if (response.status === 401 && !skipAuthRefresh && localStorage.getItem('refreshToken')) {
-          const newToken = await this.tryRefreshToken();
-          if (newToken) {
-            return this.request<T>(endpoint, options, true);
+        if (response.status === 401) {
+          const refreshedResponse = await this.handle401Response<T>(endpoint, options, skipAuthRefresh);
+          if (refreshedResponse) {
+            return refreshedResponse;
           }
         }
 
-        let message: string;
-        try {
-          const errorBody = await response.json();
-          message = errorBody.message || errorBody.title || errorBody.detail || `Request failed with status ${response.status}`;
-        } catch {
-          message = response.status === 401
-            ? 'Invalid username or password'
-            : `Request failed with status ${response.status}`;
-        }
-
-        throw {
-          message,
-          status: response.status,
-        } as ApiError;
+        const message = await this.parseErrorMessage(response);
+        throw new ApiError(message, response.status);
       }
 
       const data = await response.json();
-      
       return {
         data,
         status: response.status,
@@ -104,11 +136,7 @@ class ApiClient {
       clearTimeout(timeoutId);
       
       if (error instanceof Error) {
-        throw {
-          message: error.message,
-          status: 0,
-          details: error,
-        } as ApiError;
+        throw new ApiError(error.message, 0, error);
       }
       
       throw error;
