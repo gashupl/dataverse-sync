@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { config } from '../../../shared/config';
 import { useAuth } from '../../../application';
 import { RegisterForm } from '../features/RegisterForm';
@@ -11,6 +11,7 @@ import { LoginForm } from '../features/LoginForm';
  */
 export function AuthButtons() {
   const { authState, logout } = useAuth();
+  const navigate = useNavigate();
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
 
@@ -29,9 +30,11 @@ export function AuthButtons() {
   const handleLogoutClick = async () => {
     try {
       await logout();
+      navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
       // Logout should clear local state even if server call fails
+      navigate('/');
     }
   };
 
