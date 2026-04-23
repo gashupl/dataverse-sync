@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Header } from '../components/common/Header';
 
 interface MainLayoutProps {
-  children: ReactNode;
+  readonly children: ReactNode;
 }
 
 /**

@@ -16,13 +16,13 @@ export function Documentation() {
       <ul>
         <li>
           <a href="https://vite.dev/" target="_blank" rel="noreferrer">
-            <img className="logo" src={viteLogo} alt="" />
+            <img className="logo" src={viteLogo} alt=""/>
             Explore Vite
           </a>
         </li>
         <li>
           <a href="https://react.dev/" target="_blank" rel="noreferrer">
-            <img className="button-icon" src={reactLogo} alt="" />
+            <img className="button-icon" src={reactLogo} alt=""/>
             Learn more
           </a>
         </li>
