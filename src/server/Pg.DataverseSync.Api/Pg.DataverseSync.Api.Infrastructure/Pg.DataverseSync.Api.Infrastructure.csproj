@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
+    <ProjectReference Include="..\Pg.DataverseSync.Api.Application\Pg.DataverseSync.Api.Application.csproj" />
+  </ItemGroup>
+
+</Project>
