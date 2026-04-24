@@ -16,7 +16,7 @@ export function Documentation() {
       <ul>
         <li>
           <a href="https://vite.dev/" target="_blank" rel="noreferrer">
-            <img className="logo" src={viteLogo} alt=""/>
+            <img className="logo" src={viteLogo} alt=""/>{' '}
             Explore Vite
           </a>
         </li>
