@@ -1,8 +1,7 @@
 /**
  * Login form component
  */
-import { useState } from 'react';
-import type { FormEvent } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../../application';
 import type { LoginRequest } from '../../../domain/entities';
 
@@ -20,7 +19,7 @@ export function LoginForm({ onClose, onSuccess }: LoginFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
 
