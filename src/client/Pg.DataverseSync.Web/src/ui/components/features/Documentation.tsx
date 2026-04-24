@@ -22,7 +22,7 @@ export function Documentation() {
         </li>
         <li>
           <a href="https://react.dev/" target="_blank" rel="noreferrer">
-            <img className="button-icon" src={reactLogo} alt=""/>
+            <img className="button-icon" src={reactLogo} alt=""/>{' '}
             Learn more
           </a>
         </li>
