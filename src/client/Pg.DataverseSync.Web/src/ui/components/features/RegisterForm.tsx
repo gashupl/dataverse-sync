@@ -2,6 +2,7 @@
  * Registration form component
  */
 import React, { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import { useAuth } from '../../../application';
 import type { RegisterRequest } from '../../../domain/entities';
 
@@ -21,7 +22,7 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError(null);
 
@@ -91,14 +92,9 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
   // Success view
   if (isSuccess) {
     return (
-      <div 
-        className="register-form-overlay" 
-        onClick={handleSuccessClose}
-        role="none"
-      >
+      <dialog open className="register-form-overlay" onClose={handleSuccessClose}>
         <div 
           className="register-form-modal" 
-          onClick={e => e.stopPropagation()}
           role="alertdialog"
           aria-modal="true"
           aria-labelledby="success-title"
@@ -132,24 +128,14 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
             </div>
           </div>
         </div>
-      </div>
+      </dialog>
     );
   }
 
   return (
-    <div 
-      className="register-form-overlay" 
-      onClick={onClose}
-      onKeyDown={e => {
-        if (e.key === 'Escape') onClose();
-      }}
-      role="none"
-      tabIndex={0}
-    >
+    <dialog open className="register-form-overlay" onClose={onClose}>
       <div 
         className="register-form-modal" 
-        onClick={e => e.stopPropagation()}
-        onKeyDown={e => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="register-title"
@@ -245,6 +231,6 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
           </div>
         </form>
       </div>
-    </div>
+    </dialog>
   );
 }

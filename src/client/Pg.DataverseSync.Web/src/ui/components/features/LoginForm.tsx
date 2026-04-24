@@ -2,6 +2,7 @@
  * Login form component
  */
 import React, { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import { useAuth } from '../../../application';
 import type { LoginRequest } from '../../../domain/entities';
 
@@ -19,7 +20,7 @@ export function LoginForm({ onClose, onSuccess }: LoginFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError(null);
 
@@ -72,14 +73,9 @@ export function LoginForm({ onClose, onSuccess }: LoginFormProps) {
   // Success view
   if (isSuccess) {
     return (
-      <div 
-        className="login-form-overlay" 
-        onClick={handleSuccessClose}
-        role="none"
-      >
+      <dialog open className="login-form-overlay" onClose={handleSuccessClose}>
         <div 
           className="login-form-modal" 
-          onClick={e => e.stopPropagation()}
           role="alertdialog"
           aria-modal="true"
           aria-labelledby="success-title"
@@ -109,25 +105,15 @@ export function LoginForm({ onClose, onSuccess }: LoginFormProps) {
             </div>
           </div>
         </div>
-      </div>
+      </dialog>
     );
   }
 
   // Form view
   return (
-    <div 
-      className="login-form-overlay" 
-      onClick={onClose}
-      onKeyDown={e => {
-        if (e.key === 'Escape') onClose();
-      }}
-      role="none"
-      tabIndex={0}
-    >
+    <dialog open className="login-form-overlay" onClose={onClose}>
       <div 
         className="login-form-modal" 
-        onClick={e => e.stopPropagation()}
-        onKeyDown={e => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="login-title"
@@ -198,6 +184,6 @@ export function LoginForm({ onClose, onSuccess }: LoginFormProps) {
           </div>
         </form>
       </div>
-    </div>
+    </dialog>
   );
 }
