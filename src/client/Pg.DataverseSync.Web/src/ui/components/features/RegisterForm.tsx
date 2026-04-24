@@ -6,8 +6,8 @@ import { useAuth } from '../../../application';
 import type { RegisterRequest } from '../../../domain/entities';
 
 export interface RegisterFormProps {
-  onClose: () => void;
-  onSuccess?: () => void;
+  readonly onClose: () => void;
+  readonly onSuccess?: () => void;
 }
 
 export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
@@ -21,7 +21,7 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError(null);
 
@@ -94,12 +94,12 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
       <div 
         className="register-form-overlay" 
         onClick={handleSuccessClose}
-        role="presentation"
+        role="none"
       >
         <div 
           className="register-form-modal" 
           onClick={e => e.stopPropagation()}
-          role="dialog"
+          role="alertdialog"
           aria-modal="true"
           aria-labelledby="success-title"
         >
@@ -140,11 +140,16 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
     <div 
       className="register-form-overlay" 
       onClick={onClose}
-      role="presentation"
+      onKeyDown={e => {
+        if (e.key === 'Escape') onClose();
+      }}
+      role="none"
+      tabIndex={0}
     >
       <div 
         className="register-form-modal" 
         onClick={e => e.stopPropagation()}
+        onKeyDown={e => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="register-title"
@@ -162,7 +167,7 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
 
         <form onSubmit={handleSubmit} className="register-form">
           {error && (
-            <div className="error-message">
+            <div className="error-message" role="alert">
               {error}
             </div>
           )}

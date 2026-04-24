@@ -6,8 +6,8 @@ import { useAuth } from '../../../application';
 import type { LoginRequest } from '../../../domain/entities';
 
 export interface LoginFormProps {
-  onClose: () => void;
-  onSuccess?: () => void;
+  readonly onClose: () => void;
+  readonly onSuccess?: () => void;
 }
 
 export function LoginForm({ onClose, onSuccess }: LoginFormProps) {
@@ -19,7 +19,7 @@ export function LoginForm({ onClose, onSuccess }: LoginFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError(null);
 
@@ -75,12 +75,12 @@ export function LoginForm({ onClose, onSuccess }: LoginFormProps) {
       <div 
         className="login-form-overlay" 
         onClick={handleSuccessClose}
-        role="presentation"
+        role="none"
       >
         <div 
           className="login-form-modal" 
           onClick={e => e.stopPropagation()}
-          role="dialog"
+          role="alertdialog"
           aria-modal="true"
           aria-labelledby="success-title"
         >
@@ -118,11 +118,16 @@ export function LoginForm({ onClose, onSuccess }: LoginFormProps) {
     <div 
       className="login-form-overlay" 
       onClick={onClose}
-      role="presentation"
+      onKeyDown={e => {
+        if (e.key === 'Escape') onClose();
+      }}
+      role="none"
+      tabIndex={0}
     >
       <div 
         className="login-form-modal" 
         onClick={e => e.stopPropagation()}
+        onKeyDown={e => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="login-title"

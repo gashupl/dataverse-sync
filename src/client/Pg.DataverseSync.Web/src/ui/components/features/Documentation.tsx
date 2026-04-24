@@ -16,14 +16,18 @@ export function Documentation() {
       <ul>
         <li>
           <a href="https://vite.dev/" target="_blank" rel="noreferrer">
-            <img className="logo" src={viteLogo} alt=""/>{' '}
-            Explore Vite
+            <span className="logo-container">
+              <img className="logo" src={viteLogo} alt="Vite logo" />
+              <span className="logo-text">Explore Vite</span>
+            </span>
           </a>
         </li>
         <li>
           <a href="https://react.dev/" target="_blank" rel="noreferrer">
-            <img className="button-icon" src={reactLogo} alt=""/>{' '}
-            Learn more
+            <span className="logo-container">
+              <img className="button-icon" src={reactLogo} alt="React logo" />
+              <span className="logo-text">Learn more</span>
+            </span>
           </a>
         </li>
       </ul>
