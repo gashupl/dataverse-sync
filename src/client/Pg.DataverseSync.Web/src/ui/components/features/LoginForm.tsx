@@ -1,7 +1,7 @@
 /**
  * Login form component
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../application';
 import type { LoginRequest } from '../../../domain/entities';
 
@@ -57,13 +57,35 @@ export function LoginForm({ onClose, onSuccess }: LoginFormProps) {
     }));
   };
 
+  // Handle Escape key for accessibility
+  useEffect(() => {
+    const handleEscapeKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => document.removeEventListener('keydown', handleEscapeKey);
+  }, [onClose]);
+
   // Success view
   if (isSuccess) {
     return (
-      <div className="login-form-overlay" onClick={handleSuccessClose}>
-        <div className="login-form-modal" onClick={e => e.stopPropagation()}>
+      <div 
+        className="login-form-overlay" 
+        onClick={handleSuccessClose}
+        role="presentation"
+      >
+        <div 
+          className="login-form-modal" 
+          onClick={e => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="success-title"
+        >
           <div className="login-form-header">
-            <h2>Welcome Back! 👋</h2>
+            <h2 id="success-title">Welcome Back! 👋</h2>
             <button 
               className="close-button" 
               onClick={handleSuccessClose}
@@ -93,10 +115,20 @@ export function LoginForm({ onClose, onSuccess }: LoginFormProps) {
 
   // Form view
   return (
-    <div className="login-form-overlay" onClick={onClose}>
-      <div className="login-form-modal" onClick={e => e.stopPropagation()}>
+    <div 
+      className="login-form-overlay" 
+      onClick={onClose}
+      role="presentation"
+    >
+      <div 
+        className="login-form-modal" 
+        onClick={e => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="login-title"
+      >
         <div className="login-form-header">
-          <h2>Login</h2>
+          <h2 id="login-title">Login</h2>
           <button 
             className="close-button" 
             onClick={onClose}
