@@ -1,8 +1,7 @@
 /**
  * Registration form component
  */
-import { useState } from 'react';
-import type { FormEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../application';
 import type { RegisterRequest } from '../../../domain/entities';
 
@@ -22,7 +21,7 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
 
@@ -77,13 +76,35 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
     }));
   };
 
+  // Handle Escape key for accessibility
+  useEffect(() => {
+    const handleEscapeKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => document.removeEventListener('keydown', handleEscapeKey);
+  }, [onClose]);
+
   // Success view
   if (isSuccess) {
     return (
-      <div className="register-form-overlay" onClick={handleSuccessClose}>
-        <div className="register-form-modal" onClick={e => e.stopPropagation()}>
+      <div 
+        className="register-form-overlay" 
+        onClick={handleSuccessClose}
+        role="presentation"
+      >
+        <div 
+          className="register-form-modal" 
+          onClick={e => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="success-title"
+        >
           <div className="register-form-header">
-            <h2>Registration Successful! 🎉</h2>
+            <h2 id="success-title">Registration Successful! 🎉</h2>
             <button 
               className="close-button" 
               onClick={handleSuccessClose}
@@ -116,10 +137,20 @@ export function RegisterForm({ onClose, onSuccess }: RegisterFormProps) {
   }
 
   return (
-    <div className="register-form-overlay" onClick={onClose}>
-      <div className="register-form-modal" onClick={e => e.stopPropagation()}>
+    <div 
+      className="register-form-overlay" 
+      onClick={onClose}
+      role="presentation"
+    >
+      <div 
+        className="register-form-modal" 
+        onClick={e => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="register-title"
+      >
         <div className="register-form-header">
-          <h2>Register</h2>
+          <h2 id="register-title">Register</h2>
           <button 
             className="close-button" 
             onClick={onClose}
