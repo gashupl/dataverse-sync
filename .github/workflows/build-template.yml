@@ -47,7 +47,8 @@ jobs:
       VSTEST_CONSOLE: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe
       SOLUTION_NAME: DataverseSync
       SOLUTION_FOLDER: solutions
-      FUNCTIONS_PACKAGE_NAME: DataverseSyncEngine
+      ENGINE_FUNCTIONS_PACKAGE_NAME: DataverseSyncEngine
+      PORTAL_API_FUNCTIONS_PACKAGE_NAME: DataverseSyncPortalAPI
 
     steps:
       - name: Checkout repository
@@ -224,23 +225,44 @@ jobs:
           path: ${{ env.SOLUTION_NAME }}_managed.zip
           retention-days: 14
 
-      - name: Publish Azure Functions project
+      - name: Publish Azure Functions Engine project
         if: ${{ inputs.artifacts-build-upload }}
         run: |
           $functionsProject = "src\server\Pg.DataverseSync.Engine\Pg.DataverseSync.Engine.Functions\Pg.DataverseSync.Engine.Functions.csproj"
           dotnet publish $functionsProject -c Release -o publish\azure-functions --no-build
 
-      - name: Create Azure Functions deployment package
+      - name: Create Azure Functions Engine deployment package
         if: ${{ inputs.artifacts-build-upload }}
         run: |
           $publishPath = "publish\azure-functions"
-          $zipPath = "${{ env.FUNCTIONS_PACKAGE_NAME }}.zip"
+          $zipPath = "${{ env.ENGINE_FUNCTIONS_PACKAGE_NAME }}.zip"
           Compress-Archive -Path "$publishPath\*" -DestinationPath $zipPath -Force
         
-      - name: Upload Azure Functions deployment artifact
+      - name: Upload Azure Functions Engine deployment artifact
         if: ${{ inputs.artifacts-build-upload }}
         uses: actions/upload-artifact@v4
         with:
-          name: DataverseSyncEngine
-          path: ${{ env.FUNCTIONS_PACKAGE_NAME }}.zip
+          name: ${{ env.ENGINE_FUNCTIONS_PACKAGE_NAME }}
+          path: ${{ env.ENGINE_FUNCTIONS_PACKAGE_NAME }}.zip
+          retention-days: 14
+
+      - name: Publish Azure Functions Portal API project
+        if: ${{ inputs.artifacts-build-upload }}
+        run: |
+          $functionsProject = "src\server\Pg.DataverseSync.Api\Pg.DataverseSync.Api\Pg.DataverseSync.Api.csproj"
+          dotnet publish $functionsProject -c Release -o publish\azure-functions --no-build
+
+      - name: Create Azure Functions Portal API deployment package
+        if: ${{ inputs.artifacts-build-upload }}
+        run: |
+          $publishPath = "publish\azure-functions"
+          $zipPath = "${{ env.PORTAL_API_FUNCTIONS_PACKAGE_NAME }}.zip"
+          Compress-Archive -Path "$publishPath\*" -DestinationPath $zipPath -Force
+        
+      - name: Upload Azure Functions Portal API deployment artifact
+        if: ${{ inputs.artifacts-build-upload }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PORTAL_API_FUNCTIONS_PACKAGE_NAME  }}
+          path: ${{ env.PORTAL_API_FUNCTIONS_PACKAGE_NAME  }}.zip
           retention-days: 14
