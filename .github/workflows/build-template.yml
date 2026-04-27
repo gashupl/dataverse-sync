@@ -49,6 +49,7 @@ jobs:
       SOLUTION_FOLDER: solutions
       ENGINE_FUNCTIONS_PACKAGE_NAME: DataverseSyncEngine
       PORTAL_API_FUNCTIONS_PACKAGE_NAME: DataverseSyncPortalAPI
+      BUILD_RETENTION_DAYS: 14
 
     steps:
       - name: Checkout repository
@@ -223,7 +224,7 @@ jobs:
         with:
           name: DataverseSyncSolution
           path: ${{ env.SOLUTION_NAME }}_managed.zip
-          retention-days: 14
+          retention-days: ${{ env.BUILD_RETENTION_DAYS }}
 
       - name: Publish Azure Functions Engine project
         if: ${{ inputs.artifacts-build-upload }}
@@ -244,7 +245,7 @@ jobs:
         with:
           name: ${{ env.ENGINE_FUNCTIONS_PACKAGE_NAME }}
           path: ${{ env.ENGINE_FUNCTIONS_PACKAGE_NAME }}.zip
-          retention-days: 14
+          retention-days: ${{ env.BUILD_RETENTION_DAYS }}
 
       - name: Publish Azure Functions Portal API project
         if: ${{ inputs.artifacts-build-upload }}
@@ -265,4 +266,13 @@ jobs:
         with:
           name: ${{ env.PORTAL_API_FUNCTIONS_PACKAGE_NAME  }}
           path: ${{ env.PORTAL_API_FUNCTIONS_PACKAGE_NAME  }}.zip
-          retention-days: 14
+          retention-days: ${{ env.BUILD_RETENTION_DAYS }}
+
+      - name: Upload Portal Web build artifact
+        if: ${{ inputs.artifacts-build-upload }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: portal-web-build
+          path: ${{ env.PORTAL_WEB_FOLDER }}/dist  # Adjust path based on your build output directory
+          retention-days: ${{ env.BUILD_RETENTION_DAYS }}
+          if-no-files-found: error
