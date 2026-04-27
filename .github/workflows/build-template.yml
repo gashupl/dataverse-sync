@@ -49,6 +49,7 @@ jobs:
       SOLUTION_FOLDER: solutions
       ENGINE_FUNCTIONS_PACKAGE_NAME: DataverseSyncEngine
       PORTAL_API_FUNCTIONS_PACKAGE_NAME: DataverseSyncPortalAPI
+      PORTAL_PACKAGE_NAME: DataverseSyncPortalWeb
       BUILD_RETENTION_DAYS: 14
 
     steps:
@@ -272,7 +273,7 @@ jobs:
         if: ${{ inputs.artifacts-build-upload }}
         uses: actions/upload-artifact@v4
         with:
-          name: portal-web-build
+          name: ${{ env.PORTAL_PACKAGE_NAME }}
           path: ${{ env.PORTAL_WEB_FOLDER }}/dist  # Adjust path based on your build output directory
           retention-days: ${{ env.BUILD_RETENTION_DAYS }}
           if-no-files-found: error
