@@ -169,7 +169,7 @@ jobs:
       - name: Convert Code Coverage to OpenCover format
         if: ${{ inputs.run-tests && inputs.run-sonar-analysis }}
         run: |
-          dotnet tool install --global ReportGenerator
+          dotnet tool install --global dotnet-reportgenerator-globaltool
           reportgenerator -reports:"TestResults/**/*.coverage" -targetdir:"coverage" -reporttypes:"OpenCoverage"
           if (Test-Path "coverage/coverage.opencover.xml") {
             Copy-Item "coverage/coverage.opencover.xml" "TestResults/coverage.opencover.xml"
