@@ -154,7 +154,7 @@ jobs:
           foreach ($path in $paths) {
             $testAssemblies = Get-ChildItem -Path $path -Recurse -ErrorAction SilentlyContinue
             foreach ($assembly in $testAssemblies) {
-              & "${{ env.VSTEST_CONSOLE }}" $assembly.FullName /Logger:trx /Collect:"XPlat Code Coverage" /ResultsDirectory:TestResults
+              & "${{ env.VSTEST_CONSOLE }}" $assembly.FullName /Logger:trx /Collect:"Code Coverage" /ResultsDirectory:TestResults
             }
           }
 
