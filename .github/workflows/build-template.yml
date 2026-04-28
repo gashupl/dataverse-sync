@@ -166,6 +166,15 @@ jobs:
           path: "TestResults/**/*.trx"
           reporter: dotnet-trx
 
+      - name: Convert Code Coverage to OpenCover format
+        if: ${{ inputs.run-tests && inputs.run-sonar-analysis }}
+        run: |
+          dotnet tool install --global ReportGenerator
+          reportgenerator -reports:"TestResults/**/*.coverage" -targetdir:"coverage" -reporttypes:"OpenCoverage"
+          if (Test-Path "coverage/coverage.opencover.xml") {
+            Copy-Item "coverage/coverage.opencover.xml" "TestResults/coverage.opencover.xml"
+          }
+
       - name: Run SonarQube Analysis (without quality gate wait)
         if: ${{ inputs.run-sonar-analysis && !inputs.sonar-qualitygate-wait }}
         shell: powershell
@@ -176,7 +185,7 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.sources="src\server,src\client" `
             /d:sonar.coverage.exclusions="src/client/**" `
-            /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+            /d:sonar.cs.opencover.reportsPaths="TestResults/coverage.opencover.xml"
           # Re-build Dataverse solution for SonarQube analysis
           msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
           
@@ -197,7 +206,7 @@ jobs:
             /d:sonar.coverage.exclusions="src/client/**" `
             /d:sonar.qualitygate.wait=true `
             /d:sonar.qualitygate.timeout=3000 `
-            /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+            /d:sonar.cs.opencover.reportsPaths="TestResults/coverage.opencover.xml"
           # Re-build Dataverse solution for SonarQube analysis
           msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
           
