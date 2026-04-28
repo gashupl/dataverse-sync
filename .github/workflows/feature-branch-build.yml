@@ -18,3 +18,4 @@ jobs:
       node-version: '24'
       run-tests: true
       run-sonar-analysis: true
+      artifacts-build-upload: true #Temporary, must be removed before pull request
