@@ -170,7 +170,7 @@ jobs:
         if: ${{ inputs.run-tests && inputs.run-sonar-analysis }}
         run: |
           dotnet tool install --global dotnet-reportgenerator-globaltool
-          reportgenerator -reports:"TestResults/**/*.coverage" -targetdir:"coverage" -reporttypes:"OpenCoverage"
+          reportgenerator -reports:"TestResults/**/*.coverage" -targetdir:"coverage" -reporttypes:"OpenCover"
           if (Test-Path "coverage/coverage.opencover.xml") {
             Copy-Item "coverage/coverage.opencover.xml" "TestResults/coverage.opencover.xml"
           }
