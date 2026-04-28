@@ -169,10 +169,15 @@ jobs:
       - name: Convert Code Coverage to OpenCover format
         if: ${{ inputs.run-tests && inputs.run-sonar-analysis }}
         run: |
-          dotnet tool install --global dotnet-reportgenerator-globaltool
-          reportgenerator -reports:"TestResults/**/*.coverage" -targetdir:"coverage" -reporttypes:"OpenCover"
-          if (Test-Path "coverage/coverage.opencover.xml") {
-            Copy-Item "coverage/coverage.opencover.xml" "TestResults/coverage.opencover.xml"
+          $codeCoverageTool = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe"
+          $coverageFiles = Get-ChildItem -Path "TestResults" -Filter "*.coverage" -Recurse
+          foreach ($file in $coverageFiles) {
+            & $codeCoverageTool analyze /output:"$($file.DirectoryName)\$($file.BaseName).xml" "$($file.FullName)"
+          }
+          # Install dotnet-coverage to convert XML to OpenCover format
+          dotnet tool install --global dotnet-coverage
+          Get-ChildItem -Path "TestResults" -Filter "*.xml" -Recurse | ForEach-Object {
+            dotnet-coverage convert --input-format dynamiccodecoverage --output-format opencover --output "TestResults/coverage.opencover.xml" "$($_.FullName)"
           }
 
       - name: Run SonarQube Analysis (without quality gate wait)
