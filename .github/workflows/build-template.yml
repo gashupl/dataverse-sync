@@ -143,6 +143,14 @@ jobs:
       - name: Build Portal API solution
         run: dotnet build ${{ env.VS_PORTAL_API_SOLUTION_PATH }} -c Release
 
+      - name: Clean test results directory
+        if: ${{ inputs.run-tests }}
+        shell: powershell
+        run: |
+          if (Test-Path -Path TestResults) {
+            Remove-Item -Path TestResults -Recurse -Force
+          }
+
       - name: Run xUnit tests with Visual Studio 2022 Test Runner
         if: ${{ inputs.run-tests }}
         run: |
