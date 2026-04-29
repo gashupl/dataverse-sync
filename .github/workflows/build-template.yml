@@ -172,7 +172,7 @@ jobs:
           dotnet tool install --global dotnet-coverage
           $coverageFiles = Get-ChildItem -Path "TestResults" -Filter "*.coverage" -Recurse
           foreach ($file in $coverageFiles) {
-            dotnet-coverage merge -o "TestResults/coverage.opencover.xml" -f xml "$($file.FullName)"
+            dotnet-coverage merge -o "TestResults\coverage.opencover.xml" -f xml "$($file.FullName)"
             break
           }
 
@@ -186,7 +186,7 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.sources="src\server,src\client" `
             /d:sonar.coverage.exclusions="src/client/**" `
-            /d:sonar.cs.opencover.reportsPaths="TestResults/coverage.opencover.xml"
+            /d:sonar.cs.opencover.reportsPaths="TestResults\coverage.opencover.xml"
           # Re-build Dataverse solution for SonarQube analysis
           msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
           
@@ -207,7 +207,7 @@ jobs:
             /d:sonar.coverage.exclusions="src/client/**" `
             /d:sonar.qualitygate.wait=true `
             /d:sonar.qualitygate.timeout=3000 `
-            /d:sonar.cs.opencover.reportsPaths="TestResults/coverage.opencover.xml"
+            /d:sonar.cs.opencover.reportsPaths="TestResults\coverage.opencover.xml"
           # Re-build Dataverse solution for SonarQube analysis
           msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
           
