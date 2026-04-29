@@ -172,7 +172,7 @@ jobs:
           dotnet tool install --global dotnet-coverage
           $coverageFiles = Get-ChildItem -Path "TestResults" -Filter "*.coverage" -Recurse
           foreach ($file in $coverageFiles) {
-            dotnet-coverage convert --input-format dynamiccodecoverage --output-format opencover --output "TestResults/coverage.opencover.xml" "$($file.FullName)"
+            dotnet-coverage merge -o "TestResults/coverage.opencover.xml" -f xml "$($file.FullName)"
             break
           }
 
