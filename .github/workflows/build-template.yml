@@ -174,14 +174,15 @@ jobs:
           path: "TestResults/**/*.trx"
           reporter: dotnet-trx
 
-      - name: Convert Code Coverage to OpenCover format
+      - name: Convert VS coverage to OpenCover format
         if: ${{ inputs.run-tests && inputs.run-sonar-analysis }}
+        shell: powershell
         run: |
           dotnet tool install --global dotnet-coverage
           $coverageFiles = Get-ChildItem -Path "TestResults" -Filter "*.coverage" -Recurse
-          foreach ($file in $coverageFiles) {
-            dotnet-coverage merge -o "TestResults\coverage.opencover.xml" -f xml "$($file.FullName)"
-            break
+          if ($coverageFiles.Count -gt 0) {
+            $coveragePaths = $coverageFiles | ForEach-Object { $_.FullName }
+            dotnet-coverage report --format opencover --output "TestResults\coverage.opencover.xml" $coveragePaths
           }
 
       - name: Run SonarQube Analysis (without quality gate wait)
