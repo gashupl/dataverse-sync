@@ -111,7 +111,7 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.sources="src\server,src\client" `
             /d:sonar.coverage.exclusions="src/client/**" `
-            /d:sonar.cs.opencover.reportsPaths="TestResults\coverage.opencover.xml"
+            /d:sonar.cs.vscoveragexml.reportsPaths="TestResults\coverage.xml"
 
       - name: Run SonarQube Analysis (with quality gate wait)
         if: ${{ inputs.run-sonar-analysis && inputs.sonar-qualitygate-wait }}
@@ -125,7 +125,7 @@ jobs:
             /d:sonar.coverage.exclusions="src/client/**" `
             /d:sonar.qualitygate.wait=true `
             /d:sonar.qualitygate.timeout=3000 `
-            /d:sonar.cs.opencover.reportsPaths="TestResults\coverage.opencover.xml"
+            /d:sonar.cs.vscoveragexml.reportsPaths="TestResults\coverage.xml"
 
       - name: Install npm dependencies (PCF)
         run: |
@@ -192,16 +192,13 @@ jobs:
           path: "TestResults/**/*.trx"
           reporter: dotnet-trx
 
-      - name: Convert coverage to OpenCover format
+      - name: Merge coverage files
         run: |
           dotnet tool install --global dotnet-coverage
-
           $coverageFiles = Get-ChildItem -Path "TestResults" -Filter "*.coverage" -Recurse
           $fileArgs = ($coverageFiles | ForEach-Object { "`"$($_.FullName)`"" }) -join " "
-
-          # Merge ALL files, output as opencover (not plain xml)
-          Invoke-Expression "dotnet-coverage merge -o `"TestResults\coverage.opencover.xml`" -f opencover $fileArgs"
-
+          Invoke-Expression "dotnet-coverage merge -o `"TestResults\coverage.xml`" -f xml $fileArgs"
+          
       - name: End SonarQube analysis
         if: ${{ inputs.run-sonar-analysis }}
         run: |
