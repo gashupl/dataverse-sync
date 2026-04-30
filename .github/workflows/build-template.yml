@@ -101,6 +101,32 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
   
+      - name: Run SonarQube Analysis (without quality gate wait)
+        if: ${{ inputs.run-sonar-analysis && !inputs.sonar-qualitygate-wait }}
+        shell: powershell
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin `
+            /k:"gashupl_dataverse-sync" `
+            /o:"gashupl" `
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.sources="src\server,src\client" `
+            /d:sonar.coverage.exclusions="src/client/**" `
+            /d:sonar.cs.vscoveragexml.reportsPaths="TestResults\coverage.xml"
+
+      - name: Run SonarQube Analysis (with quality gate wait)
+        if: ${{ inputs.run-sonar-analysis && inputs.sonar-qualitygate-wait }}
+        shell: powershell
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin `
+            /k:"gashupl_dataverse-sync" `
+            /o:"gashupl" `
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.sources="src\server,src\client" `
+            /d:sonar.coverage.exclusions="src/client/**" `
+            /d:sonar.qualitygate.wait=true `
+            /d:sonar.qualitygate.timeout=3000 `
+            /d:sonar.cs.vscoveragexml.reportsPaths="TestResults\coverage.xml"
+
       - name: Install npm dependencies (PCF)
         run: |
           cd ${{ env.PCF_CONTROL_FOLDER }}\TableSelector
@@ -143,14 +169,6 @@ jobs:
       - name: Build Portal API solution
         run: dotnet build ${{ env.VS_PORTAL_API_SOLUTION_PATH }} -c Release
 
-      - name: Clean test results directory
-        if: ${{ inputs.run-tests }}
-        shell: powershell
-        run: |
-          if (Test-Path -Path TestResults) {
-            Remove-Item -Path TestResults -Recurse -Force
-          }
-
       - name: Run xUnit tests with Visual Studio 2022 Test Runner
         if: ${{ inputs.run-tests }}
         run: |
@@ -174,57 +192,18 @@ jobs:
           path: "TestResults/**/*.trx"
           reporter: dotnet-trx
 
-      - name: Convert VS coverage to OpenCover format
-        if: ${{ inputs.run-tests && inputs.run-sonar-analysis }}
-        shell: powershell
+      - name: Merge coverage files
         run: |
           dotnet tool install --global dotnet-coverage
           $coverageFiles = Get-ChildItem -Path "TestResults" -Filter "*.coverage" -Recurse
-          if ($coverageFiles.Count -gt 0) {
-            $coveragePaths = $coverageFiles | ForEach-Object { $_.FullName }
-            dotnet-coverage report --format opencover --output "TestResults\coverage.opencover.xml" $coveragePaths
-          }
-
-      - name: Run SonarQube Analysis (without quality gate wait)
-        if: ${{ inputs.run-sonar-analysis && !inputs.sonar-qualitygate-wait }}
-        shell: powershell
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin `
-            /k:"gashupl_dataverse-sync" `
-            /o:"gashupl" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.sources="src\server,src\client" `
-            /d:sonar.coverage.exclusions="src/client/**" `
-            /d:sonar.cs.opencover.reportsPaths="TestResults\coverage.opencover.xml"
-          # Re-build Dataverse solution for SonarQube analysis
-          msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
+          $fileArgs = ($coverageFiles | ForEach-Object { "`"$($_.FullName)`"" }) -join " "
+          Invoke-Expression "dotnet-coverage merge -o `"TestResults\coverage.xml`" -f xml $fileArgs"
           
-          # Re-build Azure solution for SonarQube analysis
-          dotnet build ${{ env.VS_ENGINE_SOLUTION_PATH }} -c Release
-
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
-      - name: Run SonarQube Analysis (with quality gate wait)
-        if: ${{ inputs.run-sonar-analysis && inputs.sonar-qualitygate-wait }}
-        shell: powershell
+      - name: End SonarQube analysis
+        if: ${{ inputs.run-sonar-analysis }}
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin `
-            /k:"gashupl_dataverse-sync" `
-            /o:"gashupl" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.sources="src\server,src\client" `
-            /d:sonar.coverage.exclusions="src/client/**" `
-            /d:sonar.qualitygate.wait=true `
-            /d:sonar.qualitygate.timeout=3000 `
-            /d:sonar.cs.opencover.reportsPaths="TestResults\coverage.opencover.xml"
-          # Re-build Dataverse solution for SonarQube analysis
-          msbuild ${{ env.VS_DATAVERSE_SOLUTION_PATH }} /p:Configuration=Release /p:Platform="Any CPU"
-          
-          # Re-build Azure solution for SonarQube analysis
-          dotnet build ${{ env.VS_ENGINE_SOLUTION_PATH }} -c Release
-
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-
+        
       - name: Setup Power Platform CLI
         if: ${{ inputs.artifacts-build-upload }}
         uses: microsoft/powerplatform-actions/actions-install@v1
