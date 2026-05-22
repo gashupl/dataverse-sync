@@ -97,8 +97,10 @@
   <ItemGroup>
     <Compile Include="DataverseContext.cs" />
     <Compile Include="Entities\pg_synctable.cs" />
+    <Compile Include="Entities\SdkMessageProcessingStep.cs" />
     <Compile Include="EntityOptionSetEnum.cs" />
     <Compile Include="Messages\pg_getunsynchronizedtables.cs" />
+    <Compile Include="OptionSets\ComponentState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

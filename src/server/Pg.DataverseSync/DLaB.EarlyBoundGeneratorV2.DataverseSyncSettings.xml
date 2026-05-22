@@ -28,7 +28,8 @@
     <CreateOneFilePerOptionSet>true</CreateOneFilePerOptionSet>
     <DeleteFilesFromOutputFolders>true</DeleteFilesFromOutputFolders>
     <EntitiesToSkip />
-    <EntitiesWhitelist>pg_synctable</EntitiesWhitelist>
+    <EntitiesWhitelist>pg_synctable|
+sdkmessageprocessingstep</EntitiesWhitelist>
     <EntityAttributeSpecifiedNames />
     <EntityClassNameOverrides />
     <EntityPrefixesToSkip />
@@ -144,7 +145,7 @@ VoiceMail</TokenCapitalizationOverrides>
   <Namespace>Pg.DataverseSync.Model</Namespace>
   <ServiceContextName>DataverseContext</ServiceContextName>
   <SuppressGeneratedCodeAttribute>true</SuppressGeneratedCodeAttribute>
-  <SettingsVersion>2.2025.4.20</SettingsVersion>
+  <SettingsVersion>2.2025.8.26</SettingsVersion>
   <UpdateBuilderSettingsJson>true</UpdateBuilderSettingsJson>
   <Version>2.2025.8.26</Version>
 </Config>

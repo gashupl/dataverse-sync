@@ -30,6 +30,17 @@ namespace Pg.DataverseSync.Model
 				return this.CreateQuery<Pg.DataverseSync.Model.pg_synctable>();
 			}
 		}
+		
+		/// <summary>
+		/// Gets a binding to the set of all <see cref="Pg.DataverseSync.Model.SdkMessageProcessingStep"/> entities.
+		/// </summary>
+		public System.Linq.IQueryable<Pg.DataverseSync.Model.SdkMessageProcessingStep> SdkMessageProcessingStepSet
+		{
+			get
+			{
+				return this.CreateQuery<Pg.DataverseSync.Model.SdkMessageProcessingStep>();
+			}
+		}
 	}
 	
 	/// <summary>

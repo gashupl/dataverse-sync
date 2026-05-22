@@ -120,7 +120,8 @@
   "emitFieldsClasses": true,
   "emitVirtualAttributes": true,
   "entityNamesFilter": [
-    "pg_synctable"
+    "pg_synctable",
+    "sdkmessageprocessingstep"
   ],
   "entityTypesFolder": "Entities",
   "generateActions": true,
