@@ -217,6 +217,7 @@ namespace Pg.DataverseSync.Model
 			public const string Rank = "rank";
 			public const string RuntimeIntegrationProperties = "runtimeintegrationproperties";
 			public const string SdkMessageFilterId = "sdkmessagefilterid";
+			public const string sdkmessagefilterid_sdkmessageprocessingstep = "sdkmessagefilterid_sdkmessageprocessingstep";
 			public const string SdkMessageId = "sdkmessageid";
 			public const string SdkMessageIdName = "sdkmessageidname";
 			public const string SdkMessageProcessingStepId = "sdkmessageprocessingstepid";
@@ -1416,6 +1417,25 @@ namespace Pg.DataverseSync.Model
 			get
 			{
 				return this.GetAttributeValue<System.Nullable<long>>("versionnumber");
+			}
+		}
+		
+		/// <summary>
+		/// N:1 sdkmessagefilterid_sdkmessageprocessingstep
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessagefilterid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("sdkmessagefilterid_sdkmessageprocessingstep")]
+		public Pg.DataverseSync.Model.SdkMessageFilter sdkmessagefilterid_sdkmessageprocessingstep
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetRelatedEntity<Pg.DataverseSync.Model.SdkMessageFilter>("sdkmessagefilterid_sdkmessageprocessingstep", null);
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetRelatedEntity<Pg.DataverseSync.Model.SdkMessageFilter>("sdkmessagefilterid_sdkmessageprocessingstep", null, value);
 			}
 		}
 		

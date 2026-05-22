@@ -32,6 +32,17 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
+		/// Gets a binding to the set of all <see cref="Pg.DataverseSync.Model.SdkMessageFilter"/> entities.
+		/// </summary>
+		public System.Linq.IQueryable<Pg.DataverseSync.Model.SdkMessageFilter> SdkMessageFilterSet
+		{
+			get
+			{
+				return this.CreateQuery<Pg.DataverseSync.Model.SdkMessageFilter>();
+			}
+		}
+		
+		/// <summary>
 		/// Gets a binding to the set of all <see cref="Pg.DataverseSync.Model.SdkMessageProcessingStep"/> entities.
 		/// </summary>
 		public System.Linq.IQueryable<Pg.DataverseSync.Model.SdkMessageProcessingStep> SdkMessageProcessingStepSet

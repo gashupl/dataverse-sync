@@ -29,6 +29,7 @@
     <DeleteFilesFromOutputFolders>true</DeleteFilesFromOutputFolders>
     <EntitiesToSkip />
     <EntitiesWhitelist>pg_synctable|
+sdkmessagefilter|
 sdkmessageprocessingstep</EntitiesWhitelist>
     <EntityAttributeSpecifiedNames />
     <EntityClassNameOverrides />
