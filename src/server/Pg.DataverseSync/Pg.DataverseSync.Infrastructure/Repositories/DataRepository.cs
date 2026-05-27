@@ -1,12 +1,15 @@
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
+using Microsoft.Xrm.Sdk.Query;
+using Pg.DataverseSync.Domain.Dto;
+using Pg.DataverseSync.Domain.Repositories;
+using Pg.DataverseSync.Infrastructure.Core;
 using Pg.DataverseSync.Model;
 using System;
 using System.Collections.Generic;
-using Pg.DataverseSync.Domain.Repositories;
 using System.Linq;
-using Pg.DataverseSync.Domain.Dto;
-using Microsoft.Xrm.Sdk.Metadata;
-using Pg.DataverseSync.Infrastructure.Core;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace Pg.DataverseSync.Infrastructure.Repositories
 {
@@ -17,6 +20,11 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
         public DataRepository(IOrganizationServiceFactory orgSvcFactory)
         {
             _service = orgSvcFactory.CreateOrganizationService(null); 
+        }
+
+        public void CreateStep(SdkMessageProcessingStep step)
+        {
+            throw new NotImplementedException();
         }
 
         public List<pg_synctable> GetActiveSynchronizedTables()
@@ -38,13 +46,14 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
         {
             var tables = new List<Table>();
 
-            var request = new Microsoft.Xrm.Sdk.Messages.RetrieveAllEntitiesRequest
+            var request = new RetrieveAllEntitiesRequest
             {
                 EntityFilters = EntityFilters.Entity,
                 RetrieveAsIfPublished = true
             };
 
-            var response = (Microsoft.Xrm.Sdk.Messages.RetrieveAllEntitiesResponse)_service.Execute(request);
+            var a = _service.Execute(request); 
+            var response = (RetrieveAllEntitiesResponse)a;
 
             foreach (var entity in response.EntityMetadata)
             {
@@ -60,6 +69,38 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
             }
 
             return tables;
+        }
+
+        private bool StepAlreadyExists(Guid serviceEndpointId, string messageName, string entityName)
+        {
+            var messageFilterId = GetSdkMessageFilterId(messageName, entityName);
+
+            if (messageFilterId == null)
+                return false; 
+
+            using (var context = new DataverseContext(_service))
+            {
+                return context.SdkMessageProcessingStepSet
+                    .Where(st => st.EventHandler.Id == serviceEndpointId
+                              && st.EventHandler.LogicalName == "serviceendpoint"
+                              && st.SdkMessageFilterId.Id == messageFilterId)
+                    .Any();
+            }
+        }
+
+
+        private Guid? GetSdkMessageFilterId(string messageName, string entityName)
+        {
+            using (var context = new DataverseContext(_service))
+            {
+                var filter = context.SdkMessageFilterSet
+                    .Where(f => f.PrimaryObjectTypeCode == entityName
+                             && f.SdkMessageIdName == messageName)
+                    .Select(f => new SdkMessageFilter { Id = f.Id })
+                    .FirstOrDefault();
+
+                return filter?.Id;
+            }
         }
 
     }
