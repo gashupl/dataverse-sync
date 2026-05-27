@@ -1,4 +1,10 @@
 using FakeXrmEasy;
+using FakeXrmEasy.Abstractions;
+using FakeXrmEasy.Abstractions.Enums;
+using FakeXrmEasy.FakeMessageExecutors;
+using FakeXrmEasy.Middleware;
+using FakeXrmEasy.Middleware.Crud;
+using FakeXrmEasy.Middleware.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Pg.DataverseSync.Infrastructure.Core;
@@ -8,6 +14,7 @@ using Pg.DataverseSync.Model;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Web.Services.Description;
 using Xunit;
 
 namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
@@ -18,19 +25,49 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
 
         public DataRepositoryTests()
         {
-            _serviceFactory = InitDataServiceFactory();
+            IXrmFakedContext context = MiddlewareBuilder
+                .New()
+                .AddCrud()
+                .AddFakeMessageExecutors(Assembly.GetAssembly(typeof(AddListMembersListRequestExecutor)))
+                .AddExecutionMock<RetrieveAllEntitiesRequest>(req =>
+                 {
+                     var response = new RetrieveAllEntitiesResponse
+                     {
+                         Results = new ParameterCollection
+                         {
+                             ["EntityMetadata"] = new[]
+                             {
+                        new Microsoft.Xrm.Sdk.Metadata.EntityMetadata
+                        {
+                            LogicalName = "pg_standardtable",
+                            DisplayName = new Label("Standard Table", 1033),
+                            TableType = TableTypes.Standard
+                        },
+                        new Microsoft.Xrm.Sdk.Metadata.EntityMetadata
+                        {
+                            LogicalName = "pg_sampleelastictable",
+                            DisplayName = new Label("Elastic Table", 1033),
+                            TableType = TableTypes.Elastic
+                        }
+                    }
+                         }
+                     };
+                     return response;
+                 })
+
+                .UseCrud()
+                .UseMessages()
+                .SetLicense(FakeXrmEasyLicense.NonCommercial)
+                .Build();
+
+            _serviceFactory = InitDataServiceFactory(context);
         }
 
         [Fact]
         public void GetActiveSynchronizedTables_ReturnExpectedResults()
         {
             // Arrange
-            var context = new XrmFakedContext();
-            context.ProxyTypesAssembly = Assembly.GetAssembly(typeof(pg_synctable));
-
-            var service = _serviceFactory.CreateOrganizationService(null); 
-            var repository = new DataRepository(new FakeOrganizationServiceFactory(service));
-
+            var repository = new DataRepository(_serviceFactory);   
             // Act
             var result = repository.GetActiveSynchronizedTables();
 
@@ -43,37 +80,8 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
         [Fact]
         public void GetTablesFromMetadata_ReturnsExpectedTables()
         {
-            var context = new XrmFakedContext();
-            var service = context.GetFakedOrganizationService();
 
-            // Mock the Execute method for RetrieveAllEntitiesRequest
-            context.AddExecutionMock<RetrieveAllEntitiesRequest>(req =>
-            {
-                var response = new RetrieveAllEntitiesResponse
-                {
-                    Results = new ParameterCollection
-                    {
-                        ["EntityMetadata"] = new[]
-                        {
-                    new Microsoft.Xrm.Sdk.Metadata.EntityMetadata
-                    {
-                        LogicalName = "pg_standardtable",
-                        DisplayName = new Label("Standard Table", 1033),
-                        TableType = TableTypes.Standard
-                    },
-                    new Microsoft.Xrm.Sdk.Metadata.EntityMetadata
-                    {
-                        LogicalName = "pg_sampleelastictable",
-                        DisplayName = new Label("Elastic Table", 1033),
-                        TableType = TableTypes.Elastic
-                    }
-                }
-                    }
-                };
-                return response;
-            });
-
-            var repository = new DataRepository(new FakeOrganizationServiceFactory(service));
+            var repository = new DataRepository(_serviceFactory);
             var tables = repository.GetStandardTablesFromMetadata();
 
             Assert.NotNull(tables);
@@ -82,10 +90,9 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
         }
 
 
-        private IOrganizationServiceFactory InitDataServiceFactory()
+        private IOrganizationServiceFactory InitDataServiceFactory(IXrmFakedContext context)
         {
-            var context = new XrmFakedContext(); 
-            context.ProxyTypesAssembly = Assembly.GetAssembly(typeof(pg_synctable));
+            context.EnableProxyTypes(Assembly.GetAssembly(typeof(pg_synctable)));
     
             var record1 = new pg_synctable
             {
@@ -103,7 +110,7 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
 
 
             context.Initialize(new List<Entity>() { record1, record2 });
-            return new FakeOrganizationServiceFactory(context.GetFakedOrganizationService());
+            return new FakeOrganizationServiceFactory(context.GetOrganizationService());
 
         }
 

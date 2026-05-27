@@ -1,66 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
-    <OutputType>Library</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWPF>true</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+    <SignAssembly>False</SignAssembly>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <ProjectTypeGuids>{97515C8C-F6FC-4E50-BEAF-BE2F8E019164}</ProjectTypeGuids>
   </PropertyGroup>
+
+
+  <!--
+    NuGet pack and restore as MSBuild targets reference:
+    https://docs.microsoft.com/en-us/nuget/reference/msbuild-targets
+  -->
+  <PropertyGroup>
+    <PackageId>Pg.DataverseSync.Infrastructure.Tests</PackageId>
+    <Version>$(FileVersion)</Version>
+    <Authors>PiotrGaszewski</Authors>
+    <Company>OneDynamics</Company>
+    <Description></Description>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System.Activities" />
-    <Reference Include="System.Activities.Presentation" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.DirectoryServices.AccountManagement" />
-    <Reference Include="System.IdentityModel" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Services" />
-    <Reference Include="System.Workflow.Activities" />
-    <Reference Include="System.Workflow.ComponentModel" />
-    <Reference Include="System.Workflow.Runtime" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Net.Http" />
+    <PackageReference Include="FakeXrmEasy.v9" Version="2.3.1" />
+    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.*" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.PowerApps.MSBuild.Plugin" Version="1.*" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.*" PrivateAssets="All" />
+    <PackageReference Include="Moq" Version="4.20.69" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\Pg.DataverseSync.Domain\Pg.DataverseSync.Domain.csproj" />
+    <PackageReference Include="xunit" Version="2.5.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Pg.DataverseSync.Infrastructure\Pg.DataverseSync.Infrastructure.csproj" />
-    <ProjectReference Include="..\Pg.DataverseSync.Model\Pg.DataverseSync.Model.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Castle.Core" Version="4.3.1" />
-    <PackageReference Include="FakeItEasy" Version="6.0.0" />
-    <PackageReference Include="FakeXrmEasy.9" Version="1.58.1" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
-    <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.59" />
-    <PackageReference Include="Microsoft.CrmSdk.Deployment" Version="9.0.0.5" />
-    <PackageReference Include="Microsoft.CrmSdk.Workflow" Version="9.0.0.5" />
-    <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.0.0.5" />
-    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="2.22.302111727" />
-    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="17.8.0" />
-    <PackageReference Include="NuGet.Frameworks" Version="6.5.0" />
-    <PackageReference Include="System.Buffers" Version="4.5.1" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
-    <PackageReference Include="System.Memory" Version="4.5.5" />
-    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
-    <PackageReference Include="System.Reflection.Metadata" Version="1.6.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.10.3" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.10.3" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.5" />
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="xunit" Version="2.6.3" />
-    <PackageReference Include="xunit.abstractions" Version="2.0.3" />
-    <PackageReference Include="xunit.analyzers" Version="1.7.0" />
-    <PackageReference Include="xunit.assert" Version="2.6.3" />
-    <PackageReference Include="xunit.core" Version="2.6.3" />
-    <PackageReference Include="xunit.extensibility.core" Version="2.6.3" />
-    <PackageReference Include="xunit.extensibility.execution" Version="2.6.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.5" />
   </ItemGroup>
 </Project>
