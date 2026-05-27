@@ -1,5 +1,6 @@
 using Pg.DataverseSync.Domain.Dto;
 using Pg.DataverseSync.Model;
+using System;
 using System.Collections.Generic;
 
 namespace Pg.DataverseSync.Domain.Repositories
@@ -10,7 +11,9 @@ namespace Pg.DataverseSync.Domain.Repositories
         List<Table> GetStandardTablesFromMetadata();
         List<pg_synctable> GetActiveSynchronizedTables();
 
-        void CreateStep(SdkMessageProcessingStep step); 
+        void CreateStep(SdkMessageProcessingStep step);
+
+        bool StepExists(Guid serviceEndpointId, string messageName, string entityName); 
 
 
     }

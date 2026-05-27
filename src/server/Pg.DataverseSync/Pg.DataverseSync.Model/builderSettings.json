@@ -121,6 +121,7 @@
   "emitVirtualAttributes": true,
   "entityNamesFilter": [
     "pg_synctable",
+    "sdkmessage",
     "sdkmessagefilter",
     "sdkmessageprocessingstep"
   ],

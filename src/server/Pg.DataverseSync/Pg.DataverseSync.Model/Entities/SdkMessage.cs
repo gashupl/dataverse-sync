@@ -5,19 +5,22 @@ namespace Pg.DataverseSync.Model
 	
 	
 	/// <summary>
-	/// Filter that defines which SDK messages are valid for each type of entity.
+	/// Message that is supported by the SDK.
 	/// </summary>
 	[System.Runtime.Serialization.DataContractAttribute()]
-	[Microsoft.Xrm.Sdk.Client.EntityLogicalNameAttribute("sdkmessagefilter")]
-	public partial class SdkMessageFilter : Microsoft.Xrm.Sdk.Entity
+	[Microsoft.Xrm.Sdk.Client.EntityLogicalNameAttribute("sdkmessage")]
+	public partial class SdkMessage : Microsoft.Xrm.Sdk.Entity
 	{
 		
 		/// <summary>
-		/// Available fields, a the time of codegen, for the sdkmessagefilter entity
+		/// Available fields, a the time of codegen, for the sdkmessage entity
 		/// </summary>
 		public partial class Fields
 		{
+			public const string AutoTransact = "autotransact";
+			public const string AutoTransactName = "autotransactname";
 			public const string Availability = "availability";
+			public const string CategoryName = "categoryname";
 			public const string ComponentState = "componentstate";
 			public const string CreatedBy = "createdby";
 			public const string CreatedByName = "createdbyname";
@@ -26,12 +29,19 @@ namespace Pg.DataverseSync.Model
 			public const string CreatedOnBehalfByName = "createdonbehalfbyname";
 			public const string CreatedOnBehalfByYomiName = "createdonbehalfbyyominame";
 			public const string CustomizationLevel = "customizationlevel";
+			public const string ExecutePrivilegeName = "executeprivilegename";
+			public const string Expand = "expand";
+			public const string ExpandName = "expandname";
 			public const string IntroducedVersion = "introducedversion";
-			public const string IsCustomProcessingStepAllowed = "iscustomprocessingstepallowed";
-			public const string IsCustomProcessingStepAllowedName = "iscustomprocessingstepallowedname";
+			public const string IsActive = "isactive";
+			public const string IsActiveName = "isactivename";
 			public const string IsManaged = "ismanaged";
 			public const string IsManagedName = "ismanagedname";
-			public const string IsVisible = "isvisible";
+			public const string IsPrivate = "isprivate";
+			public const string IsPrivateName = "isprivatename";
+			public const string IsReadOnly = "isreadonly";
+			public const string IsReadOnlyName = "isreadonlyname";
+			public const string IsValidForExecuteAsync = "isvalidforexecuteasync";
 			public const string ModifiedBy = "modifiedby";
 			public const string ModifiedByName = "modifiedbyname";
 			public const string ModifiedOn = "modifiedon";
@@ -41,38 +51,34 @@ namespace Pg.DataverseSync.Model
 			public const string Name = "name";
 			public const string OrganizationId = "organizationid";
 			public const string OverwriteTime = "overwritetime";
-			public const string PrimaryObjectTypeCode = "primaryobjecttypecode";
-			public const string PrimaryObjectTypeCodeName = "primaryobjecttypecodename";
-			public const string RestrictionLevel = "restrictionlevel";
-			public const string SdkMessageFilterId = "sdkmessagefilterid";
-			public const string Id = "sdkmessagefilterid";
-			public const string sdkmessagefilterid_sdkmessageprocessingstep = "sdkmessagefilterid_sdkmessageprocessingstep";
-			public const string SdkMessageFilterIdUnique = "sdkmessagefilteridunique";
 			public const string SdkMessageId = "sdkmessageid";
+			public const string Id = "sdkmessageid";
 			public const string sdkmessageid_sdkmessagefilter = "sdkmessageid_sdkmessagefilter";
-			public const string SdkMessageIdName = "sdkmessageidname";
-			public const string SecondaryObjectTypeCode = "secondaryobjecttypecode";
-			public const string SecondaryObjectTypeCodeName = "secondaryobjecttypecodename";
+			public const string sdkmessageid_sdkmessageprocessingstep = "sdkmessageid_sdkmessageprocessingstep";
+			public const string SdkMessageIdUnique = "sdkmessageidunique";
 			public const string SolutionId = "solutionid";
+			public const string Template = "template";
+			public const string TemplateName = "templatename";
+			public const string ThrottleSettings = "throttlesettings";
 			public const string VersionNumber = "versionnumber";
 			public const string WorkflowSdkStepEnabled = "workflowsdkstepenabled";
 			public const string WorkflowSdkStepEnabledName = "workflowsdkstepenabledname";
 		}
 		
 		[System.Diagnostics.DebuggerNonUserCode()]
-		public SdkMessageFilter(System.Guid id) : 
+		public SdkMessage(System.Guid id) : 
 				base(EntityLogicalName, id)
 		{
 		}
 		
 		[System.Diagnostics.DebuggerNonUserCode()]
-		public SdkMessageFilter(string keyName, object keyValue) : 
+		public SdkMessage(string keyName, object keyValue) : 
 				base(EntityLogicalName, keyName, keyValue)
 		{
 		}
 		
 		[System.Diagnostics.DebuggerNonUserCode()]
-		public SdkMessageFilter(Microsoft.Xrm.Sdk.KeyAttributeCollection keyAttributes) : 
+		public SdkMessage(Microsoft.Xrm.Sdk.KeyAttributeCollection keyAttributes) : 
 				base(EntityLogicalName, keyAttributes)
 		{
 		}
@@ -81,22 +87,57 @@ namespace Pg.DataverseSync.Model
 		/// Default Constructor.
 		/// </summary>
 		[System.Diagnostics.DebuggerNonUserCode()]
-		public SdkMessageFilter() : 
+		public SdkMessage() : 
 				base(EntityLogicalName)
 		{
 		}
 		
-		public const string PrimaryIdAttribute = "sdkmessagefilterid";
+		public const string PrimaryIdAttribute = "sdkmessageid";
 		
 		public const string PrimaryNameAttribute = "name";
 		
-		public const string EntitySchemaName = "SdkMessageFilter";
+		public const string EntitySchemaName = "SdkMessage";
 		
-		public const string EntityLogicalName = "sdkmessagefilter";
+		public const string EntityLogicalName = "sdkmessage";
 		
-		public const string EntityLogicalCollectionName = "sdkmessagefilters";
+		public const string EntityLogicalCollectionName = "sdkmessages";
 		
-		public const string EntitySetName = "sdkmessagefilters";
+		public const string EntitySetName = "sdkmessages";
+		
+		/// <summary>
+		/// Information about whether the SDK message is automatically transacted.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("autotransact")]
+		public System.Nullable<bool> AutoTransact
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<System.Nullable<bool>>("autotransact");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("autotransact", value);
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("autotransactname")]
+		public string AutoTransactName
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				if (this.FormattedValues.Contains("autotransact"))
+				{
+					return this.FormattedValues["autotransact"];
+				}
+				else
+				{
+					return default(string);
+				}
+			}
+		}
 		
 		/// <summary>
 		/// Identifies where a method will be exposed. 0 - Server, 1 - Client, 2 - both.
@@ -117,6 +158,24 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
+		/// If this is a categorized method, this is the name, otherwise None.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("categoryname")]
+		public string CategoryName
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<string>("categoryname");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("categoryname", value);
+			}
+		}
+		
+		/// <summary>
 		/// For internal use only.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("componentstate")]
@@ -130,7 +189,7 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Unique identifier of the user who created the SDK message filter.
+		/// Unique identifier of the user who created the SDK message.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("createdby")]
 		public Microsoft.Xrm.Sdk.EntityReference CreatedBy
@@ -160,7 +219,7 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Date and time when the SDK message filter was created.
+		/// Date and time when the SDK message was created.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("createdon")]
 		public System.Nullable<System.DateTime> CreatedOn
@@ -173,7 +232,7 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Unique identifier of the delegate user who created the sdkmessagefilter.
+		/// Unique identifier of the delegate user who created the sdkmessage.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("createdonbehalfby")]
 		public Microsoft.Xrm.Sdk.EntityReference CreatedOnBehalfBy
@@ -225,7 +284,7 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Customization level of the SDK message filter.
+		/// Customization level of the SDK message.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("customizationlevel")]
 		public System.Nullable<int> CustomizationLevel
@@ -234,6 +293,59 @@ namespace Pg.DataverseSync.Model
 			get
 			{
 				return this.GetAttributeValue<System.Nullable<int>>("customizationlevel");
+			}
+		}
+		
+		/// <summary>
+		/// Name of the privilege that allows execution of the SDK message
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("executeprivilegename")]
+		public string ExecutePrivilegeName
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<string>("executeprivilegename");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("executeprivilegename", value);
+			}
+		}
+		
+		/// <summary>
+		/// Indicates whether the SDK message should have its requests expanded per primary entity defined in its filters.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("expand")]
+		public System.Nullable<bool> Expand
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<System.Nullable<bool>>("expand");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("expand", value);
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("expandname")]
+		public string ExpandName
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				if (this.FormattedValues.Contains("expand"))
+				{
+					return this.FormattedValues["expand"];
+				}
+				else
+				{
+					return default(string);
+				}
 			}
 		}
 		
@@ -256,32 +368,32 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Indicates whether a custom SDK message processing step is allowed.
+		/// Information about whether the SDK message is active.
 		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("iscustomprocessingstepallowed")]
-		public System.Nullable<bool> IsCustomProcessingStepAllowed
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("isactive")]
+		public System.Nullable<bool> IsActive
 		{
 			[System.Diagnostics.DebuggerNonUserCode()]
 			get
 			{
-				return this.GetAttributeValue<System.Nullable<bool>>("iscustomprocessingstepallowed");
+				return this.GetAttributeValue<System.Nullable<bool>>("isactive");
 			}
 			[System.Diagnostics.DebuggerNonUserCode()]
 			set
 			{
-				this.SetAttributeValue("iscustomprocessingstepallowed", value);
+				this.SetAttributeValue("isactive", value);
 			}
 		}
 		
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("iscustomprocessingstepallowedname")]
-		public string IsCustomProcessingStepAllowedName
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("isactivename")]
+		public string IsActiveName
 		{
 			[System.Diagnostics.DebuggerNonUserCode()]
 			get
 			{
-				if (this.FormattedValues.Contains("iscustomprocessingstepallowed"))
+				if (this.FormattedValues.Contains("isactive"))
 				{
-					return this.FormattedValues["iscustomprocessingstepallowed"];
+					return this.FormattedValues["isactive"];
 				}
 				else
 				{
@@ -321,20 +433,90 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Indicates whether the filter should be visible.
+		/// Indicates whether the SDK message is private.
 		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("isvisible")]
-		public System.Nullable<bool> IsVisible
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("isprivate")]
+		public System.Nullable<bool> IsPrivate
 		{
 			[System.Diagnostics.DebuggerNonUserCode()]
 			get
 			{
-				return this.GetAttributeValue<System.Nullable<bool>>("isvisible");
+				return this.GetAttributeValue<System.Nullable<bool>>("isprivate");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("isprivate", value);
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("isprivatename")]
+		public string IsPrivateName
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				if (this.FormattedValues.Contains("isprivate"))
+				{
+					return this.FormattedValues["isprivate"];
+				}
+				else
+				{
+					return default(string);
+				}
 			}
 		}
 		
 		/// <summary>
-		/// Unique identifier of the user who last modified the SDK message filter.
+		/// Identifies whether an SDK message will be ReadOnly or Read Write. false - ReadWrite, true - ReadOnly .
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("isreadonly")]
+		public System.Nullable<bool> IsReadOnly
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<System.Nullable<bool>>("isreadonly");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("isreadonly", value);
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("isreadonlyname")]
+		public string IsReadOnlyName
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				if (this.FormattedValues.Contains("isreadonly"))
+				{
+					return this.FormattedValues["isreadonly"];
+				}
+				else
+				{
+					return default(string);
+				}
+			}
+		}
+		
+		/// <summary>
+		/// For internal use only.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("isvalidforexecuteasync")]
+		public System.Nullable<bool> IsValidForExecuteAsync
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<System.Nullable<bool>>("isvalidforexecuteasync");
+			}
+		}
+		
+		/// <summary>
+		/// Unique identifier of the user who last modified the SDK message.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("modifiedby")]
 		public Microsoft.Xrm.Sdk.EntityReference ModifiedBy
@@ -364,7 +546,7 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Date and time when the SDK message filter was last modified.
+		/// Date and time when the SDK message was last modified.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("modifiedon")]
 		public System.Nullable<System.DateTime> ModifiedOn
@@ -377,7 +559,7 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Unique identifier of the delegate user who last modified the sdkmessagefilter.
+		/// Unique identifier of the delegate user who last modified the sdkmessage.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("modifiedonbehalfby")]
 		public Microsoft.Xrm.Sdk.EntityReference ModifiedOnBehalfBy
@@ -429,7 +611,7 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Name of the SDK message filter.
+		/// Name of the SDK message.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("name")]
 		public string Name
@@ -447,7 +629,7 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Unique identifier of the organization with which the SDK message filter is associated.
+		/// Unique identifier of the organization with which the SDK message is associated.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("organizationid")]
 		public Microsoft.Xrm.Sdk.EntityReference OrganizationId
@@ -473,68 +655,20 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Type of entity with which the SDK message filter is primarily associated.
+		/// Unique identifier of the SDK message entity.
 		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("primaryobjecttypecode")]
-		public string PrimaryObjectTypeCode
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessageid")]
+		public System.Nullable<System.Guid> SdkMessageId
 		{
 			[System.Diagnostics.DebuggerNonUserCode()]
 			get
 			{
-				return this.GetAttributeValue<string>("primaryobjecttypecode");
-			}
-		}
-		
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("primaryobjecttypecodename")]
-		public string PrimaryObjectTypeCodeName
-		{
-			[System.Diagnostics.DebuggerNonUserCode()]
-			get
-			{
-				if (this.FormattedValues.Contains("primaryobjecttypecode"))
-				{
-					return this.FormattedValues["primaryobjecttypecode"];
-				}
-				else
-				{
-					return default(string);
-				}
-			}
-		}
-		
-		/// <summary>
-		/// For internal use only.
-		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("restrictionlevel")]
-		public System.Nullable<int> RestrictionLevel
-		{
-			[System.Diagnostics.DebuggerNonUserCode()]
-			get
-			{
-				return this.GetAttributeValue<System.Nullable<int>>("restrictionlevel");
+				return this.GetAttributeValue<System.Nullable<System.Guid>>("sdkmessageid");
 			}
 			[System.Diagnostics.DebuggerNonUserCode()]
 			set
 			{
-				this.SetAttributeValue("restrictionlevel", value);
-			}
-		}
-		
-		/// <summary>
-		/// Unique identifier of the SDK message filter entity.
-		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessagefilterid")]
-		public System.Nullable<System.Guid> SdkMessageFilterId
-		{
-			[System.Diagnostics.DebuggerNonUserCode()]
-			get
-			{
-				return this.GetAttributeValue<System.Nullable<System.Guid>>("sdkmessagefilterid");
-			}
-			[System.Diagnostics.DebuggerNonUserCode()]
-			set
-			{
-				this.SetAttributeValue("sdkmessagefilterid", value);
+				this.SetAttributeValue("sdkmessageid", value);
 				if (value.HasValue)
 				{
 					base.Id = value.Value;
@@ -546,7 +680,7 @@ namespace Pg.DataverseSync.Model
 			}
 		}
 		
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessagefilterid")]
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessageid")]
 		public override System.Guid Id
 		{
 			[System.Diagnostics.DebuggerNonUserCode()]
@@ -557,85 +691,20 @@ namespace Pg.DataverseSync.Model
 			[System.Diagnostics.DebuggerNonUserCode()]
 			set
 			{
-				this.SdkMessageFilterId = value;
+				this.SdkMessageId = value;
 			}
 		}
 		
 		/// <summary>
-		/// Unique identifier of the SDK message filter.
+		/// Unique identifier of the SDK message.
 		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessagefilteridunique")]
-		public System.Nullable<System.Guid> SdkMessageFilterIdUnique
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessageidunique")]
+		public System.Nullable<System.Guid> SdkMessageIdUnique
 		{
 			[System.Diagnostics.DebuggerNonUserCode()]
 			get
 			{
-				return this.GetAttributeValue<System.Nullable<System.Guid>>("sdkmessagefilteridunique");
-			}
-		}
-		
-		/// <summary>
-		/// Unique identifier of the related SDK message.
-		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessageid")]
-		public Microsoft.Xrm.Sdk.EntityReference SdkMessageId
-		{
-			[System.Diagnostics.DebuggerNonUserCode()]
-			get
-			{
-				return this.GetAttributeValue<Microsoft.Xrm.Sdk.EntityReference>("sdkmessageid");
-			}
-			[System.Diagnostics.DebuggerNonUserCode()]
-			set
-			{
-				this.SetAttributeValue("sdkmessageid", value);
-			}
-		}
-		
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessageidname")]
-		public string SdkMessageIdName
-		{
-			[System.Diagnostics.DebuggerNonUserCode()]
-			get
-			{
-				if (this.FormattedValues.Contains("sdkmessageid"))
-				{
-					return this.FormattedValues["sdkmessageid"];
-				}
-				else
-				{
-					return default(string);
-				}
-			}
-		}
-		
-		/// <summary>
-		/// Type of entity with which the SDK message filter is secondarily associated.
-		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("secondaryobjecttypecode")]
-		public string SecondaryObjectTypeCode
-		{
-			[System.Diagnostics.DebuggerNonUserCode()]
-			get
-			{
-				return this.GetAttributeValue<string>("secondaryobjecttypecode");
-			}
-		}
-		
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("secondaryobjecttypecodename")]
-		public string SecondaryObjectTypeCodeName
-		{
-			[System.Diagnostics.DebuggerNonUserCode()]
-			get
-			{
-				if (this.FormattedValues.Contains("secondaryobjecttypecode"))
-				{
-					return this.FormattedValues["secondaryobjecttypecode"];
-				}
-				else
-				{
-					return default(string);
-				}
+				return this.GetAttributeValue<System.Nullable<System.Guid>>("sdkmessageidunique");
 			}
 		}
 		
@@ -652,6 +721,57 @@ namespace Pg.DataverseSync.Model
 			}
 		}
 		
+		/// <summary>
+		/// Indicates whether the SDK message is a template.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("template")]
+		public System.Nullable<bool> Template
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<System.Nullable<bool>>("template");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("template", value);
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("templatename")]
+		public string TemplateName
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				if (this.FormattedValues.Contains("template"))
+				{
+					return this.FormattedValues["template"];
+				}
+				else
+				{
+					return default(string);
+				}
+			}
+		}
+		
+		/// <summary>
+		/// For internal use only.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("throttlesettings")]
+		public string ThrottleSettings
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<string>("throttlesettings");
+			}
+		}
+		
+		/// <summary>
+		/// Number that identifies a specific revision of the SDK message. 
+		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("versionnumber")]
 		public System.Nullable<long> VersionNumber
 		{
@@ -693,39 +813,38 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// 1:N sdkmessagefilterid_sdkmessageprocessingstep
+		/// 1:N sdkmessageid_sdkmessagefilter
 		/// </summary>
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("sdkmessagefilterid_sdkmessageprocessingstep")]
-		public System.Collections.Generic.IEnumerable<Pg.DataverseSync.Model.SdkMessageProcessingStep> sdkmessagefilterid_sdkmessageprocessingstep
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("sdkmessageid_sdkmessagefilter")]
+		public System.Collections.Generic.IEnumerable<Pg.DataverseSync.Model.SdkMessageFilter> sdkmessageid_sdkmessagefilter
 		{
 			[System.Diagnostics.DebuggerNonUserCode()]
 			get
 			{
-				return this.GetRelatedEntities<Pg.DataverseSync.Model.SdkMessageProcessingStep>("sdkmessagefilterid_sdkmessageprocessingstep", null);
+				return this.GetRelatedEntities<Pg.DataverseSync.Model.SdkMessageFilter>("sdkmessageid_sdkmessagefilter", null);
 			}
 			[System.Diagnostics.DebuggerNonUserCode()]
 			set
 			{
-				this.SetRelatedEntities<Pg.DataverseSync.Model.SdkMessageProcessingStep>("sdkmessagefilterid_sdkmessageprocessingstep", null, value);
+				this.SetRelatedEntities<Pg.DataverseSync.Model.SdkMessageFilter>("sdkmessageid_sdkmessagefilter", null, value);
 			}
 		}
 		
 		/// <summary>
-		/// N:1 sdkmessageid_sdkmessagefilter
+		/// 1:N sdkmessageid_sdkmessageprocessingstep
 		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessageid")]
-		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("sdkmessageid_sdkmessagefilter")]
-		public Pg.DataverseSync.Model.SdkMessage sdkmessageid_sdkmessagefilter
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("sdkmessageid_sdkmessageprocessingstep")]
+		public System.Collections.Generic.IEnumerable<Pg.DataverseSync.Model.SdkMessageProcessingStep> sdkmessageid_sdkmessageprocessingstep
 		{
 			[System.Diagnostics.DebuggerNonUserCode()]
 			get
 			{
-				return this.GetRelatedEntity<Pg.DataverseSync.Model.SdkMessage>("sdkmessageid_sdkmessagefilter", null);
+				return this.GetRelatedEntities<Pg.DataverseSync.Model.SdkMessageProcessingStep>("sdkmessageid_sdkmessageprocessingstep", null);
 			}
 			[System.Diagnostics.DebuggerNonUserCode()]
 			set
 			{
-				this.SetRelatedEntity<Pg.DataverseSync.Model.SdkMessage>("sdkmessageid_sdkmessagefilter", null, value);
+				this.SetRelatedEntities<Pg.DataverseSync.Model.SdkMessageProcessingStep>("sdkmessageid_sdkmessageprocessingstep", null, value);
 			}
 		}
 		
@@ -734,7 +853,7 @@ namespace Pg.DataverseSync.Model
 		/// <param name="anonymousType">LINQ anonymous type.</param>
 		/// </summary>
 		[System.Diagnostics.DebuggerNonUserCode()]
-		public SdkMessageFilter(object anonymousType) : 
+		public SdkMessage(object anonymousType) : 
 				this()
 		{
             foreach (var p in anonymousType.GetType().GetProperties())
@@ -752,9 +871,9 @@ namespace Pg.DataverseSync.Model
                 {
                     case "id":
                         base.Id = (System.Guid)value;
-                        Attributes["sdkmessagefilterid"] = base.Id;
+                        Attributes["sdkmessageid"] = base.Id;
                         break;
-                    case "sdkmessagefilterid":
+                    case "sdkmessageid":
                         var id = (System.Nullable<System.Guid>) value;
                         if(id == null){ continue; }
                         base.Id = id.Value;

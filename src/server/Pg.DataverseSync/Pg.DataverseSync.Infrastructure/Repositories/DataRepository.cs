@@ -9,7 +9,6 @@ using Pg.DataverseSync.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace Pg.DataverseSync.Infrastructure.Repositories
 {
@@ -71,36 +70,71 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
             return tables;
         }
 
-        private bool StepAlreadyExists(Guid serviceEndpointId, string messageName, string entityName)
+        public bool StepExists(Guid serviceEndpointId, string messageName, string entityName)
         {
             var messageFilterId = GetSdkMessageFilterId(messageName, entityName);
 
             if (messageFilterId == null)
-                return false; 
+                return false;
 
-            using (var context = new DataverseContext(_service))
+            var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
             {
-                return context.SdkMessageProcessingStepSet
-                    .Where(st => st.EventHandler.Id == serviceEndpointId
-                              && st.EventHandler.LogicalName == "serviceendpoint"
-                              && st.SdkMessageFilterId.Id == messageFilterId)
-                    .Any();
-            }
+                ColumnSet = new ColumnSet(SdkMessageProcessingStep.Fields.SdkMessageProcessingStepId),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(SdkMessageProcessingStep.Fields.EventHandler, 
+                            ConditionOperator.Equal, 
+                            serviceEndpointId),
+                        new ConditionExpression(SdkMessageProcessingStep.Fields.SdkMessageFilterId, 
+                            ConditionOperator.Equal, 
+                            messageFilterId.Value)
+                    }
+                }
+            };
+
+            return _service.RetrieveMultiple(query).Entities.Count > 0;
         }
 
 
         private Guid? GetSdkMessageFilterId(string messageName, string entityName)
         {
-            using (var context = new DataverseContext(_service))
+            var query = new QueryExpression(SdkMessageFilter.EntityLogicalName)
             {
-                var filter = context.SdkMessageFilterSet
-                    .Where(f => f.PrimaryObjectTypeCode == entityName
-                             && f.SdkMessageIdName == messageName)
-                    .Select(f => new SdkMessageFilter { Id = f.Id })
-                    .FirstOrDefault();
+                ColumnSet = new ColumnSet(SdkMessageFilter.Fields.SdkMessageFilterId),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(SdkMessageFilter.Fields.PrimaryObjectTypeCode, 
+                            ConditionOperator.Equal, 
+                            entityName)
+                    }
+                },
+                LinkEntities =
+                {
+                    new LinkEntity(SdkMessageFilter.EntityLogicalName, 
+                        SdkMessage.EntityLogicalName, 
+                        SdkMessageFilter.Fields.SdkMessageId, 
+                        SdkMessage.Fields.SdkMessageId, 
+                        JoinOperator.Inner)
+                    {
+                        LinkCriteria =
+                        {
+                            Conditions =
+                            {
+                                new ConditionExpression(SdkMessage.Fields.Name, 
+                                    ConditionOperator.Equal, 
+                                    messageName)
+                            }
+                        }
+                    }
+                }
+            };
 
-                return filter?.Id;
-            }
+            var results = _service.RetrieveMultiple(query);
+            return results.Entities.Count > 0 ? results.Entities[0].Id : (Guid?)null;
         }
 
     }

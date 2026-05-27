@@ -219,6 +219,7 @@ namespace Pg.DataverseSync.Model
 			public const string SdkMessageFilterId = "sdkmessagefilterid";
 			public const string sdkmessagefilterid_sdkmessageprocessingstep = "sdkmessagefilterid_sdkmessageprocessingstep";
 			public const string SdkMessageId = "sdkmessageid";
+			public const string sdkmessageid_sdkmessageprocessingstep = "sdkmessageid_sdkmessageprocessingstep";
 			public const string SdkMessageIdName = "sdkmessageidname";
 			public const string SdkMessageProcessingStepId = "sdkmessageprocessingstepid";
 			public const string Id = "sdkmessageprocessingstepid";
@@ -1436,6 +1437,25 @@ namespace Pg.DataverseSync.Model
 			set
 			{
 				this.SetRelatedEntity<Pg.DataverseSync.Model.SdkMessageFilter>("sdkmessagefilterid_sdkmessageprocessingstep", null, value);
+			}
+		}
+		
+		/// <summary>
+		/// N:1 sdkmessageid_sdkmessageprocessingstep
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("sdkmessageid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("sdkmessageid_sdkmessageprocessingstep")]
+		public Pg.DataverseSync.Model.SdkMessage sdkmessageid_sdkmessageprocessingstep
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetRelatedEntity<Pg.DataverseSync.Model.SdkMessage>("sdkmessageid_sdkmessageprocessingstep", null);
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetRelatedEntity<Pg.DataverseSync.Model.SdkMessage>("sdkmessageid_sdkmessageprocessingstep", null, value);
 			}
 		}
 		
