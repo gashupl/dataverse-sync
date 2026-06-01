@@ -21,9 +21,15 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
             _service = orgSvcFactory.CreateOrganizationService(null); 
         }
 
-        public void CreateStep(SdkMessageProcessingStep step)
+        public void CreateStep(SdkMessageProcessingStep step, string entityName)
         {
-            throw new NotImplementedException();
+            if(StepExists(step.EventHandler.Id, step.SdkMessageFilterId.ToString(), entityName))
+            {
+                throw new InvalidOperationException
+                    ($"Step already exists for the given entity {entityName} and message filter.");
+            }
+
+            _service.Create(step); 
         }
 
         public List<pg_synctable> GetActiveSynchronizedTables()
@@ -102,7 +108,7 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
         {
             var query = new QueryExpression(SdkMessageFilter.EntityLogicalName)
             {
-                ColumnSet = new ColumnSet(SdkMessageFilter.Fields.SdkMessageFilterId),
+                ColumnSet = new ColumnSet(SdkMessageFilter.Fields.SdkMessageFilterId, SdkMessageFilter.Fields.PrimaryObjectTypeCode),
                 Criteria =
                 {
                     Conditions =

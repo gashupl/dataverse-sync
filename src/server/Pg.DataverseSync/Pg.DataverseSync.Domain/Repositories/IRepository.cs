@@ -11,7 +11,7 @@ namespace Pg.DataverseSync.Domain.Repositories
         List<Table> GetStandardTablesFromMetadata();
         List<pg_synctable> GetActiveSynchronizedTables();
 
-        void CreateStep(SdkMessageProcessingStep step);
+        void CreateStep(SdkMessageProcessingStep step, string entityName); 
 
         bool StepExists(Guid serviceEndpointId, string messageName, string entityName); 
 

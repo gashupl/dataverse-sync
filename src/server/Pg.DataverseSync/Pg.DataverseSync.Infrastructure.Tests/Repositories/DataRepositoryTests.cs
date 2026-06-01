@@ -1,4 +1,3 @@
-using FakeXrmEasy;
 using FakeXrmEasy.Abstractions;
 using FakeXrmEasy.Abstractions.Enums;
 using FakeXrmEasy.FakeMessageExecutors;
@@ -14,7 +13,6 @@ using Pg.DataverseSync.Model;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Web.Services.Description;
 using Xunit;
 
 namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
