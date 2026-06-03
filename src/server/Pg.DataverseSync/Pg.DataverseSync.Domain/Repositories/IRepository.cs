@@ -15,6 +15,10 @@ namespace Pg.DataverseSync.Domain.Repositories
 
         bool StepExists(Guid serviceEndpointId, string messageName, string entityName); 
 
+        Guid GetSdkMessageId(string messageName);
+
+        Guid? GetSdkMessageFilterId(string messageName, string entityName);
+
 
     }
 }

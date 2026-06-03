@@ -104,7 +104,30 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
         }
 
 
-        private Guid? GetSdkMessageFilterId(string messageName, string entityName)
+        public Guid GetSdkMessageId(string messageName)
+        {
+            var query = new QueryExpression(SdkMessage.EntityLogicalName)
+            {
+                ColumnSet = new ColumnSet(SdkMessage.Fields.SdkMessageId),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(SdkMessage.Fields.Name,
+                            ConditionOperator.Equal,
+                            messageName)
+                    }
+                }
+            };
+
+            var results = _service.RetrieveMultiple(query);
+            if (results.Entities.Count == 0)
+                throw new InvalidOperationException($"SDK Message '{messageName}' not found.");
+
+            return results.Entities[0].Id;
+        }
+
+        public Guid? GetSdkMessageFilterId(string messageName, string entityName)
         {
             var query = new QueryExpression(SdkMessageFilter.EntityLogicalName)
             {
@@ -113,25 +136,25 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
                 {
                     Conditions =
                     {
-                        new ConditionExpression(SdkMessageFilter.Fields.PrimaryObjectTypeCode, 
-                            ConditionOperator.Equal, 
+                        new ConditionExpression(SdkMessageFilter.Fields.PrimaryObjectTypeCode,
+                            ConditionOperator.Equal,
                             entityName)
                     }
                 },
                 LinkEntities =
                 {
-                    new LinkEntity(SdkMessageFilter.EntityLogicalName, 
-                        SdkMessage.EntityLogicalName, 
-                        SdkMessageFilter.Fields.SdkMessageId, 
-                        SdkMessage.Fields.SdkMessageId, 
+                    new LinkEntity(SdkMessageFilter.EntityLogicalName,
+                        SdkMessage.EntityLogicalName,
+                        SdkMessageFilter.Fields.SdkMessageId,
+                        SdkMessage.Fields.SdkMessageId,
                         JoinOperator.Inner)
                     {
                         LinkCriteria =
                         {
                             Conditions =
                             {
-                                new ConditionExpression(SdkMessage.Fields.Name, 
-                                    ConditionOperator.Equal, 
+                                new ConditionExpression(SdkMessage.Fields.Name,
+                                    ConditionOperator.Equal,
                                     messageName)
                             }
                         }
@@ -141,8 +164,8 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
 
             var results = _service.RetrieveMultiple(query);
             return results.Entities.Count > 0 ? results.Entities[0].Id : (Guid?)null;
+       
         }
-
     }
 }
 

@@ -100,12 +100,12 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.MessageName).Returns("Create");
             _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
 
-            _mockService.Setup(x => x.CreateStepForEntity("account"))
+            _mockService.Setup(x => x.CreateStepForEntity("account", "Create"))
                 .Returns(new EndpointStepCreationResult { Success = true });
 
             _handler.Execute();
 
-            _mockService.Verify(x => x.CreateStepForEntity("account"), Times.Once);
+            _mockService.Verify(x => x.CreateStepForEntity("account", "Create"), Times.Once);
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.MessageName).Returns("Create");
             _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
 
-            _mockService.Setup(x => x.CreateStepForEntity("account"))
+            _mockService.Setup(x => x.CreateStepForEntity("account", "Create"))
                 .Returns(new EndpointStepCreationResult { Success = false, ErrorMessage = "Step already exists" });
 
             Assert.Throws<InvalidPluginExecutionException>(() => _handler.Execute());
@@ -134,7 +134,7 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.MessageName).Returns("Create");
             _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
 
-            _mockService.Setup(x => x.CreateStepForEntity("account"))
+            _mockService.Setup(x => x.CreateStepForEntity("account", "Create"))
                 .Throws(new Exception("Unexpected error"));
 
             Assert.Throws<InvalidPluginExecutionException>(() => _handler.Execute());
@@ -153,7 +153,7 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
 
             _handler.Execute();
 
-            _mockService.Verify(x => x.CreateStepForEntity(It.IsAny<string>()), Times.Never);
+            _mockService.Verify(x => x.CreateStepForEntity(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
@@ -173,12 +173,12 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
             _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
 
-            _mockService.Setup(x => x.CreateStepForEntity("contact"))
+            _mockService.Setup(x => x.CreateStepForEntity("contact", "Create"))
                 .Returns(new EndpointStepCreationResult { Success = true });
 
             _handler.Execute();
 
-            _mockService.Verify(x => x.CreateStepForEntity("contact"), Times.Once);
+            _mockService.Verify(x => x.CreateStepForEntity("contact", "Create"), Times.Once);
         }
 
         [Fact]
@@ -199,12 +199,12 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
             _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
 
-            _mockService.Setup(x => x.CreateStepForEntity("account"))
+            _mockService.Setup(x => x.CreateStepForEntity("account", "Create"))
                 .Returns(new EndpointStepCreationResult { Success = true });
 
             _handler.Execute();
 
-            _mockService.Verify(x => x.CreateStepForEntity("account"), Times.Once);
+            _mockService.Verify(x => x.CreateStepForEntity("account", "Create"), Times.Once);
         }
     }
 }

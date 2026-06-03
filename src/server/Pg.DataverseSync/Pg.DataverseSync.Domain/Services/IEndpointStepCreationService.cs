@@ -2,6 +2,6 @@
 {
     public interface IEndpointStepCreationService
     {
-        EndpointStepCreationResult CreateStepForEntity(string entityName);
+        EndpointStepCreationResult CreateStepForEntity(string entityName, string messageName);
     }
 }
