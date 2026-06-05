@@ -161,7 +161,7 @@ namespace Pg.DataverseSync.Model
 	{
 		
 		/// <summary>
-		/// Available fields, a the time of codegen, for the sdkmessageprocessingstep entity
+		/// Available fields, at the time of codegen, for the sdkmessageprocessingstep entity
 		/// </summary>
 		public partial class Fields
 		{

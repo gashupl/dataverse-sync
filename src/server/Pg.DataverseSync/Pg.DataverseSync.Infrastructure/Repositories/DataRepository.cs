@@ -14,11 +14,11 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
 {
     public class DataRepository : IRepository
     {
-        private readonly IOrganizationService _service;
+        protected readonly IOrganizationService service;
 
         public DataRepository(IOrganizationServiceFactory orgSvcFactory)
         {
-            _service = orgSvcFactory.CreateOrganizationService(null); 
+            service = orgSvcFactory.CreateOrganizationService(null); 
         }
 
         public void CreateStep(SdkMessageProcessingStep step, string entityName)
@@ -29,12 +29,12 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
                     ($"Step already exists for the given entity {entityName} and message filter.");
             }
 
-            _service.Create(step); 
+            service.Create(step); 
         }
 
         public List<pg_synctable> GetActiveSynchronizedTables()
         {
-            using (var context = new DataverseContext(_service))
+            using (var context = new DataverseContext(service))
             {
                 var query = context.pg_synctableSet
                     .Where(st => st.StateCode == pg_synctable_statecode.Active)
@@ -57,7 +57,7 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
                 RetrieveAsIfPublished = true
             };
 
-            var a = _service.Execute(request); 
+            var a = service.Execute(request); 
             var response = (RetrieveAllEntitiesResponse)a;
 
             foreach (var entity in response.EntityMetadata)
@@ -100,7 +100,7 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
                 }
             };
 
-            return _service.RetrieveMultiple(query).Entities.Count > 0;
+            return service.RetrieveMultiple(query).Entities.Count > 0;
         }
 
 
@@ -120,7 +120,7 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
                 }
             };
 
-            var results = _service.RetrieveMultiple(query);
+            var results = service.RetrieveMultiple(query);
             if (results.Entities.Count == 0)
                 throw new InvalidOperationException($"SDK Message '{messageName}' not found.");
 
@@ -162,7 +162,7 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
                 }
             };
 
-            var results = _service.RetrieveMultiple(query);
+            var results = service.RetrieveMultiple(query);
             return results.Entities.Count > 0 ? results.Entities[0].Id : (Guid?)null;
        
         }

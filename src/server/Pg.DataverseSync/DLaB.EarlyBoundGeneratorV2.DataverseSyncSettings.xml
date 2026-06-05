@@ -28,7 +28,9 @@
     <CreateOneFilePerOptionSet>true</CreateOneFilePerOptionSet>
     <DeleteFilesFromOutputFolders>true</DeleteFilesFromOutputFolders>
     <EntitiesToSkip />
-    <EntitiesWhitelist>pg_synctable|
+    <EntitiesWhitelist>environmentvariabledefinition|
+environmentvariablevalue|
+pg_synctable|
 sdkmessage|
 sdkmessagefilter|
 sdkmessageprocessingstep</EntitiesWhitelist>
@@ -134,7 +136,6 @@ VoiceMail</TokenCapitalizationOverrides>
     <UseDisplayNameForBpfName>true</UseDisplayNameForBpfName>
     <UseEnumForStateCodes>false</UseEnumForStateCodes>
     <UseLogicalNames>false</UseLogicalNames>
-    <UseTfsToCheckoutFiles>false</UseTfsToCheckoutFiles>
     <WaitForAttachedDebugger>false</WaitForAttachedDebugger>
   </ExtensionConfig>
   <GenerateMessages>true</GenerateMessages>
@@ -149,5 +150,5 @@ VoiceMail</TokenCapitalizationOverrides>
   <SuppressGeneratedCodeAttribute>true</SuppressGeneratedCodeAttribute>
   <SettingsVersion>2.2025.8.26</SettingsVersion>
   <UpdateBuilderSettingsJson>true</UpdateBuilderSettingsJson>
-  <Version>2.2025.8.26</Version>
+  <Version>2.2026.5.12</Version>
 </Config>

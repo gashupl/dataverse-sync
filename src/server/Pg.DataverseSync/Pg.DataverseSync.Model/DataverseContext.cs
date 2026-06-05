@@ -21,6 +21,28 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
+		/// Gets a binding to the set of all <see cref="Pg.DataverseSync.Model.EnvironmentVariableDefinition"/> entities.
+		/// </summary>
+		public System.Linq.IQueryable<Pg.DataverseSync.Model.EnvironmentVariableDefinition> EnvironmentVariableDefinitionSet
+		{
+			get
+			{
+				return this.CreateQuery<Pg.DataverseSync.Model.EnvironmentVariableDefinition>();
+			}
+		}
+		
+		/// <summary>
+		/// Gets a binding to the set of all <see cref="Pg.DataverseSync.Model.EnvironmentVariableValue"/> entities.
+		/// </summary>
+		public System.Linq.IQueryable<Pg.DataverseSync.Model.EnvironmentVariableValue> EnvironmentVariableValueSet
+		{
+			get
+			{
+				return this.CreateQuery<Pg.DataverseSync.Model.EnvironmentVariableValue>();
+			}
+		}
+		
+		/// <summary>
 		/// Gets a binding to the set of all <see cref="Pg.DataverseSync.Model.pg_synctable"/> entities.
 		/// </summary>
 		public System.Linq.IQueryable<Pg.DataverseSync.Model.pg_synctable> pg_synctableSet

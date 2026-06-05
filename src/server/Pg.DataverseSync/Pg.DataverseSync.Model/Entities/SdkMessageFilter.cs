@@ -13,7 +13,7 @@ namespace Pg.DataverseSync.Model
 	{
 		
 		/// <summary>
-		/// Available fields, a the time of codegen, for the sdkmessagefilter entity
+		/// Available fields, at the time of codegen, for the sdkmessagefilter entity
 		/// </summary>
 		public partial class Fields
 		{

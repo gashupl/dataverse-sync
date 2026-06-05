@@ -5,10 +5,10 @@ namespace Pg.DataverseSync.Model
 	
 	
 	/// <summary>
-	/// Status of the Synchronized Table
+	/// Status of the Environment Variable Value
 	/// </summary>
 	[System.Runtime.Serialization.DataContractAttribute()]
-	public enum pg_synctable_statecode
+	public enum environmentvariablevalue_statecode
 	{
 		
 		[System.Runtime.Serialization.EnumMemberAttribute()]
@@ -21,10 +21,10 @@ namespace Pg.DataverseSync.Model
 	}
 	
 	/// <summary>
-	/// Reason for the status of the Synchronized Table
+	/// Reason for the status of the Environment Variable Value
 	/// </summary>
 	[System.Runtime.Serialization.DataContractAttribute()]
-	public enum pg_synctable_StatusCode
+	public enum EnvironmentVariableValue_StatusCode
 	{
 		
 		[System.Runtime.Serialization.EnumMemberAttribute()]
@@ -36,16 +36,21 @@ namespace Pg.DataverseSync.Model
 		Inactive = 2,
 	}
 	
+	/// <summary>
+	/// Holds the value for the associated EnvironmentVariableDefinition entity.
+	/// </summary>
 	[System.Runtime.Serialization.DataContractAttribute()]
-	[Microsoft.Xrm.Sdk.Client.EntityLogicalNameAttribute("pg_synctable")]
-	public partial class pg_synctable : Microsoft.Xrm.Sdk.Entity
+	[Microsoft.Xrm.Sdk.Client.EntityLogicalNameAttribute("environmentvariablevalue")]
+	public partial class EnvironmentVariableValue : Microsoft.Xrm.Sdk.Entity
 	{
 		
 		/// <summary>
-		/// Available fields, at the time of codegen, for the pg_synctable entity
+		/// Available fields, at the time of codegen, for the environmentvariablevalue entity
 		/// </summary>
 		public partial class Fields
 		{
+			public const string ComponentState = "componentstate";
+			public const string componentstateName = "componentstatename";
 			public const string CreatedBy = "createdby";
 			public const string CreatedByName = "createdbyname";
 			public const string CreatedByYomiName = "createdbyyominame";
@@ -53,7 +58,17 @@ namespace Pg.DataverseSync.Model
 			public const string CreatedOnBehalfBy = "createdonbehalfby";
 			public const string CreatedOnBehalfByName = "createdonbehalfbyname";
 			public const string CreatedOnBehalfByYomiName = "createdonbehalfbyyominame";
+			public const string environmentvariabledefinition_environmentvariablevalue = "environmentvariabledefinition_environmentvariablevalue";
+			public const string EnvironmentVariableDefinitionId = "environmentvariabledefinitionid";
+			public const string EnvironmentVariableDefinitionIdName = "environmentvariabledefinitionidname";
+			public const string EnvironmentVariableValueId = "environmentvariablevalueid";
+			public const string Id = "environmentvariablevalueid";
+			public const string EnvironmentVariableValueIdUnique = "environmentvariablevalueidunique";
 			public const string ImportSequenceNumber = "importsequencenumber";
+			public const string IntroducedVersion = "introducedversion";
+			public const string IsCustomizable = "iscustomizable";
+			public const string IsManaged = "ismanaged";
+			public const string ismanagedName = "ismanagedname";
 			public const string ModifiedBy = "modifiedby";
 			public const string ModifiedByName = "modifiedbyname";
 			public const string ModifiedByYomiName = "modifiedbyyominame";
@@ -61,59 +76,94 @@ namespace Pg.DataverseSync.Model
 			public const string ModifiedOnBehalfBy = "modifiedonbehalfby";
 			public const string ModifiedOnBehalfByName = "modifiedonbehalfbyname";
 			public const string ModifiedOnBehalfByYomiName = "modifiedonbehalfbyyominame";
-			public const string OrganizationId = "organizationid";
-			public const string OrganizationIdName = "organizationidname";
 			public const string OverriddenCreatedOn = "overriddencreatedon";
-			public const string pg_name = "pg_name";
-			public const string pg_synctableId = "pg_synctableid";
-			public const string Id = "pg_synctableid";
+			public const string OverwriteTime = "overwritetime";
+			public const string OwnerId = "ownerid";
+			public const string OwningBusinessUnit = "owningbusinessunit";
+			public const string OwningTeam = "owningteam";
+			public const string OwningUser = "owninguser";
+			public const string SchemaName = "schemaname";
+			public const string SolutionId = "solutionid";
 			public const string StateCode = "statecode";
 			public const string statecodeName = "statecodename";
 			public const string StatusCode = "statuscode";
 			public const string statuscodeName = "statuscodename";
 			public const string TimeZoneRuleVersionNumber = "timezoneruleversionnumber";
 			public const string UTCConversionTimeZoneCode = "utcconversiontimezonecode";
+			public const string Value = "value";
 			public const string VersionNumber = "versionnumber";
 		}
 		
 		[System.Diagnostics.DebuggerNonUserCode()]
-		public pg_synctable(System.Guid id) : 
+		public EnvironmentVariableValue(System.Guid id) : 
 				base(EntityLogicalName, id)
 		{
 		}
 		
 		[System.Diagnostics.DebuggerNonUserCode()]
-		public pg_synctable(string keyName, object keyValue) : 
+		public EnvironmentVariableValue(string keyName, object keyValue) : 
 				base(EntityLogicalName, keyName, keyValue)
 		{
 		}
 		
 		[System.Diagnostics.DebuggerNonUserCode()]
-		public pg_synctable(Microsoft.Xrm.Sdk.KeyAttributeCollection keyAttributes) : 
+		public EnvironmentVariableValue(Microsoft.Xrm.Sdk.KeyAttributeCollection keyAttributes) : 
 				base(EntityLogicalName, keyAttributes)
 		{
 		}
+		
+		public const string AlternateKeys = "componentstate,environmentvariabledefinitionid,overwritetime";
 		
 		/// <summary>
 		/// Default Constructor.
 		/// </summary>
 		[System.Diagnostics.DebuggerNonUserCode()]
-		public pg_synctable() : 
+		public EnvironmentVariableValue() : 
 				base(EntityLogicalName)
 		{
 		}
 		
-		public const string PrimaryIdAttribute = "pg_synctableid";
+		public const string PrimaryIdAttribute = "environmentvariablevalueid";
 		
-		public const string PrimaryNameAttribute = "pg_name";
+		public const string PrimaryNameAttribute = "schemaname";
 		
-		public const string EntitySchemaName = "pg_synctable";
+		public const string EntitySchemaName = "EnvironmentVariableValue";
 		
-		public const string EntityLogicalName = "pg_synctable";
+		public const string EntityLogicalName = "environmentvariablevalue";
 		
-		public const string EntityLogicalCollectionName = "pg_synctables";
+		public const string EntityLogicalCollectionName = "environmentvariablevalues";
 		
-		public const string EntitySetName = "pg_synctables";
+		public const string EntitySetName = "environmentvariablevalues";
+		
+		/// <summary>
+		/// For internal use only.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("componentstate")]
+		public virtual ComponentState? ComponentState
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return ((ComponentState?)(EntityOptionSetEnum.GetEnum(this, "componentstate")));
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("componentstatename")]
+		public string componentstateName
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				if (this.FormattedValues.Contains("componentstate"))
+				{
+					return this.FormattedValues["componentstate"];
+				}
+				else
+				{
+					return default(string);
+				}
+			}
+		}
 		
 		/// <summary>
 		/// Unique identifier of the user who created the record.
@@ -228,6 +278,95 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
+		/// Unique identifier for Environment Variable Definition associated with Environment Variable Value.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("environmentvariabledefinitionid")]
+		public Microsoft.Xrm.Sdk.EntityReference EnvironmentVariableDefinitionId
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<Microsoft.Xrm.Sdk.EntityReference>("environmentvariabledefinitionid");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("environmentvariabledefinitionid", value);
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("environmentvariabledefinitionidname")]
+		public string EnvironmentVariableDefinitionIdName
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				if (this.FormattedValues.Contains("environmentvariabledefinitionid"))
+				{
+					return this.FormattedValues["environmentvariabledefinitionid"];
+				}
+				else
+				{
+					return default(string);
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Unique identifier for entity instances
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("environmentvariablevalueid")]
+		public System.Nullable<System.Guid> EnvironmentVariableValueId
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<System.Nullable<System.Guid>>("environmentvariablevalueid");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("environmentvariablevalueid", value);
+				if (value.HasValue)
+				{
+					base.Id = value.Value;
+				}
+				else
+				{
+					base.Id = System.Guid.Empty;
+				}
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("environmentvariablevalueid")]
+		public override System.Guid Id
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return base.Id;
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.EnvironmentVariableValueId = value;
+			}
+		}
+		
+		/// <summary>
+		/// For internal use only.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("environmentvariablevalueidunique")]
+		public System.Nullable<System.Guid> EnvironmentVariableValueIdUnique
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<System.Nullable<System.Guid>>("environmentvariablevalueidunique");
+			}
+		}
+		
+		/// <summary>
 		/// Sequence number of the import that created this record.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("importsequencenumber")]
@@ -242,6 +381,72 @@ namespace Pg.DataverseSync.Model
 			set
 			{
 				this.SetAttributeValue("importsequencenumber", value);
+			}
+		}
+		
+		/// <summary>
+		/// Version in which the form is introduced.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("introducedversion")]
+		public string IntroducedVersion
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<string>("introducedversion");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("introducedversion", value);
+			}
+		}
+		
+		/// <summary>
+		/// Tells whether the component can be customized.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("iscustomizable")]
+		public Microsoft.Xrm.Sdk.BooleanManagedProperty IsCustomizable
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<Microsoft.Xrm.Sdk.BooleanManagedProperty>("iscustomizable");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("iscustomizable", value);
+			}
+		}
+		
+		/// <summary>
+		/// Indicates whether the solution component is part of a managed solution.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("ismanaged")]
+		public System.Nullable<bool> IsManaged
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<System.Nullable<bool>>("ismanaged");
+			}
+		}
+		
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("ismanagedname")]
+		public string ismanagedName
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				if (this.FormattedValues.Contains("ismanaged"))
+				{
+					return this.FormattedValues["ismanaged"];
+				}
+				else
+				{
+					return default(string);
+				}
 			}
 		}
 		
@@ -358,36 +563,6 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Unique identifier for the organization
-		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("organizationid")]
-		public Microsoft.Xrm.Sdk.EntityReference OrganizationId
-		{
-			[System.Diagnostics.DebuggerNonUserCode()]
-			get
-			{
-				return this.GetAttributeValue<Microsoft.Xrm.Sdk.EntityReference>("organizationid");
-			}
-		}
-		
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("organizationidname")]
-		public string OrganizationIdName
-		{
-			[System.Diagnostics.DebuggerNonUserCode()]
-			get
-			{
-				if (this.FormattedValues.Contains("organizationid"))
-				{
-					return this.FormattedValues["organizationid"];
-				}
-				else
-				{
-					return default(string);
-				}
-			}
-		}
-		
-		/// <summary>
 		/// Date and time that the record was migrated.
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("overriddencreatedon")]
@@ -405,72 +580,112 @@ namespace Pg.DataverseSync.Model
 			}
 		}
 		
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("pg_name")]
-		public string pg_name
-		{
-			[System.Diagnostics.DebuggerNonUserCode()]
-			get
-			{
-				return this.GetAttributeValue<string>("pg_name");
-			}
-			[System.Diagnostics.DebuggerNonUserCode()]
-			set
-			{
-				this.SetAttributeValue("pg_name", value);
-			}
-		}
-		
 		/// <summary>
-		/// Unique identifier for entity instances
+		/// For internal use only.
 		/// </summary>
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("pg_synctableid")]
-		public System.Nullable<System.Guid> pg_synctableId
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("overwritetime")]
+		public System.Nullable<System.DateTime> OverwriteTime
 		{
 			[System.Diagnostics.DebuggerNonUserCode()]
 			get
 			{
-				return this.GetAttributeValue<System.Nullable<System.Guid>>("pg_synctableid");
-			}
-			[System.Diagnostics.DebuggerNonUserCode()]
-			set
-			{
-				this.SetAttributeValue("pg_synctableid", value);
-				if (value.HasValue)
-				{
-					base.Id = value.Value;
-				}
-				else
-				{
-					base.Id = System.Guid.Empty;
-				}
-			}
-		}
-		
-		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("pg_synctableid")]
-		public override System.Guid Id
-		{
-			[System.Diagnostics.DebuggerNonUserCode()]
-			get
-			{
-				return base.Id;
-			}
-			[System.Diagnostics.DebuggerNonUserCode()]
-			set
-			{
-				this.pg_synctableId = value;
+				return this.GetAttributeValue<System.Nullable<System.DateTime>>("overwritetime");
 			}
 		}
 		
 		/// <summary>
-		/// Status of the Synchronized Table
+		/// Owner Id
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("ownerid")]
+		public Microsoft.Xrm.Sdk.EntityReference OwnerId
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<Microsoft.Xrm.Sdk.EntityReference>("ownerid");
+			}
+		}
+		
+		/// <summary>
+		/// Unique identifier for the business unit that owns the record
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("owningbusinessunit")]
+		public Microsoft.Xrm.Sdk.EntityReference OwningBusinessUnit
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<Microsoft.Xrm.Sdk.EntityReference>("owningbusinessunit");
+			}
+		}
+		
+		/// <summary>
+		/// Unique identifier for the team that owns the record.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("owningteam")]
+		public Microsoft.Xrm.Sdk.EntityReference OwningTeam
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<Microsoft.Xrm.Sdk.EntityReference>("owningteam");
+			}
+		}
+		
+		/// <summary>
+		/// Unique identifier for the user that owns the record.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("owninguser")]
+		public Microsoft.Xrm.Sdk.EntityReference OwningUser
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<Microsoft.Xrm.Sdk.EntityReference>("owninguser");
+			}
+		}
+		
+		/// <summary>
+		/// Unique entity name.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("schemaname")]
+		public string SchemaName
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<string>("schemaname");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("schemaname", value);
+			}
+		}
+		
+		/// <summary>
+		/// Unique identifier of the associated solution.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("solutionid")]
+		public System.Nullable<System.Guid> SolutionId
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<System.Nullable<System.Guid>>("solutionid");
+			}
+		}
+		
+		/// <summary>
+		/// Status of the Environment Variable Value
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("statecode")]
-		public virtual pg_synctable_statecode? StateCode
+		public virtual environmentvariablevalue_statecode? StateCode
 		{
 			[System.Diagnostics.DebuggerNonUserCode()]
 			get
 			{
-				return ((pg_synctable_statecode?)(EntityOptionSetEnum.GetEnum(this, "statecode")));
+				return ((environmentvariablevalue_statecode?)(EntityOptionSetEnum.GetEnum(this, "statecode")));
 			}
 			[System.Diagnostics.DebuggerNonUserCode()]
 			set
@@ -497,15 +712,15 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
-		/// Reason for the status of the Synchronized Table
+		/// Reason for the status of the Environment Variable Value
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("statuscode")]
-		public virtual pg_synctable_StatusCode? StatusCode
+		public virtual EnvironmentVariableValue_StatusCode? StatusCode
 		{
 			[System.Diagnostics.DebuggerNonUserCode()]
 			get
 			{
-				return ((pg_synctable_StatusCode?)(EntityOptionSetEnum.GetEnum(this, "statuscode")));
+				return ((EnvironmentVariableValue_StatusCode?)(EntityOptionSetEnum.GetEnum(this, "statuscode")));
 			}
 			[System.Diagnostics.DebuggerNonUserCode()]
 			set
@@ -568,6 +783,24 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
+		/// Contains the actual variable data.
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("value")]
+		public string Value
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetAttributeValue<string>("value");
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetAttributeValue("value", value);
+			}
+		}
+		
+		/// <summary>
 		/// Version Number
 		/// </summary>
 		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("versionnumber")]
@@ -581,11 +814,30 @@ namespace Pg.DataverseSync.Model
 		}
 		
 		/// <summary>
+		/// N:1 environmentvariabledefinition_environmentvariablevalue
+		/// </summary>
+		[Microsoft.Xrm.Sdk.AttributeLogicalNameAttribute("environmentvariabledefinitionid")]
+		[Microsoft.Xrm.Sdk.RelationshipSchemaNameAttribute("environmentvariabledefinition_environmentvariablevalue")]
+		public Pg.DataverseSync.Model.EnvironmentVariableDefinition environmentvariabledefinition_environmentvariablevalue
+		{
+			[System.Diagnostics.DebuggerNonUserCode()]
+			get
+			{
+				return this.GetRelatedEntity<Pg.DataverseSync.Model.EnvironmentVariableDefinition>("environmentvariabledefinition_environmentvariablevalue", null);
+			}
+			[System.Diagnostics.DebuggerNonUserCode()]
+			set
+			{
+				this.SetRelatedEntity<Pg.DataverseSync.Model.EnvironmentVariableDefinition>("environmentvariabledefinition_environmentvariablevalue", null, value);
+			}
+		}
+		
+		/// <summary>
 		/// Constructor for populating via LINQ queries given a LINQ anonymous type
 		/// <param name="anonymousType">LINQ anonymous type.</param>
 		/// </summary>
 		[System.Diagnostics.DebuggerNonUserCode()]
-		public pg_synctable(object anonymousType) : 
+		public EnvironmentVariableValue(object anonymousType) : 
 				this()
 		{
             foreach (var p in anonymousType.GetType().GetProperties())
@@ -603,9 +855,9 @@ namespace Pg.DataverseSync.Model
                 {
                     case "id":
                         base.Id = (System.Guid)value;
-                        Attributes["pg_synctableid"] = base.Id;
+                        Attributes["environmentvariablevalueid"] = base.Id;
                         break;
-                    case "pg_synctableid":
+                    case "environmentvariablevalueid":
                         var id = (System.Nullable<System.Guid>) value;
                         if(id == null){ continue; }
                         base.Id = id.Value;
