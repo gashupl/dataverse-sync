@@ -7,17 +7,31 @@ namespace Pg.DataverseSync.Domain.Services
 {
     public class EndpointStepCreationService : ServiceBase, IEndpointStepCreationService
     {
-        private readonly Guid _serviceEndpointId;
+        private const string _serviceEndpointIdEnvVariableName = "pg_dataversesyncendpointid";
+        private readonly IEnvironmentVariablesRepository _envVariablesRepository;
 
-        public EndpointStepCreationService(IRepository repository, ITracingService tracingService, Guid serviceEndpointId) : base(repository, tracingService)
+        public EndpointStepCreationService(IEnvironmentVariablesRepository envVariablesRepository, IRepository repository, ITracingService tracingService) : base(repository, tracingService)
         {
-            _serviceEndpointId = serviceEndpointId;
+            _envVariablesRepository = envVariablesRepository;   
         }
 
         public EndpointStepCreationResult CreateStepForEntity(string entityName, string messageName)
         {
             try
             {
+                var parseResult 
+                    = Guid.TryParse(_envVariablesRepository.GetValue(_serviceEndpointIdEnvVariableName), out var serviceEndpointId); 
+                
+                if (!parseResult)
+                {
+                    tracingService.Trace("Missing or invalid ServiceEndpointId. Step creation aborted.");
+                    return new EndpointStepCreationResult
+                    {
+                        Success = false,
+                        ErrorMessage = "Missing or invalid ServiceEndpointId."
+                    };
+                }
+
                 var sdkMessageId = repository.GetSdkMessageId(messageName);
                 var sdkMessageFilterId = repository.GetSdkMessageFilterId(messageName, entityName);
                 if(sdkMessageFilterId == null)
@@ -34,7 +48,7 @@ namespace Pg.DataverseSync.Domain.Services
                 {
                     SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, sdkMessageId),
                     SdkMessageFilterId = new EntityReference(SdkMessageFilter.EntityLogicalName, sdkMessageFilterId.Value),
-                    EventHandler = new EntityReference("serviceendpoint", _serviceEndpointId),
+                    EventHandler = new EntityReference("serviceendpoint", serviceEndpointId),
                     Name = $"DataverseSync Endpoint: {messageName} to {entityName}",
                     Rank = 1,
                     Description = $"DataverseSync Endpoint: {messageName} to {entityName}",

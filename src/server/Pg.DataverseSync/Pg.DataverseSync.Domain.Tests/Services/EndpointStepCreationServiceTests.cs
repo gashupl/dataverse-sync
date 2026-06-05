@@ -11,6 +11,7 @@ namespace Pg.DataverseSync.Domain.Tests.Services
     public class EndpointStepCreationServiceTests
     {
         private readonly Mock<IRepository> _mockRepository;
+        private readonly Mock<IEnvironmentVariablesRepository> _mockEnvVariablesRepository;
         private readonly Mock<ITracingService> _mockTracingService;
         private readonly EndpointStepCreationService _service;
         private readonly Guid _serviceEndpointId = Guid.NewGuid();
@@ -20,12 +21,14 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         public EndpointStepCreationServiceTests()
         {
             _mockRepository = new Mock<IRepository>();
+            _mockEnvVariablesRepository = new Mock<IEnvironmentVariablesRepository>();
             _mockTracingService = new Mock<ITracingService>();
 
+            _mockEnvVariablesRepository.Setup(x => x.GetValue(It.IsAny<string>())).Returns(_serviceEndpointId.ToString());
             _mockRepository.Setup(x => x.GetSdkMessageId(It.IsAny<string>())).Returns(_sdkMessageId);
             _mockRepository.Setup(x => x.GetSdkMessageFilterId(It.IsAny<string>(), It.IsAny<string>())).Returns(_sdkMessageFilterId);
 
-            _service = new EndpointStepCreationService(_mockRepository.Object, _mockTracingService.Object, _serviceEndpointId);
+            _service = new EndpointStepCreationService(_mockEnvVariablesRepository.Object, _mockRepository.Object, _mockTracingService.Object);
         }
 
         [Fact]
@@ -148,6 +151,19 @@ namespace Pg.DataverseSync.Domain.Tests.Services
             _service.CreateStepForEntity("account", "Create");
 
             Assert.Equal(SdkMessage.EntityLogicalName, capturedStep.SdkMessageId.LogicalName);
+        }
+
+        [Fact]
+        public void CreateStepForEntity_WhenEnvironmentVariableDoesNotExist_ReturnsFailureResult()
+        {
+            var mockEnvRepo = new Mock<IEnvironmentVariablesRepository>();
+            mockEnvRepo.Setup(x => x.GetValue(It.IsAny<string>())).Returns((string)null);
+            var service = new EndpointStepCreationService(mockEnvRepo.Object, _mockRepository.Object, _mockTracingService.Object);
+
+            var result = service.CreateStepForEntity("account", "Create");
+
+            Assert.False(result.Success);
+            Assert.Equal("Missing or invalid ServiceEndpointId.", result.ErrorMessage);
         }
     }
 }
