@@ -484,12 +484,12 @@
               <Description description="Status of the Synchronized Table" languagecode="1033" />
             </Descriptions>
             <states>
-              <state value="0" defaultstatus="1" invariantname="Active">
+              <state value="0" defaultstatus="1" invariantname="Active" IsHidden="0">
                 <labels>
                   <label description="Active" languagecode="1033" />
                 </labels>
               </state>
-              <state value="1" defaultstatus="2" invariantname="Inactive">
+              <state value="1" defaultstatus="2" invariantname="Inactive" IsHidden="0">
                 <labels>
                   <label description="Inactive" languagecode="1033" />
                 </labels>
@@ -544,12 +544,12 @@
               <Description description="Reason for the status of the Synchronized Table" languagecode="1033" />
             </Descriptions>
             <statuses>
-              <status value="1" state="0">
+              <status value="1" state="0" IsHidden="0">
                 <labels>
                   <label description="Active" languagecode="1033" />
                 </labels>
               </status>
-              <status value="2" state="1">
+              <status value="2" state="1" IsHidden="0">
                 <labels>
                   <label description="Inactive" languagecode="1033" />
                 </labels>

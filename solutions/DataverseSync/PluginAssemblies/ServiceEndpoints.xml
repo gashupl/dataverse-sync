@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceEndpoints xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ServiceEndpoint ServiceEndpointId="{6eb64c32-1554-f111-bec7-002248882207}" Name="DataverseSync Endpoint">
+    <ConnectionMode>1</ConnectionMode>
+    <Contract>6</Contract>
+    <Path>dv-sync-queue</Path>
+    <SolutionNamespace>sb-dvsync-test</SolutionNamespace>
+    <UserClaim>2</UserClaim>
+    <IsCustomizable>1</IsCustomizable>
+    <AuthType>2</AuthType>
+    <MessageFormat>2</MessageFormat>
+    <NamespaceAddress>sb://sb-dvsync-test.servicebus.windows.net</NamespaceAddress>
+    <NamespaceFormat>2</NamespaceFormat>
+    <SASKeyName>SendListenAccessPolicy</SASKeyName>
+    <UseKeyVaultConfiguration>0</UseKeyVaultConfiguration>
+  </ServiceEndpoint>
+</ServiceEndpoints>
