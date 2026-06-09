@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xrm.Sdk;
+using Pg.DataverseSync.Domain.Repositories;
 using Pg.DataverseSync.Domain.Services;
+using Pg.DataverseSync.Infrastructure.Repositories;
 using Pg.DataverseSync.Model;
 using Pg.DataverseSync.Plugins.Core;
 using System;
@@ -10,6 +12,7 @@ namespace Pg.DataverseSync.Plugins.SyncTables
     {
         public SyncTableServiceBusEndpointStepLoader()
         {
+            Register<IEnvironmentVariablesRepository, EnvironmentVariablesRepository>(); 
             Register<IEndpointStepCreationService, EndpointStepCreationService>();
         }
     }
