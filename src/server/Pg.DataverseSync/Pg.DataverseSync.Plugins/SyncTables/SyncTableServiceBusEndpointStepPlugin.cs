@@ -6,29 +6,29 @@ using System;
 
 namespace Pg.DataverseSync.Plugins.SyncTables
 {
-    public class CreateServiceEndpointStepLoader : DependencyLoaderBase
+    public class SyncTableServiceBusEndpointStepLoader : DependencyLoaderBase
     {
-        public CreateServiceEndpointStepLoader()
+        public SyncTableServiceBusEndpointStepLoader()
         {
             Register<IEndpointStepCreationService, EndpointStepCreationService>();
         }
     }
 
-    public class CreateServiceEndpointStepPlugin : PluginBase<CreateServiceEndpointStepHandler>
+    public class SyncTableServiceBusEndpointStepPlugin : PluginBase<SyncTableServiceBusEndpointStepHandler>
     {
-        public override IDependencyLoader DependencyLoader => new CreateServiceEndpointStepLoader();
+        public override IDependencyLoader DependencyLoader => new SyncTableServiceBusEndpointStepLoader();
 
-        public CreateServiceEndpointStepPlugin(string unsecureConfiguration, string secureConfiguration)
-            : base(typeof(CreateServiceEndpointStepPlugin))
+        public SyncTableServiceBusEndpointStepPlugin(string unsecureConfiguration, string secureConfiguration)
+            : base(typeof(SyncTableServiceBusEndpointStepPlugin))
         {
         }
     }
 
-    public class CreateServiceEndpointStepHandler : PluginHandlerBase
+    public class SyncTableServiceBusEndpointStepHandler : PluginHandlerBase
     {
         private readonly IEndpointStepCreationService _endpointStepCreationService;
 
-        public CreateServiceEndpointStepHandler(IEndpointStepCreationService endpointStepCreationService)
+        public SyncTableServiceBusEndpointStepHandler(IEndpointStepCreationService endpointStepCreationService)
         {
             _endpointStepCreationService = endpointStepCreationService;
         }
@@ -50,7 +50,7 @@ namespace Pg.DataverseSync.Plugins.SyncTables
             var tracingService = localPluginContext.TracingService;
             var target = (Entity)context.InputParameters["Target"];
 
-            tracingService.Trace($"CreateServiceEndpointStepHandler: Processing {context.MessageName} for entity '{target.LogicalName}', Id: {target.Id}");
+            tracingService.Trace($"SyncTableServiceBusEndpointStepHandler: Processing {context.MessageName} for entity '{target.LogicalName}', Id: {target.Id}");
 
             var entityName = target.GetAttributeValue<string>(pg_synctable.Fields.pg_name);
 
@@ -88,7 +88,7 @@ namespace Pg.DataverseSync.Plugins.SyncTables
             }
             catch (Exception ex)
             {
-                tracingService.Trace($"CreateServiceEndpointStepHandler Error: {ex.Message}");
+                tracingService.Trace($"SyncTableServiceBusEndpointStepHandler Error: {ex.Message}");
                 throw new InvalidPluginExecutionException(
                     $"Failed to create service endpoint step for entity '{entityName}': {ex.Message}", ex);
             }

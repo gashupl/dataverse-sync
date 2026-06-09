@@ -8,15 +8,15 @@ using Xunit;
 
 namespace Pg.DataverseSync.Plugins.Tests.SyncTables
 {
-    public class CreateServiceEndpointStepHandlerTests
+    public class SyncTableServiceBusEndpointStepHandlerTests
     {
         private readonly Mock<IEndpointStepCreationService> _mockService;
         private readonly Mock<ILocalPluginContext> _mockLocalPluginContext;
         private readonly Mock<IPluginExecutionContext4> _mockExecutionContext;
         private readonly Mock<ITracingService> _mockTracingService;
-        private readonly CreateServiceEndpointStepHandler _handler;
+        private readonly SyncTableServiceBusEndpointStepHandler _handler;
 
-        public CreateServiceEndpointStepHandlerTests()
+        public SyncTableServiceBusEndpointStepHandlerTests()
         {
             _mockService = new Mock<IEndpointStepCreationService>();
             _mockLocalPluginContext = new Mock<ILocalPluginContext>();
@@ -26,7 +26,7 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockLocalPluginContext.Setup(x => x.PluginExecutionContext).Returns(_mockExecutionContext.Object);
             _mockLocalPluginContext.Setup(x => x.TracingService).Returns(_mockTracingService.Object);
 
-            _handler = new CreateServiceEndpointStepHandler(_mockService.Object);
+            _handler = new SyncTableServiceBusEndpointStepHandler(_mockService.Object);
             _handler.Init(_mockLocalPluginContext.Object);
         }
 
