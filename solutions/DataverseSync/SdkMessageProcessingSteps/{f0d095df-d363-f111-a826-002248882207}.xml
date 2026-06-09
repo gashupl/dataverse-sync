@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SdkMessageProcessingStep Name="Pg.DataverseSync.Plugins.SyncTables.SyncTableServiceBusEndpointStepPlugin: Create of pg_synctable" SdkMessageProcessingStepId="{f0d095df-d363-f111-a826-002248882207}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SdkMessageId>9ebdbb1b-ea3e-db11-86a7-000a3a5473e8</SdkMessageId>
+  <PluginTypeExportKey>8CB158CE65724CEEA85921CCCE2E58A1FE2E0A3EF9349D7B3459096606742B97</PluginTypeExportKey>
+  <PrimaryEntity>pg_synctable</PrimaryEntity>
+  <AsyncAutoDelete>0</AsyncAutoDelete>
+  <Description>Pg.DataverseSync.Plugins.SyncTables.SyncTableServiceBusEndpointStepPlugin: Create of pg_synctable</Description>
+  <FilteringAttributes></FilteringAttributes>
+  <InvocationSource>1</InvocationSource>
+  <Mode>0</Mode>
+  <Rank>1</Rank>
+  <EventHandlerTypeCode>4602</EventHandlerTypeCode>
+  <Stage>40</Stage>
+  <IsCustomizable>1</IsCustomizable>
+  <IsHidden>0</IsHidden>
+  <SupportedDeployment>0</SupportedDeployment>
+  <IntroducedVersion>1.0</IntroducedVersion>
+  <SdkMessageProcessingStepImages />
+</SdkMessageProcessingStep>
