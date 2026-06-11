@@ -21,32 +21,6 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
             service = orgSvcFactory.CreateOrganizationService(null); 
         }
 
-        public void CreateStep(SdkMessageProcessingStep step, string entityName)
-        {
-            if(StepExists(step.EventHandler.Id, step.SdkMessageFilterId.ToString(), entityName))
-            {
-                throw new InvalidOperationException
-                    ($"Step already exists for the given entity {entityName} and message filter.");
-            }
-
-            service.Create(step); 
-        }
-
-        public List<pg_synctable> GetActiveSynchronizedTables()
-        {
-            using (var context = new DataverseContext(service))
-            {
-                var query = context.pg_synctableSet
-                    .Where(st => st.StateCode == pg_synctable_statecode.Active)
-                    .Select(st => new pg_synctable
-                {
-                    Id = st.Id, 
-                    pg_name = st.pg_name, 
-                });
-                return query.ToList<pg_synctable>();
-            }
-        }
-
         public List<Table> GetStandardTablesFromMetadata()
         {
             var tables = new List<Table>();
@@ -74,33 +48,6 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
             }
 
             return tables;
-        }
-
-        public bool StepExists(Guid serviceEndpointId, string messageName, string entityName)
-        {
-            var messageFilterId = GetSdkMessageFilterId(messageName, entityName);
-
-            if (messageFilterId == null)
-                return false;
-
-            var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
-            {
-                ColumnSet = new ColumnSet(SdkMessageProcessingStep.Fields.SdkMessageProcessingStepId),
-                Criteria =
-                {
-                    Conditions =
-                    {
-                        new ConditionExpression(SdkMessageProcessingStep.Fields.EventHandler, 
-                            ConditionOperator.Equal, 
-                            serviceEndpointId),
-                        new ConditionExpression(SdkMessageProcessingStep.Fields.SdkMessageFilterId, 
-                            ConditionOperator.Equal, 
-                            messageFilterId.Value)
-                    }
-                }
-            };
-
-            return service.RetrieveMultiple(query).Entities.Count > 0;
         }
 
 
@@ -166,6 +113,8 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
             return results.Entities.Count > 0 ? results.Entities[0].Id : (Guid?)null;
        
         }
+
+
     }
 }
 

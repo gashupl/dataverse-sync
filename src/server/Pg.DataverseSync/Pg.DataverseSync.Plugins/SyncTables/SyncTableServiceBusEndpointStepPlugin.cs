@@ -12,6 +12,7 @@ namespace Pg.DataverseSync.Plugins.SyncTables
     {
         public SyncTableServiceBusEndpointStepLoader()
         {
+            Register<IServiceBusEndpointsRepository, ServiceBusEndpointsRepository>(); 
             Register<IEnvironmentVariablesRepository, EnvironmentVariablesRepository>(); 
             Register<IEndpointStepCreationService, EndpointStepCreationService>();
         }

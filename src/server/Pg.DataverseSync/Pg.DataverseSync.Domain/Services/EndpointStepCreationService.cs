@@ -9,10 +9,13 @@ namespace Pg.DataverseSync.Domain.Services
     {
         private const string _serviceEndpointIdEnvVariableName = "pg_dataversesyncendpointid";
         private readonly IEnvironmentVariablesRepository _envVariablesRepository;
+        private readonly IServiceBusEndpointsRepository _serviceBusEndpointsRepository;
 
-        public EndpointStepCreationService(IEnvironmentVariablesRepository envVariablesRepository, IRepository repository, ITracingService tracingService) : base(repository, tracingService)
+        public EndpointStepCreationService(IEnvironmentVariablesRepository envVariablesRepository, IServiceBusEndpointsRepository serviceBusEndpointsRepository, ITracingService tracingService) 
+            : base(tracingService)
         {
-            _envVariablesRepository = envVariablesRepository;   
+            _envVariablesRepository = envVariablesRepository;
+            _serviceBusEndpointsRepository = serviceBusEndpointsRepository;
         }
 
         public EndpointStepCreationResult CreateStepForEntity(string entityName, string messageName)
@@ -32,8 +35,8 @@ namespace Pg.DataverseSync.Domain.Services
                     };
                 }
 
-                var sdkMessageId = repository.GetSdkMessageId(messageName);
-                var sdkMessageFilterId = repository.GetSdkMessageFilterId(messageName, entityName);
+                var sdkMessageId = _serviceBusEndpointsRepository.GetSdkMessageId(messageName);
+                var sdkMessageFilterId = _serviceBusEndpointsRepository.GetSdkMessageFilterId(messageName, entityName);
                 if(sdkMessageFilterId == null)
                 {
                     tracingService.Trace($"No SDK Message Filter found for message '{messageName}' and entity '{entityName}'. Step creation aborted.");
@@ -56,7 +59,7 @@ namespace Pg.DataverseSync.Domain.Services
                     Mode = SdkMessageProcessingStep_Mode.Asynchronous
                 };
 
-                repository.CreateStep(step, entityName);
+                _serviceBusEndpointsRepository.CreateStep(step, entityName);
                 return new EndpointStepCreationResult { Success = true };
             }
             catch (Exception ex)

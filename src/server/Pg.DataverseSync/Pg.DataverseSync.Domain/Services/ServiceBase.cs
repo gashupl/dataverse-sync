@@ -5,12 +5,10 @@ namespace Pg.DataverseSync.Domain.Services
 {
     public abstract class ServiceBase
     {
-        protected readonly IRepository repository;
         protected readonly ITracingService tracingService;
 
-        public ServiceBase(IRepository repository, ITracingService tracingService)
+        public ServiceBase(ITracingService tracingService)
         {
-            this.repository = repository;
             this.tracingService = tracingService;
         }
     }

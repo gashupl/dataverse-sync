@@ -8,31 +8,27 @@ namespace Pg.DataverseSync.Domain.Services
 {
     public class TablesService : ServiceBase, ITablesService
     {
-        public TablesService(IRepository repository, ITracingService tracingService) : base(repository, tracingService)
+        private readonly ISyncTablesRepository _syncTablesRepository;
+
+        public TablesService(ISyncTablesRepository syncTablesRepository, ITracingService tracingService) : base(tracingService)
         {
+            _syncTablesRepository = syncTablesRepository;
         }
 
         public List<Table> GetUnsynchronizedTables()
         {
 
-            var syncTablesNames = repository.GetActiveSynchronizedTables()
+            var syncTablesNames = _syncTablesRepository.GetActiveSynchronizedTables()
                 .Select(st => st.pg_name)
                 .ToList();
 
-            var allStandardTables = repository.GetStandardTablesFromMetadata();
+            var allStandardTables = _syncTablesRepository.GetStandardTablesFromMetadata();
 
             var unsynchronizedTables = allStandardTables
                 .Where(t => !syncTablesNames.Contains(t.SchemaName))
                 .ToList();
 
             return unsynchronizedTables; 
-
-            //return new List<Table>
-            //{
-            //    new Table { Name = "Account", SchemaName = "account" },
-            //    new Table { Name = "Contact", SchemaName = "contact" },
-            //    new Table { Name = "Lead", SchemaName = "lead" }
-            //};
         }
     }
 }

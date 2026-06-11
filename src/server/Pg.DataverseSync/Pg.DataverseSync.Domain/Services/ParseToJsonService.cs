@@ -7,7 +7,7 @@ namespace Pg.DataverseSync.Domain.Services
 {
     public class ParseToJsonService : ServiceBase, IParseToJsonService
     {
-        public ParseToJsonService(IRepository repository, ITracingService tracingService) : base(repository, tracingService)
+        public ParseToJsonService(ITracingService tracingService) : base(tracingService)
         {
         }
 

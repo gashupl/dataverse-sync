@@ -1,4 +1,6 @@
+using Pg.DataverseSync.Domain.Repositories;
 using Pg.DataverseSync.Domain.Services;
+using Pg.DataverseSync.Infrastructure.Repositories;
 using Pg.DataverseSync.Model;
 using Pg.DataverseSync.Plugins.Core;
 using System;
@@ -9,6 +11,7 @@ namespace Pg.DataverseSync.Plugins.CustomApi
     {
         public GetUnsynchronizedTablesLoader()
         {
+            Register<ISyncTablesRepository, SyncTablesRepository>();
             Register<ITablesService, TablesService>();
             Register<IParseToJsonService, ParseToJsonService>();
         }
