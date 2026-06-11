@@ -1,7 +1,6 @@
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using Microsoft.Xrm.Sdk.Query;
 using Pg.DataverseSync.Domain.Dto;
 using Pg.DataverseSync.Domain.Repositories;
 using Pg.DataverseSync.Infrastructure.Core;
@@ -53,65 +52,33 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
 
         public Guid GetSdkMessageId(string messageName)
         {
-            var query = new QueryExpression(SdkMessage.EntityLogicalName)
+            using (var context = new DataverseContext(service))
             {
-                ColumnSet = new ColumnSet(SdkMessage.Fields.SdkMessageId),
-                Criteria =
-                {
-                    Conditions =
-                    {
-                        new ConditionExpression(SdkMessage.Fields.Name,
-                            ConditionOperator.Equal,
-                            messageName)
-                    }
-                }
-            };
+                var messageId = context.SdkMessageSet
+                    .Where(m => m.Name == messageName)
+                    .Select(m => m.SdkMessageId)
+                    .FirstOrDefault();
 
-            var results = service.RetrieveMultiple(query);
-            if (results.Entities.Count == 0)
-                throw new InvalidOperationException($"SDK Message '{messageName}' not found.");
+                if (messageId == null)
+                    throw new InvalidOperationException($"SDK Message '{messageName}' not found.");
 
-            return results.Entities[0].Id;
+                return messageId.Value;
+            }
         }
 
         public Guid? GetSdkMessageFilterId(string messageName, string entityName)
         {
-            var query = new QueryExpression(SdkMessageFilter.EntityLogicalName)
+            using (var context = new DataverseContext(service))
             {
-                ColumnSet = new ColumnSet(SdkMessageFilter.Fields.SdkMessageFilterId, SdkMessageFilter.Fields.PrimaryObjectTypeCode),
-                Criteria =
-                {
-                    Conditions =
-                    {
-                        new ConditionExpression(SdkMessageFilter.Fields.PrimaryObjectTypeCode,
-                            ConditionOperator.Equal,
-                            entityName)
-                    }
-                },
-                LinkEntities =
-                {
-                    new LinkEntity(SdkMessageFilter.EntityLogicalName,
-                        SdkMessage.EntityLogicalName,
-                        SdkMessageFilter.Fields.SdkMessageId,
-                        SdkMessage.Fields.SdkMessageId,
-                        JoinOperator.Inner)
-                    {
-                        LinkCriteria =
-                        {
-                            Conditions =
-                            {
-                                new ConditionExpression(SdkMessage.Fields.Name,
-                                    ConditionOperator.Equal,
-                                    messageName)
-                            }
-                        }
-                    }
-                }
-            };
+                var filterId = (from f in context.SdkMessageFilterSet
+                                join m in context.SdkMessageSet
+                                on f.SdkMessageId.Id equals m.Id
+                                where f.PrimaryObjectTypeCode == entityName
+                                   && m.Name == messageName
+                                select f.SdkMessageFilterId).FirstOrDefault();
 
-            var results = service.RetrieveMultiple(query);
-            return results.Entities.Count > 0 ? results.Entities[0].Id : (Guid?)null;
-       
+                return filterId;
+            }
         }
 
 

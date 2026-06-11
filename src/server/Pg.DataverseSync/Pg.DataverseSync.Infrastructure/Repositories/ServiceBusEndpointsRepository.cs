@@ -1,8 +1,11 @@
 ﻿using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
 using Pg.DataverseSync.Domain.Repositories;
 using Pg.DataverseSync.Model;
 using System;
+using System.Linq;
+using System.Runtime.Remoting.Contexts;
+using System.ServiceModel.Description;
+using System.ServiceModel.Dispatcher;
 
 
 namespace Pg.DataverseSync.Infrastructure.Repositories
@@ -27,29 +30,18 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
         public void DeleteStep(Guid serviceEndpointId, string messageName, string entityName)
         {
             var messageFilterId = GetSdkMessageFilterId(messageName, entityName);
-            var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
+
+            using (var context = new DataverseContext(service))
             {
-                ColumnSet = new ColumnSet(SdkMessageProcessingStep.Fields.SdkMessageProcessingStepId),
-                Criteria =
-                    {
-                        Conditions =
-                        {
-                            new ConditionExpression(SdkMessageProcessingStep.Fields.EventHandler,
-                                ConditionOperator.Equal,
-                                serviceEndpointId),
-                            new ConditionExpression(SdkMessageProcessingStep.Fields.SdkMessageFilterId,
-                                ConditionOperator.Equal,
-                                messageFilterId.Value)
-                        }
-                    }
-            };
-            var results = service.RetrieveMultiple(query);
-            foreach (var step in results.Entities)
-            {
-                service.Delete(SdkMessageProcessingStep.EntityLogicalName, step.Id);
+                var stepIds = BuildSqkMessageProcessingStepQuery(context, serviceEndpointId, messageFilterId)
+                    .ToList();
+
+                foreach (var stepId in stepIds)
+                {
+                    service.Delete(SdkMessageProcessingStep.EntityLogicalName, stepId.Value);
+                }
             }
         }
-
 
         public bool StepExists(Guid serviceEndpointId, string messageName, string entityName)
         {
@@ -58,24 +50,21 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
             if (messageFilterId == null)
                 return false;
 
-            var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
+            using (var context = new DataverseContext(service))
             {
-                ColumnSet = new ColumnSet(SdkMessageProcessingStep.Fields.SdkMessageProcessingStepId),
-                Criteria =
-                {
-                    Conditions =
-                    {
-                        new ConditionExpression(SdkMessageProcessingStep.Fields.EventHandler,
-                            ConditionOperator.Equal,
-                            serviceEndpointId),
-                        new ConditionExpression(SdkMessageProcessingStep.Fields.SdkMessageFilterId,
-                            ConditionOperator.Equal,
-                            messageFilterId.Value)
-                    }
-                }
-            };
-
-            return service.RetrieveMultiple(query).Entities.Count > 0;
+                return BuildSqkMessageProcessingStepQuery(context, serviceEndpointId, messageFilterId)
+                    .FirstOrDefault() != null;
+            }
         }
+
+        private IQueryable<Guid?> BuildSqkMessageProcessingStepQuery(
+            DataverseContext context, Guid serviceEndpointId, Guid? messageFilterId)
+        {
+            return context.SdkMessageProcessingStepSet
+                    .Where(s => s.EventHandler.Id == serviceEndpointId
+                             && s.SdkMessageFilterId.Id == messageFilterId.Value)
+                    .Select(s => s.SdkMessageProcessingStepId); 
+        }
+
     }
 }
