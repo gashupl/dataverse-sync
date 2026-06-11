@@ -14,7 +14,7 @@ namespace Pg.DataverseSync.Plugins.SyncTables
         {
             Register<IServiceBusEndpointsRepository, ServiceBusEndpointsRepository>(); 
             Register<IEnvironmentVariablesRepository, EnvironmentVariablesRepository>(); 
-            Register<IEndpointStepCreationService, EndpointStepCreationService>();
+            Register<IServiceBusStepService, ServiceBusStepService>();
         }
     }
 
@@ -30,9 +30,9 @@ namespace Pg.DataverseSync.Plugins.SyncTables
 
     public class SyncTableServiceBusEndpointStepHandler : PluginHandlerBase
     {
-        private readonly IEndpointStepCreationService _endpointStepCreationService;
+        private readonly IServiceBusStepService _endpointStepCreationService;
 
-        public SyncTableServiceBusEndpointStepHandler(IEndpointStepCreationService endpointStepCreationService)
+        public SyncTableServiceBusEndpointStepHandler(IServiceBusStepService endpointStepCreationService)
         {
             _endpointStepCreationService = endpointStepCreationService;
         }

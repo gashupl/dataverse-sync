@@ -21,6 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pg.DataverseSync.Domain\Pg.DataverseSync.Domain.csproj" />
+    <ProjectReference Include="..\Pg.DataverseSync.Infrastructure\Pg.DataverseSync.Infrastructure.csproj" />
     <ProjectReference Include="..\Pg.DataverseSync.Model\Pg.DataverseSync.Model.csproj" />
   </ItemGroup>
   <ItemGroup>

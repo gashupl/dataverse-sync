@@ -5,20 +5,20 @@ using System;
 
 namespace Pg.DataverseSync.Domain.Services
 {
-    public class EndpointStepCreationService : ServiceBase, IEndpointStepCreationService
+    public class ServiceBusStepService : ServiceBase, IServiceBusStepService
     {
         private const string _serviceEndpointIdEnvVariableName = "pg_dataversesyncendpointid";
         private readonly IEnvironmentVariablesRepository _envVariablesRepository;
         private readonly IServiceBusEndpointsRepository _serviceBusEndpointsRepository;
 
-        public EndpointStepCreationService(IEnvironmentVariablesRepository envVariablesRepository, IServiceBusEndpointsRepository serviceBusEndpointsRepository, ITracingService tracingService) 
+        public ServiceBusStepService(IEnvironmentVariablesRepository envVariablesRepository, IServiceBusEndpointsRepository serviceBusEndpointsRepository, ITracingService tracingService) 
             : base(tracingService)
         {
             _envVariablesRepository = envVariablesRepository;
             _serviceBusEndpointsRepository = serviceBusEndpointsRepository;
         }
 
-        public EndpointStepCreationResult CreateStepForEntity(string entityName, string messageName)
+        public ServiceOperationResult CreateStepForEntity(string entityName, string messageName)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace Pg.DataverseSync.Domain.Services
                 if (!parseResult)
                 {
                     tracingService.Trace("Missing or invalid ServiceEndpointId. Step creation aborted.");
-                    return new EndpointStepCreationResult
+                    return new ServiceOperationResult
                     {
                         Success = false,
                         ErrorMessage = "Missing or invalid ServiceEndpointId."
@@ -40,7 +40,7 @@ namespace Pg.DataverseSync.Domain.Services
                 if(sdkMessageFilterId == null)
                 {
                     tracingService.Trace($"No SDK Message Filter found for message '{messageName}' and entity '{entityName}'. Step creation aborted.");
-                    return new EndpointStepCreationResult
+                    return new ServiceOperationResult
                     {
                         Success = false,
                         ErrorMessage = $"No SDK Message Filter found for message '{messageName}' and entity '{entityName}'."
@@ -60,12 +60,12 @@ namespace Pg.DataverseSync.Domain.Services
                 };
 
                 _serviceBusEndpointsRepository.CreateStep(step, entityName);
-                return new EndpointStepCreationResult { Success = true };
+                return new ServiceOperationResult { Success = true };
             }
             catch (Exception ex)
             {
                 tracingService.Trace($"CreateStepForEntity failed for entity '{entityName}' and message '{messageName}': {ex.Message}");
-                return new EndpointStepCreationResult
+                return new ServiceOperationResult
                 {
                     Success = false,
                     ErrorMessage = ex.Message

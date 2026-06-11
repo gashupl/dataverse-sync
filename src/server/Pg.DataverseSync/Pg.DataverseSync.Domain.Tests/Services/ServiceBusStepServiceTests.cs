@@ -8,17 +8,17 @@ using Xunit;
 
 namespace Pg.DataverseSync.Domain.Tests.Services
 {
-    public class EndpointStepCreationServiceTests
+    public class ServiceBusStepServiceTests
     {
         private readonly Mock<IServiceBusEndpointsRepository> _mockServiceBusEndpointsRepository;
         private readonly Mock<IEnvironmentVariablesRepository> _mockEnvVariablesRepository;
         private readonly Mock<ITracingService> _mockTracingService;
-        private readonly EndpointStepCreationService _service;
+        private readonly ServiceBusStepService _service;
         private readonly Guid _serviceEndpointId = Guid.NewGuid();
         private readonly Guid _sdkMessageId = Guid.NewGuid();
         private readonly Guid _sdkMessageFilterId = Guid.NewGuid();
 
-        public EndpointStepCreationServiceTests()
+        public ServiceBusStepServiceTests()
         {
             _mockServiceBusEndpointsRepository = new Mock<IServiceBusEndpointsRepository>();
             _mockEnvVariablesRepository = new Mock<IEnvironmentVariablesRepository>();
@@ -28,7 +28,7 @@ namespace Pg.DataverseSync.Domain.Tests.Services
             _mockServiceBusEndpointsRepository.Setup(x => x.GetSdkMessageId(It.IsAny<string>())).Returns(_sdkMessageId);
             _mockServiceBusEndpointsRepository.Setup(x => x.GetSdkMessageFilterId(It.IsAny<string>(), It.IsAny<string>())).Returns(_sdkMessageFilterId);
 
-            _service = new EndpointStepCreationService(_mockEnvVariablesRepository.Object, _mockServiceBusEndpointsRepository.Object, _mockTracingService.Object);
+            _service = new ServiceBusStepService(_mockEnvVariablesRepository.Object, _mockServiceBusEndpointsRepository.Object, _mockTracingService.Object);
         }
 
         [Fact]
@@ -158,7 +158,7 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         {
             var mockEnvRepo = new Mock<IEnvironmentVariablesRepository>();
             mockEnvRepo.Setup(x => x.GetValue(It.IsAny<string>())).Returns((string)null);
-            var service = new EndpointStepCreationService(mockEnvRepo.Object, _mockServiceBusEndpointsRepository.Object, _mockTracingService.Object);
+            var service = new ServiceBusStepService(mockEnvRepo.Object, _mockServiceBusEndpointsRepository.Object, _mockTracingService.Object);
 
             var result = service.CreateStepForEntity("account", "Create");
 

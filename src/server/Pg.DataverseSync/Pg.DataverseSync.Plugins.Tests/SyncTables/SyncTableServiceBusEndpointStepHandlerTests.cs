@@ -10,7 +10,7 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
 {
     public class SyncTableServiceBusEndpointStepHandlerTests
     {
-        private readonly Mock<IEndpointStepCreationService> _mockService;
+        private readonly Mock<IServiceBusStepService> _mockService;
         private readonly Mock<ILocalPluginContext> _mockLocalPluginContext;
         private readonly Mock<IPluginExecutionContext4> _mockExecutionContext;
         private readonly Mock<ITracingService> _mockTracingService;
@@ -18,7 +18,7 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
 
         public SyncTableServiceBusEndpointStepHandlerTests()
         {
-            _mockService = new Mock<IEndpointStepCreationService>();
+            _mockService = new Mock<IServiceBusStepService>();
             _mockLocalPluginContext = new Mock<ILocalPluginContext>();
             _mockExecutionContext = new Mock<IPluginExecutionContext4>();
             _mockTracingService = new Mock<ITracingService>();
@@ -101,7 +101,7 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
 
             _mockService.Setup(x => x.CreateStepForEntity("account", "Create"))
-                .Returns(new EndpointStepCreationResult { Success = true });
+                .Returns(new ServiceOperationResult { Success = true });
 
             _handler.Execute();
 
@@ -119,7 +119,7 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
 
             _mockService.Setup(x => x.CreateStepForEntity("account", "Create"))
-                .Returns(new EndpointStepCreationResult { Success = false, ErrorMessage = "Step already exists" });
+                .Returns(new ServiceOperationResult { Success = false, ErrorMessage = "Step already exists" });
 
             Assert.Throws<InvalidPluginExecutionException>(() => _handler.Execute());
         }
@@ -174,7 +174,7 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
 
             _mockService.Setup(x => x.CreateStepForEntity("contact", "Create"))
-                .Returns(new EndpointStepCreationResult { Success = true });
+                .Returns(new ServiceOperationResult { Success = true });
 
             _handler.Execute();
 
@@ -200,7 +200,7 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
 
             _mockService.Setup(x => x.CreateStepForEntity("account", "Create"))
-                .Returns(new EndpointStepCreationResult { Success = true });
+                .Returns(new ServiceOperationResult { Success = true });
 
             _handler.Execute();
 
