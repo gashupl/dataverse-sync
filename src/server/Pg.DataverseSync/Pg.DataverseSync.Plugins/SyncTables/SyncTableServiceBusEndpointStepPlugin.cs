@@ -76,15 +76,15 @@ namespace Pg.DataverseSync.Plugins.SyncTables
             try
             {
                 //TODO: It should be replaced with the Create, Update and Delete calls. Message name should not be hardcoded. 
-                var result = _endpointStepCreationService.CreateStepForEntity(entityName, "Create");
+                var result = _endpointStepCreationService.CreateStepsForEntity(entityName, new[] { "Create" });
 
                 if (!result.Success)
                 {
                     throw new InvalidPluginExecutionException(
-                        $"Failed to create service endpoint step for entity '{entityName}': {result.ErrorMessage}");
+                        $"Failed to create service endpoint steps for entity '{entityName}': {result.ErrorMessage}");
                 }
 
-                tracingService.Trace($"Service endpoint step created successfully for entity '{entityName}'.");
+                tracingService.Trace($"Service endpoint steps created successfully for entity '{entityName}'.");
             }
             catch (InvalidPluginExecutionException)
             {
@@ -94,7 +94,7 @@ namespace Pg.DataverseSync.Plugins.SyncTables
             {
                 tracingService.Trace($"SyncTableServiceBusEndpointStepHandler Error: {ex.Message}");
                 throw new InvalidPluginExecutionException(
-                    $"Failed to create service endpoint step for entity '{entityName}': {ex.Message}", ex);
+                    $"Failed to create service endpoint steps for entity '{entityName}': {ex.Message}", ex);
             }
         }
     }

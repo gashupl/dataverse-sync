@@ -18,13 +18,13 @@ namespace Pg.DataverseSync.Domain.Services
             _serviceBusEndpointsRepository = serviceBusEndpointsRepository;
         }
 
-        public ServiceOperationResult CreateStepForEntity(string entityName, string messageName)
+        public ServiceOperationResult CreateStepsForEntity(string entityName, string[] messageNames)
         {
             try
             {
                 var parseResult 
                     = Guid.TryParse(_envVariablesRepository.GetValue(_serviceEndpointIdEnvVariableName), out var serviceEndpointId); 
-                
+
                 if (!parseResult)
                 {
                     tracingService.Trace("Missing or invalid ServiceEndpointId. Step creation aborted.");
@@ -35,36 +35,40 @@ namespace Pg.DataverseSync.Domain.Services
                     };
                 }
 
-                var sdkMessageId = _serviceBusEndpointsRepository.GetSdkMessageId(messageName);
-                var sdkMessageFilterId = _serviceBusEndpointsRepository.GetSdkMessageFilterId(messageName, entityName);
-                if(sdkMessageFilterId == null)
+                foreach (var messageName in messageNames)
                 {
-                    tracingService.Trace($"No SDK Message Filter found for message '{messageName}' and entity '{entityName}'. Step creation aborted.");
-                    return new ServiceOperationResult
+                    var sdkMessageId = _serviceBusEndpointsRepository.GetSdkMessageId(messageName);
+                    var sdkMessageFilterId = _serviceBusEndpointsRepository.GetSdkMessageFilterId(messageName, entityName);
+                    if (sdkMessageFilterId == null)
                     {
-                        Success = false,
-                        ErrorMessage = $"No SDK Message Filter found for message '{messageName}' and entity '{entityName}'."
+                        tracingService.Trace($"No SDK Message Filter found for message '{messageName}' and entity '{entityName}'. Step creation aborted.");
+                        return new ServiceOperationResult
+                        {
+                            Success = false,
+                            ErrorMessage = $"No SDK Message Filter found for message '{messageName}' and entity '{entityName}'."
+                        };
+                    }
+
+                    var step = new SdkMessageProcessingStep
+                    {
+                        SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, sdkMessageId),
+                        SdkMessageFilterId = new EntityReference(SdkMessageFilter.EntityLogicalName, sdkMessageFilterId.Value),
+                        EventHandler = new EntityReference("serviceendpoint", serviceEndpointId),
+                        Name = $"DataverseSync Endpoint: {messageName} to {entityName}",
+                        Rank = 1,
+                        Description = $"DataverseSync Endpoint: {messageName} to {entityName}",
+                        Stage = SdkMessageProcessingStep_Stage.PostOperation,
+                        Mode = SdkMessageProcessingStep_Mode.Asynchronous
                     };
+
+                    _serviceBusEndpointsRepository.CreateStep(step, entityName);
                 }
 
-                var step = new SdkMessageProcessingStep
-                {
-                    SdkMessageId = new EntityReference(SdkMessage.EntityLogicalName, sdkMessageId),
-                    SdkMessageFilterId = new EntityReference(SdkMessageFilter.EntityLogicalName, sdkMessageFilterId.Value),
-                    EventHandler = new EntityReference("serviceendpoint", serviceEndpointId),
-                    Name = $"DataverseSync Endpoint: {messageName} to {entityName}",
-                    Rank = 1,
-                    Description = $"DataverseSync Endpoint: {messageName} to {entityName}",
-                    Stage = SdkMessageProcessingStep_Stage.PostOperation,
-                    Mode = SdkMessageProcessingStep_Mode.Asynchronous
-                };
-
-                _serviceBusEndpointsRepository.CreateStep(step, entityName);
                 return new ServiceOperationResult { Success = true };
             }
             catch (Exception ex)
             {
-                tracingService.Trace($"CreateStepForEntity failed for entity '{entityName}' and message '{messageName}': {ex.Message}");
+                tracingService.Trace($"CreateStepsForEntity failed for entity '{entityName}': {ex.Message}");
                 return new ServiceOperationResult
                 {
                     Success = false,
@@ -73,7 +77,7 @@ namespace Pg.DataverseSync.Domain.Services
             }
         }
 
-        public ServiceOperationResult DeleteStepForEntity(string entityName, string messageName)
+        public ServiceOperationResult DeleteStepsForEntity(string entityName, string[] messageNames)
         {
             try
             {
@@ -90,12 +94,16 @@ namespace Pg.DataverseSync.Domain.Services
                     };
                 }
 
-                _serviceBusEndpointsRepository.DeleteStep(serviceEndpointId, messageName, entityName);
+                foreach (var messageName in messageNames)
+                {
+                    _serviceBusEndpointsRepository.DeleteStep(serviceEndpointId, messageName, entityName);
+                }
+
                 return new ServiceOperationResult { Success = true };
             }
             catch (Exception ex)
             {
-                tracingService.Trace($"DeleteStepForEntity failed for entity '{entityName}' and message '{messageName}': {ex.Message}");
+                tracingService.Trace($"DeleteStepsForEntity failed for entity '{entityName}': {ex.Message}");
                 return new ServiceOperationResult
                 {
                     Success = false,

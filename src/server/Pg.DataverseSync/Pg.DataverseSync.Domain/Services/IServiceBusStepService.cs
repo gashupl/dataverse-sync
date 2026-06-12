@@ -2,8 +2,8 @@
 {
     public interface IServiceBusStepService
     {
-        ServiceOperationResult CreateStepForEntity(string entityName, string messageName);
+        ServiceOperationResult CreateStepsForEntity(string entityName, string[] messageNames);
 
-        ServiceOperationResult DeleteStepForEntity(string entityName, string messageName);
+        ServiceOperationResult DeleteStepsForEntity(string entityName, string[] messageNames);
     }
 }

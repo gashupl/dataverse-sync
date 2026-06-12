@@ -32,45 +32,45 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         }
 
         [Fact]
-        public void CreateStepForEntity_Success_ReturnsSuccessResult()
+        public void CreateStepsForEntity_Success_ReturnsSuccessResult()
         {
-            var result = _service.CreateStepForEntity("account", "Create");
+            var result = _service.CreateStepsForEntity("account", new[] { "Create" });
 
             Assert.True(result.Success);
             Assert.Equal(string.Empty, result.ErrorMessage);
         }
 
         [Fact]
-        public void CreateStepForEntity_Success_CallsRepositoryCreateStep()
+        public void CreateStepsForEntity_MultipleMessages_CallsRepositoryCreateStepForEach()
         {
-            _service.CreateStepForEntity("account", "Create");
+            _service.CreateStepsForEntity("account", new[] { "Create", "Update", "Delete" });
 
             _mockServiceBusEndpointsRepository.Verify(
                 x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), "account"),
-                Times.Once);
+                Times.Exactly(3));
         }
 
         [Fact]
-        public void CreateStepForEntity_RepositoryThrows_ReturnsFailureResult()
+        public void CreateStepsForEntity_RepositoryThrows_ReturnsFailureResult()
         {
             _mockServiceBusEndpointsRepository
                 .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
                 .Throws(new Exception("Connection failed"));
 
-            var result = _service.CreateStepForEntity("account", "Create");
+            var result = _service.CreateStepsForEntity("account", new[] { "Create" });
 
             Assert.False(result.Success);
             Assert.Equal("Connection failed", result.ErrorMessage);
         }
 
         [Fact]
-        public void CreateStepForEntity_RepositoryThrows_TracesError()
+        public void CreateStepsForEntity_RepositoryThrows_TracesError()
         {
             _mockServiceBusEndpointsRepository
                 .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
                 .Throws(new Exception("Connection failed"));
 
-            _service.CreateStepForEntity("account", "Create");
+            _service.CreateStepsForEntity("account", new[] { "Create" });
 
             _mockTracingService.Verify(
                 x => x.Trace(It.Is<string>(s => s.Contains("account") && s.Contains("Connection failed"))),
@@ -78,9 +78,9 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         }
 
         [Fact]
-        public void CreateStepForEntity_PassesEntityNameToRepository()
+        public void CreateStepsForEntity_PassesEntityNameToRepository()
         {
-            _service.CreateStepForEntity("contact", "Update");
+            _service.CreateStepsForEntity("contact", new[] { "Update" });
 
             _mockServiceBusEndpointsRepository.Verify(
                 x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), "contact"),
@@ -88,97 +88,107 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         }
 
         [Fact]
-        public void CreateStepForEntity_SetsStepNameWithEntityAndMessage()
+        public void CreateStepsForEntity_SetsStepNameWithEntityAndMessage()
         {
             SdkMessageProcessingStep capturedStep = null;
             _mockServiceBusEndpointsRepository
                 .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
                 .Callback<SdkMessageProcessingStep, string>((step, _) => capturedStep = step);
 
-            _service.CreateStepForEntity("account", "Create");
+            _service.CreateStepsForEntity("account", new[] { "Create" });
 
             Assert.Equal("DataverseSync Endpoint: Create to account", capturedStep.Name);
         }
 
         [Fact]
-        public void CreateStepForEntity_SetsEventHandlerToServiceEndpoint()
+        public void CreateStepsForEntity_SetsEventHandlerToServiceEndpoint()
         {
             SdkMessageProcessingStep capturedStep = null;
             _mockServiceBusEndpointsRepository
                 .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
                 .Callback<SdkMessageProcessingStep, string>((step, _) => capturedStep = step);
 
-            _service.CreateStepForEntity("account", "Create");
+            _service.CreateStepsForEntity("account", new[] { "Create" });
 
             Assert.Equal("serviceendpoint", capturedStep.EventHandler.LogicalName);
             Assert.Equal(_serviceEndpointId, capturedStep.EventHandler.Id);
         }
 
         [Fact]
-        public void CreateStepForEntity_SetsAsynchronousMode()
+        public void CreateStepsForEntity_SetsAsynchronousMode()
         {
             SdkMessageProcessingStep capturedStep = null;
             _mockServiceBusEndpointsRepository
                 .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
                 .Callback<SdkMessageProcessingStep, string>((step, _) => capturedStep = step);
 
-            _service.CreateStepForEntity("account", "Create");
+            _service.CreateStepsForEntity("account", new[] { "Create" });
 
             Assert.Equal(SdkMessageProcessingStep_Mode.Asynchronous, capturedStep.Mode);
         }
 
         [Fact]
-        public void CreateStepForEntity_SetsPostOperationStage()
+        public void CreateStepsForEntity_SetsPostOperationStage()
         {
             SdkMessageProcessingStep capturedStep = null;
             _mockServiceBusEndpointsRepository
                 .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
                 .Callback<SdkMessageProcessingStep, string>((step, _) => capturedStep = step);
 
-            _service.CreateStepForEntity("account", "Delete");
+            _service.CreateStepsForEntity("account", new[] { "Delete" });
 
             Assert.Equal(SdkMessageProcessingStep_Stage.PostOperation, capturedStep.Stage);
         }
 
         [Fact]
-        public void CreateStepForEntity_SetsSdkMessageId()
+        public void CreateStepsForEntity_SetsSdkMessageId()
         {
             SdkMessageProcessingStep capturedStep = null;
             _mockServiceBusEndpointsRepository
                 .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
                 .Callback<SdkMessageProcessingStep, string>((step, _) => capturedStep = step);
 
-            _service.CreateStepForEntity("account", "Create");
+            _service.CreateStepsForEntity("account", new[] { "Create" });
 
             Assert.Equal(SdkMessage.EntityLogicalName, capturedStep.SdkMessageId.LogicalName);
         }
 
         [Fact]
-        public void CreateStepForEntity_WhenEnvironmentVariableDoesNotExist_ReturnsFailureResult()
+        public void CreateStepsForEntity_WhenEnvironmentVariableDoesNotExist_ReturnsFailureResult()
         {
             var mockEnvRepo = new Mock<IEnvironmentVariablesRepository>();
             mockEnvRepo.Setup(x => x.GetValue(It.IsAny<string>())).Returns((string)null);
             var service = new ServiceBusStepService(mockEnvRepo.Object, _mockServiceBusEndpointsRepository.Object, _mockTracingService.Object);
 
-            var result = service.CreateStepForEntity("account", "Create");
+            var result = service.CreateStepsForEntity("account", new[] { "Create" });
 
             Assert.False(result.Success);
             Assert.Equal("Missing or invalid ServiceEndpointId.", result.ErrorMessage);
         }
 
         [Fact]
-        public void DeleteStepForEntity_Success_ReturnsSuccessResult()
+        public void DeleteStepsForEntity_Success_ReturnsSuccessResult()
         {
-            var result = _service.DeleteStepForEntity("account", "Create");
+            var result = _service.DeleteStepsForEntity("account", new[] { "Create" });
 
             Assert.True(result.Success);
             Assert.Equal(string.Empty, result.ErrorMessage);
         }
 
         [Fact]
-        public void DeleteStepForEntity_Success_CallsRepositoryDeleteStep()
+        public void DeleteStepsForEntity_MultipleMessages_CallsRepositoryDeleteStepForEach()
         {
-            _service.DeleteStepForEntity("account", "Create");
+            _service.DeleteStepsForEntity("account", new[] { "Create", "Update", "Delete" });
+
+            _mockServiceBusEndpointsRepository.Verify(
+                x => x.DeleteStep(_serviceEndpointId, It.IsAny<string>(), "account"),
+                Times.Exactly(3));
+        }
+
+        [Fact]
+        public void DeleteStepsForEntity_Success_CallsRepositoryDeleteStep()
+        {
+            _service.DeleteStepsForEntity("account", new[] { "Create" });
 
             _mockServiceBusEndpointsRepository.Verify(
                 x => x.DeleteStep(_serviceEndpointId, "Create", "account"),
@@ -186,26 +196,26 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         }
 
         [Fact]
-        public void DeleteStepForEntity_RepositoryThrows_ReturnsFailureResult()
+        public void DeleteStepsForEntity_RepositoryThrows_ReturnsFailureResult()
         {
             _mockServiceBusEndpointsRepository
                 .Setup(x => x.DeleteStep(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Throws(new Exception("Delete failed"));
 
-            var result = _service.DeleteStepForEntity("account", "Create");
+            var result = _service.DeleteStepsForEntity("account", new[] { "Create" });
 
             Assert.False(result.Success);
             Assert.Equal("Delete failed", result.ErrorMessage);
         }
 
         [Fact]
-        public void DeleteStepForEntity_RepositoryThrows_TracesError()
+        public void DeleteStepsForEntity_RepositoryThrows_TracesError()
         {
             _mockServiceBusEndpointsRepository
                 .Setup(x => x.DeleteStep(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Throws(new Exception("Delete failed"));
 
-            _service.DeleteStepForEntity("account", "Create");
+            _service.DeleteStepsForEntity("account", new[] { "Create" });
 
             _mockTracingService.Verify(
                 x => x.Trace(It.Is<string>(s => s.Contains("account") && s.Contains("Delete failed"))),
@@ -213,13 +223,13 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         }
 
         [Fact]
-        public void DeleteStepForEntity_WhenEnvironmentVariableDoesNotExist_ReturnsFailureResult()
+        public void DeleteStepsForEntity_WhenEnvironmentVariableDoesNotExist_ReturnsFailureResult()
         {
             var mockEnvRepo = new Mock<IEnvironmentVariablesRepository>();
             mockEnvRepo.Setup(x => x.GetValue(It.IsAny<string>())).Returns((string)null);
             var service = new ServiceBusStepService(mockEnvRepo.Object, _mockServiceBusEndpointsRepository.Object, _mockTracingService.Object);
 
-            var result = service.DeleteStepForEntity("account", "Create");
+            var result = service.DeleteStepsForEntity("account", new[] { "Create" });
 
             Assert.False(result.Success);
             Assert.Equal("Missing or invalid ServiceEndpointId.", result.ErrorMessage);
