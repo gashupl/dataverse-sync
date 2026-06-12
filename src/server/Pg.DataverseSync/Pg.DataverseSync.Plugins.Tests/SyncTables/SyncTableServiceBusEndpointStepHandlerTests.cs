@@ -100,12 +100,16 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.MessageName).Returns("Create");
             _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
 
-            _mockService.Setup(x => x.CreateStepsForEntity("account", It.Is<string[]>(m => m.Length == 1 && m[0] == "Create")))
+            _mockService.Setup(x => 
+                x.CreateStepsForEntity("account",
+                    It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")))
                 .Returns(new ServiceOperationResult { Success = true });
 
             _handler.Execute();
 
-            _mockService.Verify(x => x.CreateStepsForEntity("account", It.Is<string[]>(m => m.Length == 1 && m[0] == "Create")), Times.Once);
+            _mockService.Verify(x => 
+                x.CreateStepsForEntity("account", 
+                    It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")), Times.Once);
         }
 
         [Fact]
@@ -173,12 +177,14 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
             _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
 
-            _mockService.Setup(x => x.CreateStepsForEntity("contact", It.Is<string[]>(m => m.Length == 1 && m[0] == "Create")))
+            _mockService.Setup(x => x.CreateStepsForEntity("contact", 
+                    It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")))
                 .Returns(new ServiceOperationResult { Success = true });
 
             _handler.Execute();
 
-            _mockService.Verify(x => x.CreateStepsForEntity("contact", It.Is<string[]>(m => m.Length == 1 && m[0] == "Create")), Times.Once);
+            _mockService.Verify(x => x.CreateStepsForEntity("contact", 
+                It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")), Times.Once);
         }
 
         [Fact]
@@ -199,12 +205,14 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
             _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
 
-            _mockService.Setup(x => x.CreateStepsForEntity("account", It.Is<string[]>(m => m.Length == 1 && m[0] == "Create")))
+            _mockService.Setup(x => x.CreateStepsForEntity("account", 
+                It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")))
                 .Returns(new ServiceOperationResult { Success = true });
 
             _handler.Execute();
 
-            _mockService.Verify(x => x.CreateStepsForEntity("account", It.Is<string[]>(m => m.Length == 1 && m[0] == "Create")), Times.Once);
+            _mockService.Verify(x => x.CreateStepsForEntity("account", 
+                It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")), Times.Once);
         }
     }
 }

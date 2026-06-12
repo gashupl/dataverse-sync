@@ -76,7 +76,7 @@ namespace Pg.DataverseSync.Plugins.SyncTables
             try
             {
                 //TODO: It should be replaced with the Create, Update and Delete calls. Message name should not be hardcoded. 
-                var result = _endpointStepCreationService.CreateStepsForEntity(entityName, new[] { "Create" });
+                var result = _endpointStepCreationService.CreateStepsForEntity(entityName, new[] { "Create", "Update", "Delete" });
 
                 if (!result.Success)
                 {
