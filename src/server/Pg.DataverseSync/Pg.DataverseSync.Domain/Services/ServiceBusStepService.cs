@@ -72,5 +72,36 @@ namespace Pg.DataverseSync.Domain.Services
                 };
             }
         }
+
+        public ServiceOperationResult DeleteStepForEntity(string entityName, string messageName)
+        {
+            try
+            {
+                var parseResult
+                    = Guid.TryParse(_envVariablesRepository.GetValue(_serviceEndpointIdEnvVariableName), out var serviceEndpointId);
+
+                if (!parseResult)
+                {
+                    tracingService.Trace("Missing or invalid ServiceEndpointId. Step deletion aborted.");
+                    return new ServiceOperationResult
+                    {
+                        Success = false,
+                        ErrorMessage = "Missing or invalid ServiceEndpointId."
+                    };
+                }
+
+                _serviceBusEndpointsRepository.DeleteStep(serviceEndpointId, messageName, entityName);
+                return new ServiceOperationResult { Success = true };
+            }
+            catch (Exception ex)
+            {
+                tracingService.Trace($"DeleteStepForEntity failed for entity '{entityName}' and message '{messageName}': {ex.Message}");
+                return new ServiceOperationResult
+                {
+                    Success = false,
+                    ErrorMessage = ex.Message
+                };
+            }
+        }
     }
 }

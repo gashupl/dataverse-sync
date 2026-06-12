@@ -165,5 +165,64 @@ namespace Pg.DataverseSync.Domain.Tests.Services
             Assert.False(result.Success);
             Assert.Equal("Missing or invalid ServiceEndpointId.", result.ErrorMessage);
         }
+
+        [Fact]
+        public void DeleteStepForEntity_Success_ReturnsSuccessResult()
+        {
+            var result = _service.DeleteStepForEntity("account", "Create");
+
+            Assert.True(result.Success);
+            Assert.Equal(string.Empty, result.ErrorMessage);
+        }
+
+        [Fact]
+        public void DeleteStepForEntity_Success_CallsRepositoryDeleteStep()
+        {
+            _service.DeleteStepForEntity("account", "Create");
+
+            _mockServiceBusEndpointsRepository.Verify(
+                x => x.DeleteStep(_serviceEndpointId, "Create", "account"),
+                Times.Once);
+        }
+
+        [Fact]
+        public void DeleteStepForEntity_RepositoryThrows_ReturnsFailureResult()
+        {
+            _mockServiceBusEndpointsRepository
+                .Setup(x => x.DeleteStep(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Throws(new Exception("Delete failed"));
+
+            var result = _service.DeleteStepForEntity("account", "Create");
+
+            Assert.False(result.Success);
+            Assert.Equal("Delete failed", result.ErrorMessage);
+        }
+
+        [Fact]
+        public void DeleteStepForEntity_RepositoryThrows_TracesError()
+        {
+            _mockServiceBusEndpointsRepository
+                .Setup(x => x.DeleteStep(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Throws(new Exception("Delete failed"));
+
+            _service.DeleteStepForEntity("account", "Create");
+
+            _mockTracingService.Verify(
+                x => x.Trace(It.Is<string>(s => s.Contains("account") && s.Contains("Delete failed"))),
+                Times.Once);
+        }
+
+        [Fact]
+        public void DeleteStepForEntity_WhenEnvironmentVariableDoesNotExist_ReturnsFailureResult()
+        {
+            var mockEnvRepo = new Mock<IEnvironmentVariablesRepository>();
+            mockEnvRepo.Setup(x => x.GetValue(It.IsAny<string>())).Returns((string)null);
+            var service = new ServiceBusStepService(mockEnvRepo.Object, _mockServiceBusEndpointsRepository.Object, _mockTracingService.Object);
+
+            var result = service.DeleteStepForEntity("account", "Create");
+
+            Assert.False(result.Success);
+            Assert.Equal("Missing or invalid ServiceEndpointId.", result.ErrorMessage);
+        }
     }
 }
