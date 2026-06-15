@@ -12,7 +12,8 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
 {
     public class ServiceBusEndpointsRepository : DataRepository, IServiceBusEndpointsRepository
     {
-        public ServiceBusEndpointsRepository(IOrganizationServiceFactory orgSvcFactory) : base(orgSvcFactory)
+        public ServiceBusEndpointsRepository(IOrganizationServiceFactory orgSvcFactory, ITracingService tracingService) 
+            : base(orgSvcFactory, tracingService)
         {
         }
 

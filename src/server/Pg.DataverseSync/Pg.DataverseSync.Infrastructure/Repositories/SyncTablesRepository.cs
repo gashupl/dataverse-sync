@@ -8,7 +8,7 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
 {
     public class SyncTablesRepository : DataRepository, ISyncTablesRepository
     {
-        public SyncTablesRepository(IOrganizationServiceFactory orgSvcFactory) : base(orgSvcFactory)
+        public SyncTablesRepository(IOrganizationServiceFactory orgSvcFactory, ITracingService tracingService) : base(orgSvcFactory, tracingService)
         {
         }
 

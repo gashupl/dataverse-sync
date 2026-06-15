@@ -14,10 +14,12 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
     public class DataRepository : IRepository
     {
         protected readonly IOrganizationService service;
+        protected readonly ITracingService tracingService;
 
-        public DataRepository(IOrganizationServiceFactory orgSvcFactory)
+        public DataRepository(IOrganizationServiceFactory orgSvcFactory, ITracingService tracingService)
         {
             service = orgSvcFactory.CreateOrganizationService(null); 
+            this.tracingService = tracingService;
         }
 
         public List<Table> GetStandardTablesFromMetadata()

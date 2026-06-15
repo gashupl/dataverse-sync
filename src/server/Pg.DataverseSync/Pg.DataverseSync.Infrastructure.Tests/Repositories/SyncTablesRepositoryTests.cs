@@ -5,6 +5,7 @@ using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
 using Microsoft.Xrm.Sdk;
+using Moq;
 using Pg.DataverseSync.Infrastructure.Repositories;
 using Pg.DataverseSync.Infrastructure.Tests.Core;
 using Pg.DataverseSync.Model;
@@ -54,7 +55,7 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
         public void GetActiveSynchronizedTables_ReturnExpectedResults()
         {
             // Arrange
-            var repository = new SyncTablesRepository(_serviceFactory);
+            var repository = new SyncTablesRepository(_serviceFactory, new Mock<ITracingService>().Object);
 
             // Act
             var result = repository.GetActiveSynchronizedTables();

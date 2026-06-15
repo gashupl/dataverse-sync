@@ -6,6 +6,7 @@ using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
+using Moq;
 using Pg.DataverseSync.Infrastructure.Core;
 using Pg.DataverseSync.Infrastructure.Repositories;
 using Pg.DataverseSync.Infrastructure.Tests.Core;
@@ -65,7 +66,7 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
         public void GetTablesFromMetadata_ReturnsExpectedTables()
         {
 
-            var repository = new DataRepository(_serviceFactory);
+            var repository = new DataRepository(_serviceFactory, new Mock<ITracingService>().Object);
             var tables = repository.GetStandardTablesFromMetadata();
 
             Assert.NotNull(tables);

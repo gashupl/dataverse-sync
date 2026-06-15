@@ -11,7 +11,8 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
 {
     public class EnvironmentVariablesRepository : DataRepository, IEnvironmentVariablesRepository
     {
-        public EnvironmentVariablesRepository(IOrganizationServiceFactory orgSvcFactory) : base(orgSvcFactory)
+        public EnvironmentVariablesRepository(IOrganizationServiceFactory orgSvcFactory, ITracingService tracingService) 
+            : base(orgSvcFactory, tracingService)
         {
         }
 

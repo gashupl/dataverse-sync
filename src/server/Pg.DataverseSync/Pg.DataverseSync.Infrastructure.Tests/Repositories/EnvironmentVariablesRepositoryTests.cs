@@ -5,6 +5,7 @@ using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
 using Microsoft.Xrm.Sdk;
+using Moq;
 using Pg.DataverseSync.Infrastructure.Repositories;
 using Pg.DataverseSync.Infrastructure.Tests.Core;
 using Pg.DataverseSync.Model;
@@ -22,7 +23,7 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
         {
             // Arrange
             var serviceFactory = BuildServiceFactoryWithEnvironmentVariable("pg_TestVariable", "TestValue");
-            var repository = new EnvironmentVariablesRepository(serviceFactory);
+            var repository = new EnvironmentVariablesRepository(serviceFactory, new Mock<ITracingService>().Object);
 
             // Act
             var result = repository.GetValue("pg_TestVariable");
@@ -37,7 +38,7 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
         {
             // Arrange
             var serviceFactory = BuildServiceFactoryWithEnvironmentVariable("pg_TestVariable", "TestValue");
-            var repository = new EnvironmentVariablesRepository(serviceFactory);
+            var repository = new EnvironmentVariablesRepository(serviceFactory, new Mock<ITracingService>().Object);
 
             // Act
             var result = repository.GetValue("pg_NonExistentVariable");

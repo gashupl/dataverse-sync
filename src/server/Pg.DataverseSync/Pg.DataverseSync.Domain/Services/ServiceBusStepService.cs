@@ -2,6 +2,7 @@
 using Pg.DataverseSync.Domain.Repositories;
 using Pg.DataverseSync.Model;
 using System;
+using System.Web.UI.WebControls;
 
 namespace Pg.DataverseSync.Domain.Services
 {
@@ -61,7 +62,9 @@ namespace Pg.DataverseSync.Domain.Services
                         Mode = SdkMessageProcessingStep_Mode.Asynchronous
                     };
 
+                    tracingService.Trace("Creating step for message '{0}' and entity '{1}' with ServiceEndpointId '{2}'", messageName, entityName, serviceEndpointId);
                     _serviceBusEndpointsRepository.CreateStep(step, entityName);
+                    tracingService.Trace("Step created successfully for message '{0}' and entity '{1}'", messageName, entityName);
                 }
 
                 return new ServiceOperationResult { Success = true };
