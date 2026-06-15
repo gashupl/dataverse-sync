@@ -5,7 +5,6 @@ using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
 using Microsoft.Xrm.Sdk;
-using Moq;
 using Pg.DataverseSync.Infrastructure.Repositories;
 using Pg.DataverseSync.Infrastructure.Tests.Core;
 using Pg.DataverseSync.Model;
@@ -16,14 +15,14 @@ using Xunit;
 
 namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
 {
-    public class ServiceBusEndpointsRepositoryTests
+    public class ServiceBusEndpointsRepositoryTests : RepositoryTestsBase
     {
         [Fact]
         public void StepExists_WhenMessageFilterDoesNotExist_ReturnsFalse()
         {
             // Arrange
             var serviceFactory = BuildServiceFactoryWithFilterAndStep(out var serviceEndpointId, includeStep: false, includeFilter: false);
-            var repository = new ServiceBusEndpointsRepository(serviceFactory, new Mock<ITracingService>().Object);
+            var repository = new ServiceBusEndpointsRepository(serviceFactory, tracingService);
 
             // Act
             var result = repository.StepExists(serviceEndpointId, "Create", "account");
@@ -37,7 +36,7 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
         {
             // Arrange
             var serviceFactory = BuildServiceFactoryWithFilterAndStep(out var serviceEndpointId, includeStep: false);
-            var repository = new ServiceBusEndpointsRepository(serviceFactory, new Mock<ITracingService>().Object);
+            var repository = new ServiceBusEndpointsRepository(serviceFactory, tracingService);
 
             // Act
             var result = repository.StepExists(serviceEndpointId, "Create", "account");
@@ -51,7 +50,7 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
         {
             // Arrange
             var serviceFactory = BuildServiceFactoryWithFilterAndStep(out var serviceEndpointId, includeStep: true);
-            var repository = new ServiceBusEndpointsRepository(serviceFactory, new Mock<ITracingService>().Object);
+            var repository = new ServiceBusEndpointsRepository(serviceFactory, tracingService);
 
             // Act
             var result = repository.StepExists(serviceEndpointId, "Create", "account");

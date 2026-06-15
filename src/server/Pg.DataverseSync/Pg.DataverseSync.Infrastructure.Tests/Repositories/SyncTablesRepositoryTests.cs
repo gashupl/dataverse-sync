@@ -5,7 +5,6 @@ using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
 using Microsoft.Xrm.Sdk;
-using Moq;
 using Pg.DataverseSync.Infrastructure.Repositories;
 using Pg.DataverseSync.Infrastructure.Tests.Core;
 using Pg.DataverseSync.Model;
@@ -16,7 +15,7 @@ using Xunit;
 
 namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
 {
-    public class SyncTablesRepositoryTests
+    public class SyncTablesRepositoryTests : RepositoryTestsBase
     {
         private readonly IOrganizationServiceFactory _serviceFactory;
 
@@ -55,7 +54,7 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
         public void GetActiveSynchronizedTables_ReturnExpectedResults()
         {
             // Arrange
-            var repository = new SyncTablesRepository(_serviceFactory, new Mock<ITracingService>().Object);
+            var repository = new SyncTablesRepository(_serviceFactory, tracingService);
 
             // Act
             var result = repository.GetActiveSynchronizedTables();

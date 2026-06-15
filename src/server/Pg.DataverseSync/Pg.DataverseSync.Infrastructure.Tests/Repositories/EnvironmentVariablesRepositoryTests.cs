@@ -5,7 +5,6 @@ using FakeXrmEasy.Middleware;
 using FakeXrmEasy.Middleware.Crud;
 using FakeXrmEasy.Middleware.Messages;
 using Microsoft.Xrm.Sdk;
-using Moq;
 using Pg.DataverseSync.Infrastructure.Repositories;
 using Pg.DataverseSync.Infrastructure.Tests.Core;
 using Pg.DataverseSync.Model;
@@ -16,14 +15,14 @@ using Xunit;
 
 namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
 {
-    public class EnvironmentVariablesRepositoryTests
+    public class EnvironmentVariablesRepositoryTests : RepositoryTestsBase
     {
         [Fact]
         public void GetValue_WhenEnvironmentVariableExists_ReturnsValue()
         {
             // Arrange
             var serviceFactory = BuildServiceFactoryWithEnvironmentVariable("pg_TestVariable", "TestValue");
-            var repository = new EnvironmentVariablesRepository(serviceFactory, new Mock<ITracingService>().Object);
+            var repository = new EnvironmentVariablesRepository(serviceFactory, tracingService);
 
             // Act
             var result = repository.GetValue("pg_TestVariable");
@@ -38,7 +37,7 @@ namespace Pg.DataverseSync.Infrastructure.Tests.Repositories
         {
             // Arrange
             var serviceFactory = BuildServiceFactoryWithEnvironmentVariable("pg_TestVariable", "TestValue");
-            var repository = new EnvironmentVariablesRepository(serviceFactory, new Mock<ITracingService>().Object);
+            var repository = new EnvironmentVariablesRepository(serviceFactory, tracingService);
 
             // Act
             var result = repository.GetValue("pg_NonExistentVariable");

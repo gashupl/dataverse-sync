@@ -46,10 +46,14 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
 
         public bool StepExists(Guid serviceEndpointId, string messageName, string entityName)
         {
+            tracingService.Trace($"StepExists method execution started with ServiceEndpointId: {serviceEndpointId}, MessageName: {messageName}, EntityName: {entityName}");
             var messageFilterId = GetSdkMessageFilterId(messageName, entityName);
 
             if (messageFilterId == null)
+            {
+                tracingService.Trace("No message filter found for the given message name and entity name.");
                 return false;
+            }
 
             using (var context = new DataverseContext(service))
             {
@@ -61,6 +65,9 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
         private IQueryable<Guid?> BuildSqkMessageProcessingStepQuery(
             DataverseContext context, Guid serviceEndpointId, Guid? messageFilterId)
         {
+            tracingService.Trace($"BuildSdkMessageProcessingStepQuery method execution started " +
+                $"with serviceEndpointId: {serviceEndpointId}, messageFilterId: {messageFilterId}");
+
             return context.SdkMessageProcessingStepSet
                     .Where(s => s.EventHandler.Id == serviceEndpointId
                              && s.SdkMessageFilterId.Id == messageFilterId.Value)
