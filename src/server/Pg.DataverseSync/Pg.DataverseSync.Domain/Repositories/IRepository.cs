@@ -1,5 +1,4 @@
 using Pg.DataverseSync.Domain.Dto;
-using Pg.DataverseSync.Model;
 using System;
 using System.Collections.Generic;
 

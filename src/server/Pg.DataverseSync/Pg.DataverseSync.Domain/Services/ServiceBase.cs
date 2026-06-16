@@ -1,5 +1,4 @@
 using Microsoft.Xrm.Sdk;
-using Pg.DataverseSync.Domain.Repositories;
 
 namespace Pg.DataverseSync.Domain.Services
 {

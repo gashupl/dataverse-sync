@@ -3,9 +3,6 @@ using Pg.DataverseSync.Domain.Repositories;
 using Pg.DataverseSync.Model;
 using System;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.ServiceModel.Description;
-using System.ServiceModel.Dispatcher;
 
 
 namespace Pg.DataverseSync.Infrastructure.Repositories

@@ -1,6 +1,5 @@
 using Microsoft.Xrm.Sdk;
 using Newtonsoft.Json;
-using Pg.DataverseSync.Domain.Repositories;
 using System;
 
 namespace Pg.DataverseSync.Domain.Services

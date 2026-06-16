@@ -1,11 +1,7 @@
 ﻿using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Domain.Repositories;
 using Pg.DataverseSync.Model;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pg.DataverseSync.Infrastructure.Repositories
 {

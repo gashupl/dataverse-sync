@@ -1,5 +1,4 @@
 using Microsoft.Xrm.Sdk;
-using Pg.DataverseSync.Model;
 
 namespace Pg.DataverseSync.Plugins.Core
 {
