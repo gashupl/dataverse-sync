@@ -63,7 +63,7 @@ namespace Pg.DataverseSync.Domain.Services
                     };
 
                     tracingService.Trace("Creating step for message '{0}' and entity '{1}' with ServiceEndpointId '{2}'", messageName, entityName, serviceEndpointId);
-                    _serviceBusEndpointsRepository.CreateStep(step, entityName);
+                    _serviceBusEndpointsRepository.CreateStep(step, messageName, entityName);
                     tracingService.Trace("Step created successfully for message '{0}' and entity '{1}'", messageName, entityName);
                 }
 

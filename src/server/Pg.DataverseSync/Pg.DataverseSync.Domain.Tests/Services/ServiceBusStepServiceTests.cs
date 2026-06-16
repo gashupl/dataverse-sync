@@ -46,7 +46,7 @@ namespace Pg.DataverseSync.Domain.Tests.Services
             _service.CreateStepsForEntity("account", new[] { "Create", "Update", "Delete" });
 
             _mockServiceBusEndpointsRepository.Verify(
-                x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), "account"),
+                x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>(), "account"),
                 Times.Exactly(3));
         }
 
@@ -54,7 +54,7 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         public void CreateStepsForEntity_RepositoryThrows_ReturnsFailureResult()
         {
             _mockServiceBusEndpointsRepository
-                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
+                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Throws(new Exception("Connection failed"));
 
             var result = _service.CreateStepsForEntity("account", new[] { "Create" });
@@ -67,7 +67,7 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         public void CreateStepsForEntity_RepositoryThrows_TracesError()
         {
             _mockServiceBusEndpointsRepository
-                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
+                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Throws(new Exception("Connection failed"));
 
             _service.CreateStepsForEntity("account", new[] { "Create" });
@@ -83,7 +83,7 @@ namespace Pg.DataverseSync.Domain.Tests.Services
             _service.CreateStepsForEntity("contact", new[] { "Update" });
 
             _mockServiceBusEndpointsRepository.Verify(
-                x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), "contact"),
+                x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), "Update", "contact"),
                 Times.Once);
         }
 
@@ -92,8 +92,8 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         {
             SdkMessageProcessingStep capturedStep = null;
             _mockServiceBusEndpointsRepository
-                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
-                .Callback<SdkMessageProcessingStep, string>((step, _) => capturedStep = step);
+                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<SdkMessageProcessingStep, string, string>((step, _, __) => capturedStep = step);
 
             _service.CreateStepsForEntity("account", new[] { "Create" });
 
@@ -105,8 +105,8 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         {
             SdkMessageProcessingStep capturedStep = null;
             _mockServiceBusEndpointsRepository
-                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
-                .Callback<SdkMessageProcessingStep, string>((step, _) => capturedStep = step);
+                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<SdkMessageProcessingStep, string, string>((step, _, __) => capturedStep = step);
 
             _service.CreateStepsForEntity("account", new[] { "Create" });
 
@@ -119,8 +119,8 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         {
             SdkMessageProcessingStep capturedStep = null;
             _mockServiceBusEndpointsRepository
-                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
-                .Callback<SdkMessageProcessingStep, string>((step, _) => capturedStep = step);
+                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<SdkMessageProcessingStep, string, string>((step, _, __) => capturedStep = step);
 
             _service.CreateStepsForEntity("account", new[] { "Create" });
 
@@ -132,8 +132,8 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         {
             SdkMessageProcessingStep capturedStep = null;
             _mockServiceBusEndpointsRepository
-                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
-                .Callback<SdkMessageProcessingStep, string>((step, _) => capturedStep = step);
+                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<SdkMessageProcessingStep, string, string>((step, _, __) => capturedStep = step);
 
             _service.CreateStepsForEntity("account", new[] { "Delete" });
 
@@ -145,8 +145,8 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         {
             SdkMessageProcessingStep capturedStep = null;
             _mockServiceBusEndpointsRepository
-                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>()))
-                .Callback<SdkMessageProcessingStep, string>((step, _) => capturedStep = step);
+                .Setup(x => x.CreateStep(It.IsAny<SdkMessageProcessingStep>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<SdkMessageProcessingStep, string, string>((step, _, __) => capturedStep = step);
 
             _service.CreateStepsForEntity("account", new[] { "Create" });
 

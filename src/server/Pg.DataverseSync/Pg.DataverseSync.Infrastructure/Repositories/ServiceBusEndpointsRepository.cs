@@ -17,9 +17,9 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
         {
         }
 
-        public void CreateStep(SdkMessageProcessingStep step, string entityName)
+        public void CreateStep(SdkMessageProcessingStep step, string messageName, string entityName)
         {
-            if (StepExists(step.EventHandler.Id, step.SdkMessageFilterId.ToString(), entityName))
+            if (StepExists(step.EventHandler.Id, messageName, entityName))
             {
                 throw new InvalidOperationException
                     ($"Step already exists for the given entity {entityName} and message filter.");
