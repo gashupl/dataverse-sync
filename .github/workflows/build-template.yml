@@ -44,7 +44,6 @@ jobs:
       TEST_PORTAL_API_ASSEMBLY_PATH: src\server\Pg.DataverseSync.Api\**\bin\Release\*.Tests.dll
       PCF_CONTROL_FOLDER: src\client\Pg.DataverseSync.Controls
       PORTAL_WEB_FOLDER: src\client\Pg.DataverseSync.Web
-      VSTEST_CONSOLE: C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\vstest.console.exe
       SOLUTION_NAME: DataverseSync
       SOLUTION_FOLDER: solutions
       ENGINE_FUNCTIONS_PACKAGE_NAME: DataverseSyncEngine
@@ -169,9 +168,14 @@ jobs:
       - name: Build Portal API solution
         run: dotnet build ${{ env.VS_PORTAL_API_SOLUTION_PATH }} -c Release
 
-      - name: Run xUnit tests with Visual Studio 2022 Test Runner
+      - name: Run xUnit tests with Visual Studio Test Runner
         if: ${{ inputs.run-tests }}
         run: |
+          $vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vsPath = & $vsWhere -latest -property installationPath
+          $vstestConsole = Join-Path $vsPath "Common7\IDE\Extensions\TestPlatform\vstest.console.exe"
+          Write-Host "Using vstest.console.exe from: $vstestConsole"
+          
           $paths = @(
             "${{ env.TEST_DATAVERSE_ASSEMBLY_PATH }}",
             "${{ env.TEST_ENGINE_ASSEMBLY_PATH }}",
@@ -180,7 +184,7 @@ jobs:
           foreach ($path in $paths) {
             $testAssemblies = Get-ChildItem -Path $path -Recurse -ErrorAction SilentlyContinue
             foreach ($assembly in $testAssemblies) {
-              & "${{ env.VSTEST_CONSOLE }}" $assembly.FullName /Logger:trx /Collect:"Code Coverage" /ResultsDirectory:TestResults
+              & "$vstestConsole" $assembly.FullName /Logger:trx /Collect:"Code Coverage" /ResultsDirectory:TestResults
             }
           }
 
