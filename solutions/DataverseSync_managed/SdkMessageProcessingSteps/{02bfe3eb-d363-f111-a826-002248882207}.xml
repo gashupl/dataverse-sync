@@ -16,11 +16,11 @@
   <SupportedDeployment>0</SupportedDeployment>
   <IntroducedVersion>1.0</IntroducedVersion>
   <SdkMessageProcessingStepImages>
-    <SdkMessageProcessingStepImage Name="PostImage">
+    <SdkMessageProcessingStepImage Name="PreImage">
       <SdkMessageProcessingStepImageId>{d329bd85-d463-f111-a826-002248882207}</SdkMessageProcessingStepImageId>
       <Attributes>pg_name,statecode</Attributes>
-      <EntityAlias>PostImage</EntityAlias>
-      <ImageType>1</ImageType>
+      <EntityAlias>PreImage</EntityAlias>
+      <ImageType>0</ImageType>
       <MessagePropertyName>Target</MessagePropertyName>
       <IsCustomizable>1</IsCustomizable>
     </SdkMessageProcessingStepImage>
