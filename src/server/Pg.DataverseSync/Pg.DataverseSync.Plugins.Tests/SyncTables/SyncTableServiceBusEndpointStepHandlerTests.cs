@@ -55,7 +55,19 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
         }
 
         [Fact]
-        public void CanExecute_DeleteMessage_ReturnsFalse()
+        public void CanExecute_DeleteMessage_PreOperation_SyncTableEntity_ReturnsTrue()
+        {
+            _mockExecutionContext.Setup(x => x.MessageName).Returns("Delete");
+            _mockExecutionContext.Setup(x => x.Stage).Returns(20);
+            _mockExecutionContext.Setup(x => x.PrimaryEntityName).Returns(pg_synctable.EntityLogicalName);
+
+            var result = _handler.CanExecute();
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void CanExecute_DeleteMessage_PostOperation_ReturnsFalse()
         {
             _mockExecutionContext.Setup(x => x.MessageName).Returns("Delete");
             _mockExecutionContext.Setup(x => x.Stage).Returns(40);
@@ -67,7 +79,7 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
         }
 
         [Fact]
-        public void CanExecute_PreOperation_ReturnsFalse()
+        public void CanExecute_CreateMessage_PreOperation_ReturnsFalse()
         {
             _mockExecutionContext.Setup(x => x.MessageName).Returns("Create");
             _mockExecutionContext.Setup(x => x.Stage).Returns(20);
@@ -76,6 +88,18 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             var result = _handler.CanExecute();
 
             Assert.False(result);
+        }
+
+        [Fact]
+        public void CanExecute_UpdateMessage_PreOperation_SyncTableEntity_ReturnsTrue()
+        {
+            _mockExecutionContext.Setup(x => x.MessageName).Returns("Update");
+            _mockExecutionContext.Setup(x => x.Stage).Returns(20);
+            _mockExecutionContext.Setup(x => x.PrimaryEntityName).Returns(pg_synctable.EntityLogicalName);
+
+            var result = _handler.CanExecute();
+
+            Assert.True(result);
         }
 
         [Fact]
@@ -145,19 +169,24 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
         }
 
         [Fact]
-        public void Execute_Update_NotReactivation_DoesNotCallService()
+        public void Execute_Update_NotReactivationOrDeactivation_DoesNotCallService()
         {
             var target = new Entity(pg_synctable.EntityLogicalName, Guid.NewGuid());
             target[pg_synctable.Fields.pg_name] = "account";
 
+            var preImage = new Entity(pg_synctable.EntityLogicalName);
+            preImage[pg_synctable.Fields.pg_name] = "account";
+
+            var preImages = new EntityImageCollection { { "PreImage", preImage } };
             var inputParameters = new ParameterCollection { { "Target", target } };
             _mockExecutionContext.Setup(x => x.MessageName).Returns("Update");
             _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
-            _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(new EntityImageCollection());
+            _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
 
             _handler.Execute();
 
             _mockService.Verify(x => x.CreateStepsForEntity(It.IsAny<string>(), It.IsAny<string[]>()), Times.Never);
+            _mockService.Verify(x => x.DeleteStepsForEntity(It.IsAny<string>(), It.IsAny<string[]>()), Times.Never);
         }
 
         [Fact]
@@ -188,15 +217,15 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
         }
 
         [Fact]
-        public void Execute_Update_Reactivation_WithNameOnTarget_UsesTargetName()
+        public void Execute_Update_Reactivation_UsesPreImageName()
         {
             var target = new Entity(pg_synctable.EntityLogicalName, Guid.NewGuid());
             target["statecode"] = new OptionSetValue(0); // Active
-            target[pg_synctable.Fields.pg_name] = "account";
+            target[pg_synctable.Fields.pg_name] = "account"; // Target name should be ignored
 
             var preImage = new Entity(pg_synctable.EntityLogicalName);
             preImage["statecode"] = new OptionSetValue(1); // Inactive
-            preImage[pg_synctable.Fields.pg_name] = "contact";
+            preImage[pg_synctable.Fields.pg_name] = "contact"; // PreImage name should be used
 
             var preImages = new EntityImageCollection { { "PreImage", preImage } };
             var inputParameters = new ParameterCollection { { "Target", target } };
@@ -205,14 +234,158 @@ namespace Pg.DataverseSync.Plugins.Tests.SyncTables
             _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
             _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
 
-            _mockService.Setup(x => x.CreateStepsForEntity("account", 
-                It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")))
+            _mockService.Setup(x => x.CreateStepsForEntity("contact", 
+                    It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")))
                 .Returns(new ServiceOperationResult { Success = true });
 
             _handler.Execute();
 
-            _mockService.Verify(x => x.CreateStepsForEntity("account", 
+            _mockService.Verify(x => x.CreateStepsForEntity("contact", 
                 It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")), Times.Once);
+        }
+
+        // ===== Execute - Deactivation Tests =====
+
+        [Fact]
+        public void Execute_Update_Deactivation_CallsDeleteStepsForEntity()
+        {
+            var target = new Entity(pg_synctable.EntityLogicalName, Guid.NewGuid());
+            target["statecode"] = new OptionSetValue(1); // Inactive
+
+            var preImage = new Entity(pg_synctable.EntityLogicalName);
+            preImage["statecode"] = new OptionSetValue(0); // Active
+            preImage[pg_synctable.Fields.pg_name] = "account";
+
+            var preImages = new EntityImageCollection { { "PreImage", preImage } };
+            var inputParameters = new ParameterCollection { { "Target", target } };
+
+            _mockExecutionContext.Setup(x => x.MessageName).Returns("Update");
+            _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
+            _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
+
+            _mockService.Setup(x => x.DeleteStepsForEntity("account",
+                    It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")))
+                .Returns(new ServiceOperationResult { Success = true });
+
+            _handler.Execute();
+
+            _mockService.Verify(x => x.DeleteStepsForEntity("account",
+                It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")), Times.Once);
+        }
+
+        [Fact]
+        public void Execute_Update_Deactivation_Failure_ThrowsInvalidPluginExecutionException()
+        {
+            var target = new Entity(pg_synctable.EntityLogicalName, Guid.NewGuid());
+            target["statecode"] = new OptionSetValue(1); // Inactive
+
+            var preImage = new Entity(pg_synctable.EntityLogicalName);
+            preImage["statecode"] = new OptionSetValue(0); // Active
+            preImage[pg_synctable.Fields.pg_name] = "account";
+
+            var preImages = new EntityImageCollection { { "PreImage", preImage } };
+            var inputParameters = new ParameterCollection { { "Target", target } };
+
+            _mockExecutionContext.Setup(x => x.MessageName).Returns("Update");
+            _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
+            _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
+
+            _mockService.Setup(x => x.DeleteStepsForEntity("account", It.IsAny<string[]>()))
+                .Returns(new ServiceOperationResult { Success = false, ErrorMessage = "Step not found" });
+
+            Assert.Throws<InvalidPluginExecutionException>(() => _handler.Execute());
+        }
+
+        [Fact]
+        public void Execute_Update_Deactivation_ServiceThrowsException_ThrowsInvalidPluginExecutionException()
+        {
+            var target = new Entity(pg_synctable.EntityLogicalName, Guid.NewGuid());
+            target["statecode"] = new OptionSetValue(1); // Inactive
+
+            var preImage = new Entity(pg_synctable.EntityLogicalName);
+            preImage["statecode"] = new OptionSetValue(0); // Active
+            preImage[pg_synctable.Fields.pg_name] = "account";
+
+            var preImages = new EntityImageCollection { { "PreImage", preImage } };
+            var inputParameters = new ParameterCollection { { "Target", target } };
+
+            _mockExecutionContext.Setup(x => x.MessageName).Returns("Update");
+            _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
+            _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
+
+            _mockService.Setup(x => x.DeleteStepsForEntity("account", It.IsAny<string[]>()))
+                .Throws(new Exception("Unexpected error"));
+
+            Assert.Throws<InvalidPluginExecutionException>(() => _handler.Execute());
+        }
+
+        // ===== Execute - Delete Tests =====
+
+        [Fact]
+        public void Execute_Delete_Success_CallsDeleteStepsForEntity()
+        {
+            var targetRef = new EntityReference(pg_synctable.EntityLogicalName, Guid.NewGuid());
+
+            var preImage = new Entity(pg_synctable.EntityLogicalName);
+            preImage[pg_synctable.Fields.pg_name] = "account";
+
+            var preImages = new EntityImageCollection { { "PreImage", preImage } };
+            var inputParameters = new ParameterCollection { { "Target", targetRef } };
+
+            _mockExecutionContext.Setup(x => x.MessageName).Returns("Delete");
+            _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
+            _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
+
+            _mockService.Setup(x => x.DeleteStepsForEntity("account",
+                    It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")))
+                .Returns(new ServiceOperationResult { Success = true });
+
+            _handler.Execute();
+
+            _mockService.Verify(x => x.DeleteStepsForEntity("account",
+                It.Is<string[]>(m => m.Length == 3 && m[0] == "Create" && m[1] == "Update" && m[2] == "Delete")), Times.Once);
+        }
+
+        [Fact]
+        public void Execute_Delete_Failure_ThrowsInvalidPluginExecutionException()
+        {
+            var targetRef = new EntityReference(pg_synctable.EntityLogicalName, Guid.NewGuid());
+
+            var preImage = new Entity(pg_synctable.EntityLogicalName);
+            preImage[pg_synctable.Fields.pg_name] = "account";
+
+            var preImages = new EntityImageCollection { { "PreImage", preImage } };
+            var inputParameters = new ParameterCollection { { "Target", targetRef } };
+
+            _mockExecutionContext.Setup(x => x.MessageName).Returns("Delete");
+            _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
+            _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
+
+            _mockService.Setup(x => x.DeleteStepsForEntity("account", It.IsAny<string[]>()))
+                .Returns(new ServiceOperationResult { Success = false, ErrorMessage = "Step not found" });
+
+            Assert.Throws<InvalidPluginExecutionException>(() => _handler.Execute());
+        }
+
+        [Fact]
+        public void Execute_Delete_ServiceThrowsException_ThrowsInvalidPluginExecutionException()
+        {
+            var targetRef = new EntityReference(pg_synctable.EntityLogicalName, Guid.NewGuid());
+
+            var preImage = new Entity(pg_synctable.EntityLogicalName);
+            preImage[pg_synctable.Fields.pg_name] = "account";
+
+            var preImages = new EntityImageCollection { { "PreImage", preImage } };
+            var inputParameters = new ParameterCollection { { "Target", targetRef } };
+
+            _mockExecutionContext.Setup(x => x.MessageName).Returns("Delete");
+            _mockExecutionContext.Setup(x => x.InputParameters).Returns(inputParameters);
+            _mockExecutionContext.Setup(x => x.PreEntityImages).Returns(preImages);
+
+            _mockService.Setup(x => x.DeleteStepsForEntity("account", It.IsAny<string[]>()))
+                .Throws(new Exception("Unexpected error"));
+
+            Assert.Throws<InvalidPluginExecutionException>(() => _handler.Execute());
         }
     }
 }
