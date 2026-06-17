@@ -14,7 +14,7 @@ namespace Pg.DataverseSync.Plugins.Core
         {
             localContext.Trace("Registering default dependencies...");
             var userOrganizationService = localContext.OrgSvcFactory.CreateOrganizationService(Guid.Empty);
-            var dataRepository = new DataRepository(localContext.OrgSvcFactory);
+            var dataRepository = new DataRepository(localContext.OrgSvcFactory, localContext.TracingService);
 
             Container.Register(localContext);
             Container.Register(localContext.Logger);

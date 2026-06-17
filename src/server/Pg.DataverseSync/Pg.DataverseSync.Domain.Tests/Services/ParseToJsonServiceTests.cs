@@ -13,7 +13,7 @@ namespace Pg.DataverseSync.Domain.Tests.Services
 
         public ParseToJsonServiceTests()
         {
-            _service = new ParseToJsonService(null, this.tracingService);
+            _service = new ParseToJsonService(this.tracingService);
         }
 
         [Fact]

@@ -1,50 +1,39 @@
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
+using Pg.DataverseSync.Domain.Dto;
+using Pg.DataverseSync.Domain.Repositories;
+using Pg.DataverseSync.Infrastructure.Core;
 using Pg.DataverseSync.Model;
 using System;
 using System.Collections.Generic;
-using Pg.DataverseSync.Domain.Repositories;
 using System.Linq;
-using Pg.DataverseSync.Domain.Dto;
-using Microsoft.Xrm.Sdk.Metadata;
-using Pg.DataverseSync.Infrastructure.Core;
 
 namespace Pg.DataverseSync.Infrastructure.Repositories
 {
     public class DataRepository : IRepository
     {
-        private readonly IOrganizationService _service;
+        protected readonly IOrganizationService service;
+        protected readonly ITracingService tracingService;
 
-        public DataRepository(IOrganizationServiceFactory orgSvcFactory)
+        public DataRepository(IOrganizationServiceFactory orgSvcFactory, ITracingService tracingService)
         {
-            _service = orgSvcFactory.CreateOrganizationService(null); 
-        }
-
-        public List<pg_synctable> GetActiveSynchronizedTables()
-        {
-            using (var context = new DataverseContext(_service))
-            {
-                var query = context.pg_synctableSet
-                    .Where(st => st.StateCode == pg_synctable_statecode.Active)
-                    .Select(st => new pg_synctable
-                {
-                    Id = st.Id, 
-                    pg_name = st.pg_name, 
-                });
-                return query.ToList<pg_synctable>();
-            }
+            service = orgSvcFactory.CreateOrganizationService(null); 
+            this.tracingService = tracingService;
         }
 
         public List<Table> GetStandardTablesFromMetadata()
         {
             var tables = new List<Table>();
 
-            var request = new Microsoft.Xrm.Sdk.Messages.RetrieveAllEntitiesRequest
+            var request = new RetrieveAllEntitiesRequest
             {
                 EntityFilters = EntityFilters.Entity,
                 RetrieveAsIfPublished = true
             };
 
-            var response = (Microsoft.Xrm.Sdk.Messages.RetrieveAllEntitiesResponse)_service.Execute(request);
+            var a = service.Execute(request); 
+            var response = (RetrieveAllEntitiesResponse)a;
 
             foreach (var entity in response.EntityMetadata)
             {
@@ -61,6 +50,39 @@ namespace Pg.DataverseSync.Infrastructure.Repositories
 
             return tables;
         }
+
+
+        public Guid GetSdkMessageId(string messageName)
+        {
+            using (var context = new DataverseContext(service))
+            {
+                var messageId = context.SdkMessageSet
+                    .Where(m => m.Name == messageName)
+                    .Select(m => m.SdkMessageId)
+                    .FirstOrDefault();
+
+                if (messageId == null)
+                    throw new InvalidOperationException($"SDK Message '{messageName}' not found.");
+
+                return messageId.Value;
+            }
+        }
+
+        public Guid? GetSdkMessageFilterId(string messageName, string entityName)
+        {
+            using (var context = new DataverseContext(service))
+            {
+                var filterId = (from f in context.SdkMessageFilterSet
+                                join m in context.SdkMessageSet
+                                on f.SdkMessageId.Id equals m.Id
+                                where f.PrimaryObjectTypeCode == entityName
+                                   && m.Name == messageName
+                                select f.SdkMessageFilterId).FirstOrDefault();
+
+                return filterId;
+            }
+        }
+
 
     }
 }

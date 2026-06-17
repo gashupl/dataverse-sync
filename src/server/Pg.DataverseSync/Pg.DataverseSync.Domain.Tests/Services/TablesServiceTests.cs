@@ -21,14 +21,14 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         [Fact]
         public void GetUnsynchronizedTables_NoSyncTable_ReturnsAllStandardTables()
         {
-            // Arrange
-            var repo = new Mock<IRepository>(); 
-            repo.Setup(r => r.GetActiveSynchronizedTables()).Returns(
+            // ArrangeB
+            var syncTablesRepo = new Mock<ISyncTablesRepository>();
+            syncTablesRepo.Setup(r => r.GetActiveSynchronizedTables()).Returns(
                 new List<pg_synctable>());
-            repo.Setup(r => r.GetStandardTablesFromMetadata()).Returns(_allTables);
+            syncTablesRepo.Setup(r => r.GetStandardTablesFromMetadata()).Returns(_allTables);
 
-            var tablesService = new TablesService(repo.Object, this.tracingService);
-            
+            var tablesService = new TablesService(syncTablesRepo.Object, this.tracingService);
+
             // Act
             var unsynchronizedTables = tablesService.GetUnsynchronizedTables();
 
@@ -42,12 +42,12 @@ namespace Pg.DataverseSync.Domain.Tests.Services
         {
             // Arrange
             var expectedTablesCount = 2; 
-            var repo = new Mock<IRepository>();
-            repo.Setup(r => r.GetActiveSynchronizedTables()).Returns(
+            var syncTablesRepo = new Mock<ISyncTablesRepository>();
+            syncTablesRepo.Setup(r => r.GetActiveSynchronizedTables()).Returns(
                 new List<pg_synctable>() { new pg_synctable { Id = Guid.NewGuid(), pg_name = "pg_test1" } });
-            repo.Setup(r => r.GetStandardTablesFromMetadata()).Returns(_allTables);
+            syncTablesRepo.Setup(r => r.GetStandardTablesFromMetadata()).Returns(_allTables);
 
-            var tablesService = new TablesService(repo.Object, this.tracingService);
+            var tablesService = new TablesService(syncTablesRepo.Object, this.tracingService);
 
             // Act
             var unsynchronizedTables = tablesService.GetUnsynchronizedTables();
