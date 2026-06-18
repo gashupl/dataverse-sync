@@ -89,7 +89,6 @@
       <RootComponent type="92" id="{1f8c50d6-abc6-f011-8544-7ced8d8d25d7}" behavior="0" />
       <RootComponent type="92" id="{a6c39757-d463-f111-a826-002248882207}" behavior="0" />
       <RootComponent type="92" id="{f0d095df-d363-f111-a826-002248882207}" behavior="0" />
-      <RootComponent type="95" id="{6eb64c32-1554-f111-bec7-002248882207}" behavior="0" />
     </RootComponents>
     <MissingDependencies>
       <MissingDependency>

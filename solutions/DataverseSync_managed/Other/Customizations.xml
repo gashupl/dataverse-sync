@@ -12,7 +12,6 @@
   <WebResources />
   <CustomControls />
   <SdkMessageProcessingSteps />
-  <ServiceEndpoints />
   <AppModuleSiteMaps />
   <AppModules />
   <EntityDataProviders />
