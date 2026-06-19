@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "appId": "c8e6781d-55ef-4f0a-b48f-8de9bb840486",
+  "appDisplayName": "DataverseSync Admin (Modern)",
+  "region": "prod",
+  "environmentId": "570a835a-4e57-e2e5-9e23-c8a3b3869f5b",
+  "description": " ",
+  "buildPath": "./dist",
+  "buildEntryPoint": "index.html",
+  "localAppUrl": "http://localhost:3000",
+  "logoPath": "Default",
+  "connectionReferences": {},
+  "databaseReferences": {}
+}
