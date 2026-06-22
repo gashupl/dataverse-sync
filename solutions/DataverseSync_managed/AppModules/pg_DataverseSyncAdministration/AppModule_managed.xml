@@ -18,7 +18,7 @@
     <Role id="{119f245c-3cc8-4b62-b31c-d1a046ced15d}" />
   </AppModuleRoleMaps>
   <LocalizedNames>
-    <LocalizedName description="Dataverse Sync Administration" languagecode="1033" />
+    <LocalizedName description="DataverseSync Administration" languagecode="1033" />
   </LocalizedNames>
   <Descriptions>
     <Description description="Streamline future data synchronization processes with Dataverse Sync Administration, currently in initial development. This solution is being designed to help organizations efficiently manage and oversee data sync activities." languagecode="1033" />
