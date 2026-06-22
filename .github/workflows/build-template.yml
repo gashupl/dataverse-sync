@@ -225,6 +225,15 @@ jobs:
         with:
           add-tools-to-path: true
 
+      - name: Copy admin app dist to solution CanvasApps package folder
+        if: ${{ inputs.artifacts-build-upload }}
+        run: |
+          $sourcePath = "src/client/Pg.DataverseSync.Admin/dist"
+          $targetPath = "solutions/DataverseSync_managed/CanvasApps/pg_dataversesyncadminmodern_eda1d_CodeAppPackages"
+
+          New-Item -Path $targetPath -ItemType Directory -Force | Out-Null
+          Copy-Item -Path "$sourcePath/*" -Destination $targetPath -Recurse -Force
+
       - name: Pack managed solution  
         if: ${{ inputs.artifacts-build-upload }}
         uses: microsoft/powerplatform-actions/pack-solution@v1
