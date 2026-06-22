@@ -422,5 +422,9 @@ FodyWeavers.xsd
 /src/server/Pg.DataverseSync.Engine/Pg.DataverseSync.Engine.Functions/Properties/serviceDependencies.local.json
 **/appsettings.Development.json
 
+#Code app assets rule
+solutions/DataverseSync/CanvasApps/pg_dataversesyncadminmodern_eda1d_CodeAppPackages/**
+solutions/DataverseSync_managed/CanvasApps/pg_dataversesyncadminmodern_eda1d_CodeAppPackages/**
+
 #Linux/Rider
 .idea/
