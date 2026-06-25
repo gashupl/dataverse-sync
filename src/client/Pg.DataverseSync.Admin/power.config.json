@@ -10,5 +10,15 @@
   "localAppUrl": "http://localhost:3000",
   "logoPath": "Default",
   "connectionReferences": {},
-  "databaseReferences": {}
+  "databaseReferences": {
+    "default.cds": {
+      "dataSources": {
+        "synchronizedtables": {
+          "entitySetName": "pg_synctables",
+          "logicalName": "pg_synctable"
+        }
+      },
+      "environmentVariableName": ""
+    }
+  }
 }
