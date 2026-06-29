@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import { Pg_synctablesService } from './generated/services/Pg_synctablesService';
 import type { Pg_synctables } from './generated/models/Pg_synctablesModel';
+import { Pg_getunsynchronizedtablesService } from './generated';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -54,6 +55,10 @@ function App() {
         <button onClick={getDataverseData} disabled={dvLoading} style={{ marginLeft: '10px' }}>
           {dvLoading ? 'Loading...' : 'Reload Pg_synctables'}
         </button>
+        <button onClick={async () => {
+          const result = await Pg_getunsynchronizedtablesService.pg_getunsynchronizedtables(); 
+          console.log(result);
+        }}>New Button</button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>

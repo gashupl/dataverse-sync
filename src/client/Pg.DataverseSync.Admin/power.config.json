@@ -16,6 +16,11 @@
         "synchronizedtables": {
           "entitySetName": "pg_synctables",
           "logicalName": "pg_synctable"
+        },
+        "environment_39a902ba": {
+          "entitySetName": "Environment",
+          "logicalName": "environment_39a902ba",
+          "isHidden": false
         }
       },
       "environmentVariableName": ""

@@ -5,6 +5,24 @@
  */
 
 export const dataSourcesInfo = {
+  "pg_getunsynchronizedtables": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "",
+    "dataSourceType": "Dataverse",
+    "apis": {
+      "pg_getunsynchronizedtables": {
+        "path": "/api/data/v9.2/pg_getunsynchronizedtables",
+        "method": "GET",
+        "parameters": [],
+        "responseInfo": {
+          "200": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
   "pg_synctables": {
     "tableId": "",
     "version": "",

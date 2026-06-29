@@ -1,0 +1,34 @@
+{
+  "name": "pg_getunsynchronizedtables",
+  "title": "pg_getunsynchronizedtables",
+  "type": "Microsoft.PowerApps/dataverseOperation",
+  "properties": {
+    "displayName": "pg_getunsynchronizedtables",
+    "swagger": {
+      "swagger": "2.0",
+      "info": {
+        "title": "pg_getunsynchronizedtables",
+        "version": "1.0"
+      },
+      "basePath": "/api/data/v9.2",
+      "paths": {
+        "/pg_getunsynchronizedtables": {
+          "get": {
+            "operationId": "pg_getunsynchronizedtables",
+            "parameters": [],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "schema": {
+                  "type": "object",
+                  "x-ms-dataverse-type": "LookupType",
+                  "x-ms-csdl-type": "mscrm.pg_getunsynchronizedtablesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
