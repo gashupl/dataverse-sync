@@ -167,6 +167,11 @@ jobs:
           cd ${{ env.ADMIN_APP_FOLDER }}
           npm run build
 
+      - name: Run tests (Admin App)
+        run: |
+          cd ${{ env.ADMIN_APP_FOLDER }}
+          npm run test
+
       - name: Restore Dataverse solution NuGet packages
         run: nuget restore ${{ env.VS_DATAVERSE_SOLUTION_PATH }}
 
