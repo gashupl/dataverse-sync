@@ -1,0 +1,24 @@
+.table-list-error {
+  color: red;
+  margin: 10px 0;
+}
+
+.table-list-scroll {
+  max-height: 400px;
+  overflow: auto;
+}
+
+.table-list-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table-list-scroll th {
+  border-bottom: 1px solid #ccc;
+  padding: 6px 12px;
+}
+
+.table-list-scroll td {
+  padding: 4px 12px;
+}

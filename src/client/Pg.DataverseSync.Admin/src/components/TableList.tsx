@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+import './TableList.css'
 import type { Table } from '../domain/model/Table'
 
 interface TableListProps {
@@ -6,7 +8,19 @@ interface TableListProps {
   error: string | null
 }
 
-export function TableList({ tables, loading, error }: TableListProps) {
+export function TableList({ tables: tablesProp, loading, error }: TableListProps) {
+  const [tables, setTables] = useState<Table[]>(tablesProp)
+
+  useEffect(() => {
+    setTables(tablesProp)
+  }, [tablesProp])
+
+  function handleToggle(schemaName: string, checked: boolean) {
+    setTables((prev) =>
+      prev.map((t) => t.SchemaName === schemaName ? { ...t, IsSynchronized: checked } : t)
+    )
+  }
+
   if (loading) {
     return <div>Loading tables...</div>
   }
@@ -14,25 +28,31 @@ export function TableList({ tables, loading, error }: TableListProps) {
   return (
     <div>
       {error && (
-        <div style={{ color: 'red', margin: '10px 0' }}>Error: {error}</div>
+        <div className="table-list-error">Error: {error}</div>
       )}
 
       <h3>Tables ({tables.length})</h3>
-      <div style={{ maxHeight: '400px', overflow: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+      <div className="table-list-scroll">
+        <table>
           <thead>
             <tr>
-              <th style={{ borderBottom: '1px solid #ccc', padding: '6px 12px' }}>Name</th>
-              <th style={{ borderBottom: '1px solid #ccc', padding: '6px 12px' }}>Schema Name</th>
-              <th style={{ borderBottom: '1px solid #ccc', padding: '6px 12px' }}>Synchronized</th>
+              <th>Name</th>
+              <th>Schema Name</th>
+              <th>Synchronized</th>
             </tr>
           </thead>
           <tbody>
             {tables.map((table) => (
               <tr key={table.SchemaName}>
-                <td style={{ padding: '4px 12px' }}>{table.Name}</td>
-                <td style={{ padding: '4px 12px' }}>{table.SchemaName}</td>
-                <td style={{ padding: '4px 12px' }}>{table.IsSynchronized ? 'Yes' : 'No'}</td>
+                <td>{table.Name}</td>
+                <td>{table.SchemaName}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={table.IsSynchronized}
+                    onChange={(e) => handleToggle(table.SchemaName, e.target.checked)}
+                  />
+                </td>
               </tr>
             ))}
           </tbody>
