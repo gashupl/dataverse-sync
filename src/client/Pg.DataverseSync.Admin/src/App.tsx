@@ -7,8 +7,13 @@ function App() {
 
   return (
     <>
-      <h1>DataverseSync Admin (Modern version v.0.02)</h1>
-      <TableList tables={tables} loading={loading} error={error} />
+      <div>
+        <TableList tables={tables} loading={loading} error={error} />
+      </div>
+      <div className="footer">
+        <p>DataverseSync Admin (Modern version v.0.03)</p>
+      </div>
+
     </>
   )
 }

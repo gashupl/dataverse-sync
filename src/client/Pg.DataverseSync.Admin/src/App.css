@@ -35,8 +35,17 @@
 
 .card {
   padding: 2em;
+  text-align: left;
 }
 
 .read-the-docs {
   color: #888;
+}
+
+.footer {
+  margin-top: 2rem;
+  padding: 1rem 0;
+  font-size: 0.75rem;
+  color: #888;
+  border-top: 1px solid #333;
 }

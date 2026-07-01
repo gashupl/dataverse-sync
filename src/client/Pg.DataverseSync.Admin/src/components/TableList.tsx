@@ -26,12 +26,16 @@ export function TableList({ tables: tablesProp, loading, error }: TableListProps
   }
 
   return (
-    <div>
+    <div style={{ textAlign: 'left' }}>
       {error && (
         <div className="table-list-error">Error: {error}</div>
       )}
-
-      <h3>Tables ({tables.length})</h3>
+      <div>
+        <button onClick={() => console.log('Hello Vite + React!')}>
+          Update Synchronization Settings
+        </button>
+      </div>
+      <h4>Tables synchronization settings ({tables.length})</h4>
       <div className="table-list-scroll">
         <table>
           <thead>
