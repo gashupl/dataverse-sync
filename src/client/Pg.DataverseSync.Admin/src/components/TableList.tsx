@@ -6,19 +6,34 @@ interface TableListProps {
   tables: Table[]
   loading: boolean
   error: string | null
+  onSave: (pendingChanges: Map<string, boolean>) => void
 }
 
-export function TableList({ tables: tablesProp, loading, error }: TableListProps) {
-  const [tables, setTables] = useState<Table[]>(tablesProp)
+export function TableList({ tables: tablesProp, loading, error, onSave }: TableListProps) {
+  const [tables, setTables] = useState<Table[]>(tablesProp); 
+  const [pendingChanges, setPendingChanges] = useState<Map<string, boolean>>(new Map());
 
   useEffect(() => {
-    setTables(tablesProp)
+    setTables(tablesProp); 
+    setPendingChanges(new Map()); 
   }, [tablesProp])
 
   function handleToggle(schemaName: string, checked: boolean) {
     setTables((prev) =>
       prev.map((t) => t.SchemaName === schemaName ? { ...t, IsSynchronized: checked } : t)
-    )
+    ); 
+
+    setPendingChanges(prev => {
+      const next = new Map(prev); 
+      // Find original value from the incoming prop
+      const original = tablesProp.find(t => t.SchemaName === schemaName)?.IsSynchronized;
+      if (original === checked) {
+        next.delete(schemaName) // change was reverted, no longer pending
+      } else {
+        next.set(schemaName, checked);
+      }
+      return next
+    }); 
   }
 
   if (loading) {
@@ -31,7 +46,9 @@ export function TableList({ tables: tablesProp, loading, error }: TableListProps
         <div className="table-list-error">Error: {error}</div>
       )}
       <div>
-        <button onClick={() => console.log('Hello Vite + React!')}>
+        <button
+          onClick={() => onSave(pendingChanges)}
+          disabled={pendingChanges.size === 0}>
           Update Synchronization Settings
         </button>
       </div>

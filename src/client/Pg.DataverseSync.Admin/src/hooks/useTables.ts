@@ -16,6 +16,7 @@ export function useTables(): UseTablesResult {
   const [error, setError] = useState<string | null>(null); 
 
   useEffect(() => {
+
     async function load() {
       setLoading(true); 
       setError(null); 
@@ -25,7 +26,9 @@ export function useTables(): UseTablesResult {
           Pg_getunsynchronizedtablesService.pg_getunsynchronizedtables(),
           Pg_synctablesService.getAll(),
         ]); 
-        setTables(TableService.createList(unsynchronizedResult, syncTablesResult)); 
+        
+        let tables = TableService.createList(unsynchronizedResult, syncTablesResult);
+        setTables(tables); 
       } 
       catch (err) {
         setError('Failed to load tables: ' + (err as Error).message); 
