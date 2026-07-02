@@ -11,29 +11,32 @@ interface UseTablesResult {
 }
 
 export function useTables(): UseTablesResult {
-  const [tables, setTables] = useState<Table[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [tables, setTables] = useState<Table[]>([]); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState<string | null>(null); 
 
   useEffect(() => {
     async function load() {
-      setLoading(true)
-      setError(null)
+      setLoading(true); 
+      setError(null); 
+
       try {
         const [unsynchronizedResult, syncTablesResult] = await Promise.all([
           Pg_getunsynchronizedtablesService.pg_getunsynchronizedtables(),
           Pg_synctablesService.getAll(),
-        ])
-        setTables(TableService.createList(unsynchronizedResult, syncTablesResult))
-      } catch (err) {
-        setError('Failed to load tables: ' + (err as Error).message)
-      } finally {
-        setLoading(false)
+        ]); 
+        setTables(TableService.createList(unsynchronizedResult, syncTablesResult)); 
+      } 
+      catch (err) {
+        setError('Failed to load tables: ' + (err as Error).message); 
+      } 
+      finally {
+        setLoading(false); 
       }
     }
 
-    load()
+    load(); 
   }, [])
 
-  return { tables, loading, error }
+  return { tables, loading, error }; 
 }
