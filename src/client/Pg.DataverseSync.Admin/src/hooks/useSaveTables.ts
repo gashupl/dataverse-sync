@@ -20,12 +20,11 @@ export function useSaveTables(): UseSaveTablesResult {
     //TODO: Refactoring this callback to use the TableService to handle the logic of creating and deleting tables based on the pendingChanges map. This will make the code cleaner and more maintainable.
     console.log('Pending changes:');
     console.log(pendingChanges); 
-    return; 
 
     try {
 
-      const toSync = [...pendingChanges.entries()].filter(([, v]) => v).map(([k]) => k); 
-      const toUnsync = [...pendingChanges.entries()].filter(([, v]) => !v).map(([k]) => k); 
+      const toSync = [...pendingChanges.entries()].filter(([, selected]) => selected).map(([schemaName]) => schemaName);
+      const toUnsync = [...pendingChanges.entries()].filter(([, selected]) => !selected).map(([schemaName]) => schemaName); 
 
       const createPromises = toSync.map((schemaName) =>
         Pg_synctablesService.create({ pg_name: schemaName, statecode: 0 })
