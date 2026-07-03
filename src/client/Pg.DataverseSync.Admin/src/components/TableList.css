@@ -14,10 +14,11 @@
 }
 
 .table-list-scroll th {
-  border-bottom: 1px solid #ccc;
+  border: 1px solid #ccc;
   padding: 6px 12px;
 }
 
 .table-list-scroll td {
+  border: 1px solid #ccc;
   padding: 4px 12px;
 }
