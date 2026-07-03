@@ -3,13 +3,14 @@ import './TableList.css'
 import type { Table } from '../domain/model/Table'
 
 interface TableListProps {
-  tables: Table[]
-  loading: boolean
-  error: string | null
-  onSave: (pendingChanges: Map<string, boolean>) => void
+  tables: Table[];
+  loading: boolean;
+  error: string | null;
+  saving: boolean;
+  onSave: (pendingChanges: Map<string, boolean>) => void;
 }
 
-export function TableList({ tables: tablesProp, loading, error, onSave }: TableListProps) {
+export function TableList({ tables: tablesProp, loading, error, saving, onSave }: TableListProps) {
   const [tables, setTables] = useState<Table[]>(tablesProp); 
   const [pendingChanges, setPendingChanges] = useState<Map<string, boolean>>(new Map());
 
@@ -48,9 +49,10 @@ export function TableList({ tables: tablesProp, loading, error, onSave }: TableL
       <div>
         <button
           onClick={() => onSave(pendingChanges)}
-          disabled={pendingChanges.size === 0}>
+          disabled={pendingChanges.size === 0 || saving}>
           Update Synchronization Settings
         </button>
+        {saving && <span style={{ marginLeft: '0.75rem' }}>Saving changes...</span>}
       </div>
       <h4>Tables synchronization settings ({tables.length})</h4>
       <div className="table-list-scroll">

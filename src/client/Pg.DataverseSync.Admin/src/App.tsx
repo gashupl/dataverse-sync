@@ -19,9 +19,9 @@ function App() {
           tables={tables}
           loading={loading}
           error={error ?? saveError}
+          saving={saving}
           onSave={handleSave}
         />
-        {saving && <div>Saving...</div>}
       </div>
       <div className="footer">
         <p>DataverseSync Admin (Modern version v.0.03)</p>
