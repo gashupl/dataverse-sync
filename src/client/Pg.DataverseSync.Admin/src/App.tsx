@@ -4,8 +4,13 @@ import { useSaveTables } from './hooks/useSaveTables'
 import { TableList } from './components/TableList'
 
 function App() {
-  const { tables, loading, error } = useTables()
-  const { save, saving, error: saveError } = useSaveTables()
+  const { tables, loading, error, refresh } = useTables();
+  const { save, saving, error: saveError } = useSaveTables();
+
+  const handleSave = async (pendingChanges: Map<string, boolean>) => {
+    await save(pendingChanges);
+    await refresh();
+  };
 
   return (
     <>
@@ -14,7 +19,7 @@ function App() {
           tables={tables}
           loading={loading}
           error={error ?? saveError}
-          onSave={save}
+          onSave={handleSave}
         />
         {saving && <div>Saving...</div>}
       </div>
