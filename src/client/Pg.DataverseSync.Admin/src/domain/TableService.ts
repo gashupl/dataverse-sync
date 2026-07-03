@@ -8,10 +8,12 @@ interface UnsynchronizedTableRaw {
 }
 
 export class TableService {
+
   public static createList(
     unsynchronizedResult: IOperationResult<Record<string, unknown>>,
     syncTablesResult: IOperationResult<Pg_synctables[]>
   ): Table[] {
+    
     const raw = unsynchronizedResult.data as { tables?: string } | null
     const unsynchronized: UnsynchronizedTableRaw[] = raw?.tables ? JSON.parse(raw.tables) : []
 
