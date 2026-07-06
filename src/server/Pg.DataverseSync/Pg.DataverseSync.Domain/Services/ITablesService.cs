@@ -6,6 +6,8 @@ namespace Pg.DataverseSync.Domain.Services
     public interface ITablesService
     {
         List<Table> GetUnsynchronizedTables();
+
+        List<Table> GetAllTables();
     }
 }
 
