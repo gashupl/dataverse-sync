@@ -1,0 +1,15 @@
+<customapi uniquename="pg_gettables">
+  <allowedcustomprocessingsteptype>2</allowedcustomprocessingsteptype>
+  <bindingtype>0</bindingtype>
+  <description default="Get tables (query tables metadata from Dataverse).">
+    <label description="Get tables (query tables metadata from Dataverse)." languagecode="1033" />
+  </description>
+  <displayname default="Get Tables">
+    <label description="Get Tables" languagecode="1033" />
+  </displayname>
+  <iscustomizable>1</iscustomizable>
+  <isfunction>1</isfunction>
+  <isprivate>0</isprivate>
+  <name>pg_gettables</name>
+  <workflowsdkstepenabled>0</workflowsdkstepenabled>
+</customapi>

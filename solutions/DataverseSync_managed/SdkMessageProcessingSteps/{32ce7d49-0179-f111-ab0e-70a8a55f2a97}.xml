@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SdkMessageProcessingStep Name="Pg.DataverseSync.Plugins.CustomApi.GetAllTablesPlugin: pg_gettables of any Entity" SdkMessageProcessingStepId="{32ce7d49-0179-f111-ab0e-70a8a55f2a97}" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SdkMessageName>pg_gettables</SdkMessageName>
+  <PluginTypeExportKey>9E0A27DE0FB17506B5A62CC92B7B70B4AE3BA2A62EDDD73CF61366FB1B302B6B</PluginTypeExportKey>
+  <AsyncAutoDelete>0</AsyncAutoDelete>
+  <Description>Pg.DataverseSync.Plugins.CustomApi.GetAllTablesPlugin: pg_gettables of any Entity</Description>
+  <FilteringAttributes></FilteringAttributes>
+  <InvocationSource>0</InvocationSource>
+  <Mode>0</Mode>
+  <Rank>1</Rank>
+  <EventHandlerTypeCode>4602</EventHandlerTypeCode>
+  <Stage>40</Stage>
+  <IsCustomizable>1</IsCustomizable>
+  <IsHidden>0</IsHidden>
+  <SupportedDeployment>0</SupportedDeployment>
+  <IntroducedVersion>1.0</IntroducedVersion>
+  <SdkMessageProcessingStepImages />
+</SdkMessageProcessingStep>
