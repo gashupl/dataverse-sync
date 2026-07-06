@@ -10,7 +10,8 @@
   <EntityTypesFolder>Entities</EntityTypesFolder>
   <ExtensionConfig>
     <ActionPrefixesWhitelist />
-    <ActionsWhitelist>pg_getunsynchronizedtables</ActionsWhitelist>
+    <ActionsWhitelist>pg_gettables|
+pg_getunsynchronizedtables</ActionsWhitelist>
     <ActionsToSkip />
     <AddDebuggerNonUserCode>true</AddDebuggerNonUserCode>
     <AddNewFilesToProject>true</AddNewFilesToProject>
@@ -148,7 +149,7 @@ VoiceMail</TokenCapitalizationOverrides>
   <Namespace>Pg.DataverseSync.Model</Namespace>
   <ServiceContextName>DataverseContext</ServiceContextName>
   <SuppressGeneratedCodeAttribute>true</SuppressGeneratedCodeAttribute>
-  <SettingsVersion>2.2025.8.26</SettingsVersion>
+  <SettingsVersion>2.2026.5.12</SettingsVersion>
   <UpdateBuilderSettingsJson>true</UpdateBuilderSettingsJson>
   <Version>2.2026.5.12</Version>
 </Config>

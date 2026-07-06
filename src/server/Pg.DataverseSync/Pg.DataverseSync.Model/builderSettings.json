@@ -131,6 +131,7 @@
   "generateActions": true,
   "generateGlobalOptionSets": false,
   "messageNamesFilter": [
+    "pg_gettables*",
     "pg_getunsynchronizedtables*"
   ],
   "messagesTypesFolder": "Messages",
