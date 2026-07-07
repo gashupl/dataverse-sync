@@ -4,7 +4,7 @@ import type { IOperationResult } from '@microsoft/power-apps/data'
 import type { Pg_synctables } from '../../src/generated/models/Pg_synctablesModel'
 
 function makeUnsyncResult(tables: { Name: string; SchemaName: string }[]): IOperationResult<Record<string, unknown>> {
-  return { success: true, data: { tables: JSON.stringify(tables) } } as IOperationResult<Record<string, unknown>>
+  return { success: true, data: { alltables: JSON.stringify(tables) } } as IOperationResult<Record<string, unknown>>
 }
 
 function makeSyncResult(records: Partial<Pg_synctables>[]): IOperationResult<Pg_synctables[]> {
@@ -34,31 +34,38 @@ describe('TableService.createList', () => {
     ])
   })
 
-  test('maps synchronized tables with IsSynchronized true', () => {
+  test('marks tables as synchronized when SchemaName matches a sync record', () => {
+    const unsync = makeUnsyncResult([
+      { Name: 'Opportunity', SchemaName: 'opportunity' },
+      { Name: 'Lead', SchemaName: 'lead' },
+    ])
     const sync = makeSyncResult([
       { pg_name: 'opportunity' },
       { pg_name: 'lead' },
     ])
 
-    const result = TableService.createList(emptyUnsync, sync)
+    const result = TableService.createList(unsync, sync)
 
     expect(result).toEqual([
-      { Name: 'opportunity', SchemaName: 'opportunity', IsSynchronized: true },
-      { Name: 'lead', SchemaName: 'lead', IsSynchronized: true },
+      { Name: 'Opportunity', SchemaName: 'opportunity', IsSynchronized: true },
+      { Name: 'Lead', SchemaName: 'lead', IsSynchronized: true },
     ])
   })
 
-  test('synchronized tables appear before unsynchronized tables', () => {
-    const unsync = makeUnsyncResult([{ Name: 'Account', SchemaName: 'account' }])
+  test('sets IsSynchronized correctly for mixed tables', () => {
+    const unsync = makeUnsyncResult([
+      { Name: 'Account', SchemaName: 'account' },
+      { Name: 'Opportunity', SchemaName: 'opportunity' },
+    ])
     const sync = makeSyncResult([{ pg_name: 'opportunity' }])
 
     const result = TableService.createList(unsync, sync)
 
-    expect(result[0].IsSynchronized).toBe(true)
-    expect(result[1].IsSynchronized).toBe(false)
+    expect(result.find((t) => t.SchemaName === 'account')?.IsSynchronized).toBe(false)
+    expect(result.find((t) => t.SchemaName === 'opportunity')?.IsSynchronized).toBe(true)
   })
 
-  test('combines both results into a single list', () => {
+  test('returns only tables from the all-tables result', () => {
     const unsync = makeUnsyncResult([
       { Name: 'Account', SchemaName: 'account' },
       { Name: 'Contact', SchemaName: 'contact' },
@@ -69,7 +76,7 @@ describe('TableService.createList', () => {
 
     const result = TableService.createList(unsync, sync)
 
-    expect(result).toHaveLength(3)
+    expect(result).toHaveLength(2)
   })
 
   test('handles null data in unsynchronized result', () => {
@@ -78,9 +85,7 @@ describe('TableService.createList', () => {
 
     const result = TableService.createList(nullUnsync, sync)
 
-    expect(result).toEqual([
-      { Name: 'opportunity', SchemaName: 'opportunity', IsSynchronized: true },
-    ])
+    expect(result).toEqual([])
   })
 
   test('handles missing tables property in unsynchronized result', () => {

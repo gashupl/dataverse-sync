@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Pg_getunsynchronizedtablesService } from '../generated/services/Pg_getunsynchronizedtablesService';
+import { Pg_gettablesService } from '../generated/services/Pg_gettablesService';
 import { Pg_synctablesService } from '../generated/services/Pg_synctablesService';
 import { TableService } from '../domain/TableService';
 import type { Table } from '../domain/model/Table';
@@ -21,12 +21,12 @@ export function useTables(): UseTablesResult {
     setError(null);
 
     try {
-      const [unsynchronizedResult, syncTablesResult] = await Promise.all([
-        Pg_getunsynchronizedtablesService.pg_getunsynchronizedtables(),
-        Pg_synctablesService.getAll(),
+      const [allTablesResult, syncTablesResult] = await Promise.all([
+        Pg_gettablesService.pg_gettables(), 
+        Pg_synctablesService.getAll()
       ]);
 
-      const loadedTables = TableService.createList(unsynchronizedResult, syncTablesResult);
+      const loadedTables = TableService.createList(allTablesResult, syncTablesResult);
 
       setTables(loadedTables);
     }
