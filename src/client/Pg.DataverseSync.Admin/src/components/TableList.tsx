@@ -3,11 +3,11 @@ import './TableList.css'
 import type { Table } from '../domain/model/Table'
 
 interface TableListProps {
-  tables: Table[];
-  loading: boolean;
-  error: string | null;
-  saving: boolean;
-  onSave: (pendingChanges: Map<string, boolean>) => void;
+  readonly tables: Table[];
+  readonly loading: boolean;
+  readonly error: string | null;
+  readonly saving: boolean;
+  readonly onSave: (pendingChanges: Map<string, boolean>) => void;
 }
 
 export function TableList({ tables: tablesProp, loading, error, saving, onSave }: TableListProps) {

@@ -17,10 +17,6 @@ export function useSaveTables(): UseSaveTablesResult {
     setSaving(true); 
     setError(null); 
 
-    //TODO: Refactoring this callback to use the TableService to handle the logic of creating and deleting tables based on the pendingChanges map. This will make the code cleaner and more maintainable.
-    console.log('Pending changes:');
-    console.log(pendingChanges); 
-
     try {
 
       const toSync = [...pendingChanges.entries()].filter(([, selected]) => selected).map(([schemaName]) => schemaName);

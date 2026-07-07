@@ -110,7 +110,8 @@ jobs:
             /o:"gashupl" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.sources="src\server,src\client" `
-            /d:sonar.coverage.exclusions="src/client/**" `
+            /d:sonar.exclusions="src\client\Pg.DataverseSync.Admin\src\generated\**" `
+            /d:sonar.coverage.exclusions="src\client\**" `
             /d:sonar.cs.vscoveragexml.reportsPaths="TestResults\coverage.xml"
 
       - name: Run SonarQube Analysis (with quality gate wait)
@@ -122,7 +123,8 @@ jobs:
             /o:"gashupl" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.sources="src\server,src\client" `
-            /d:sonar.coverage.exclusions="src/client/**" `
+            /d:sonar.exclusions="src\client\Pg.DataverseSync.Admin\src\generated\**,src\server\Pg.DataverseSync\Pg.DataverseSync.Model\**" `
+            /d:sonar.coverage.exclusions="src\client\**,src\server\Pg.DataverseSync\Pg.DataverseSync.Model\**" `
             /d:sonar.qualitygate.wait=true `
             /d:sonar.qualitygate.timeout=3000 `
             /d:sonar.cs.vscoveragexml.reportsPaths="TestResults\coverage.xml"
