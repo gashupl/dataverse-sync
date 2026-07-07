@@ -5,9 +5,11 @@
 
 // Models
 export * as CommonModels from './models/CommonModels';
+export * as Pg_gettablesModel from './models/Pg_gettablesModel';
 export * as Pg_getunsynchronizedtablesModel from './models/Pg_getunsynchronizedtablesModel';
 export * as Pg_synctablesModel from './models/Pg_synctablesModel';
 
 // Services
+export * from './services/Pg_gettablesService';
 export * from './services/Pg_getunsynchronizedtablesService';
 export * from './services/Pg_synctablesService';

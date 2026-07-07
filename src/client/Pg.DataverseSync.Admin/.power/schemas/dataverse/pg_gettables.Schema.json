@@ -1,0 +1,34 @@
+{
+  "name": "pg_gettables",
+  "title": "pg_gettables",
+  "type": "Microsoft.PowerApps/dataverseOperation",
+  "properties": {
+    "displayName": "pg_gettables",
+    "swagger": {
+      "swagger": "2.0",
+      "info": {
+        "title": "pg_gettables",
+        "version": "1.0"
+      },
+      "basePath": "/api/data/v9.2",
+      "paths": {
+        "/pg_gettables": {
+          "get": {
+            "operationId": "pg_gettables",
+            "parameters": [],
+            "responses": {
+              "200": {
+                "description": "Success",
+                "schema": {
+                  "type": "object",
+                  "x-ms-dataverse-type": "LookupType",
+                  "x-ms-csdl-type": "mscrm.pg_gettablesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
