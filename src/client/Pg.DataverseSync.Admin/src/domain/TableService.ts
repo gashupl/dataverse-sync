@@ -36,6 +36,6 @@ export class TableService {
 
 
 
-    return [...allTables]; 
+    return [...allTables].sort((a, b) => Number(b.IsSynchronized) - Number(a.IsSynchronized)); 
   }
 }

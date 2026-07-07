@@ -52,7 +52,7 @@ describe('TableService.createList', () => {
     ])
   })
 
-  test('sets IsSynchronized correctly for mixed tables', () => {
+  test('sets IsSynchronized correctly for mixed tables and sorts synchronized first', () => {
     const unsync = makeUnsyncResult([
       { Name: 'Account', SchemaName: 'account' },
       { Name: 'Opportunity', SchemaName: 'opportunity' },
@@ -61,8 +61,8 @@ describe('TableService.createList', () => {
 
     const result = TableService.createList(unsync, sync)
 
-    expect(result.find((t) => t.SchemaName === 'account')?.IsSynchronized).toBe(false)
-    expect(result.find((t) => t.SchemaName === 'opportunity')?.IsSynchronized).toBe(true)
+    expect(result[0].IsSynchronized).toBe(true)
+    expect(result[1].IsSynchronized).toBe(false)
   })
 
   test('returns only tables from the all-tables result', () => {
