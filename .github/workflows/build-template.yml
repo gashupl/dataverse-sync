@@ -44,6 +44,7 @@ jobs:
       TEST_PORTAL_API_ASSEMBLY_PATH: src\server\Pg.DataverseSync.Api\**\bin\Release\*.Tests.dll
       PCF_CONTROL_FOLDER: src\client\Pg.DataverseSync.Controls
       PORTAL_WEB_FOLDER: src\client\Pg.DataverseSync.Web
+      ADMIN_APP_FOLDER: src\client\Pg.DataverseSync.Admin
       SOLUTION_NAME: DataverseSync
       SOLUTION_FOLDER: solutions
       ENGINE_FUNCTIONS_PACKAGE_NAME: DataverseSyncEngine
@@ -109,7 +110,8 @@ jobs:
             /o:"gashupl" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.sources="src\server,src\client" `
-            /d:sonar.coverage.exclusions="src/client/**" `
+            /d:sonar.exclusions="src\client\Pg.DataverseSync.Admin\src\generated\**" `
+            /d:sonar.coverage.exclusions="src\client\**" `
             /d:sonar.cs.vscoveragexml.reportsPaths="TestResults\coverage.xml"
 
       - name: Run SonarQube Analysis (with quality gate wait)
@@ -121,7 +123,8 @@ jobs:
             /o:"gashupl" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.sources="src\server,src\client" `
-            /d:sonar.coverage.exclusions="src/client/**" `
+            /d:sonar.exclusions="src\client\Pg.DataverseSync.Admin\src\generated\**,src\server\Pg.DataverseSync\Pg.DataverseSync.Model\**" `
+            /d:sonar.coverage.exclusions="src\client\**,src\server\Pg.DataverseSync\Pg.DataverseSync.Model\**" `
             /d:sonar.qualitygate.wait=true `
             /d:sonar.qualitygate.timeout=3000 `
             /d:sonar.cs.vscoveragexml.reportsPaths="TestResults\coverage.xml"
@@ -155,6 +158,21 @@ jobs:
         run: |
           cd ${{ env.PORTAL_WEB_FOLDER }}
           npm run build
+
+      - name: Install npm dependencies (Admin App)
+        run: |
+          cd ${{ env.ADMIN_APP_FOLDER }}
+          npm install
+
+      - name: Build npm project (Admin App)
+        run: |
+          cd ${{ env.ADMIN_APP_FOLDER }}
+          npm run build
+
+      - name: Run tests (Admin App)
+        run: |
+          cd ${{ env.ADMIN_APP_FOLDER }}
+          npm run test
 
       - name: Restore Dataverse solution NuGet packages
         run: nuget restore ${{ env.VS_DATAVERSE_SOLUTION_PATH }}
@@ -213,6 +231,15 @@ jobs:
         uses: microsoft/powerplatform-actions/actions-install@v1
         with:
           add-tools-to-path: true
+
+      - name: Copy admin app dist to solution CanvasApps package folder
+        if: ${{ inputs.artifacts-build-upload }}
+        run: |
+          $sourcePath = "src/client/Pg.DataverseSync.Admin/dist"
+          $targetPath = "solutions/DataverseSync_managed/CanvasApps/pg_dataversesyncadminmodern_eda1d_CodeAppPackages"
+
+          New-Item -Path $targetPath -ItemType Directory -Force | Out-Null
+          Copy-Item -Path "$sourcePath/*" -Destination $targetPath -Recurse -Force
 
       - name: Pack managed solution  
         if: ${{ inputs.artifacts-build-upload }}

@@ -15,6 +15,11 @@ namespace Pg.DataverseSync.Domain.Services
             _syncTablesRepository = syncTablesRepository;
         }
 
+        public List<Table> GetAllTables()
+        {
+            return _syncTablesRepository.GetStandardTablesFromMetadata();
+        }
+
         public List<Table> GetUnsynchronizedTables()
         {
 

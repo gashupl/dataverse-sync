@@ -18,6 +18,25 @@ namespace Pg.DataverseSync.Domain.Tests.Services
             new Table { Name = "Test 2", SchemaName = "pg_test2" },
             new Table { Name = "Test 3", SchemaName = "pg_test3" }
         };
+
+        [Fact]
+        public void GetAllTables_ReturnsAllStandardTables()
+        {
+            // Arrange
+            var syncTablesRepo = new Mock<ISyncTablesRepository>();
+            syncTablesRepo.Setup(r => r.GetStandardTablesFromMetadata()).Returns(_allTables);
+
+            var tablesService = new TablesService(syncTablesRepo.Object, this.tracingService);
+
+            // Act
+            var allTables = tablesService.GetAllTables();
+
+            // Assert
+            Assert.NotNull(allTables);
+            Assert.Equal(_allTables.Count, allTables.Count);
+            syncTablesRepo.Verify(r => r.GetStandardTablesFromMetadata(), Times.Once);
+        }
+
         [Fact]
         public void GetUnsynchronizedTables_NoSyncTable_ReturnsAllStandardTables()
         {
