@@ -4,9 +4,11 @@ using Pg.DataverseSync.Infrastructure.Repositories;
 using Pg.DataverseSync.Model;
 using Pg.DataverseSync.Plugins.Core;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Pg.DataverseSync.Plugins.CustomApi
 {
+    [ExcludeFromCodeCoverage]
     public class GetAllTablesLoader : DependencyLoaderBase
     {
         public GetAllTablesLoader()
@@ -17,6 +19,7 @@ namespace Pg.DataverseSync.Plugins.CustomApi
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public class GetAllTablesPlugin : PluginBase<GetAllTablesHandler>
     {
         public override IDependencyLoader DependencyLoader => new GetAllTablesLoader();

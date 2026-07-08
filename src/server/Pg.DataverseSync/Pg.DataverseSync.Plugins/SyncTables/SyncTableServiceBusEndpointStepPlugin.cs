@@ -5,9 +5,11 @@ using Pg.DataverseSync.Infrastructure.Repositories;
 using Pg.DataverseSync.Model;
 using Pg.DataverseSync.Plugins.Core;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Pg.DataverseSync.Plugins.SyncTables
 {
+    [ExcludeFromCodeCoverage]
     public class SyncTableServiceBusEndpointStepLoader : DependencyLoaderBase
     {
         public SyncTableServiceBusEndpointStepLoader()
@@ -18,6 +20,7 @@ namespace Pg.DataverseSync.Plugins.SyncTables
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public class SyncTableServiceBusEndpointStepPlugin : PluginBase<SyncTableServiceBusEndpointStepHandler>
     {
         public override IDependencyLoader DependencyLoader => new SyncTableServiceBusEndpointStepLoader();
