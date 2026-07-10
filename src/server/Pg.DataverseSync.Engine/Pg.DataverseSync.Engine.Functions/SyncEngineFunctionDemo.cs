@@ -9,25 +9,25 @@ using Pg.DataverseSync.Engine.Target;
 
 namespace Pg.DataverseSync.Engine.Functions;
 
-public class SyncEngineFunction
+public class SyncEngineFunctionDemo
 {
     private readonly ISourceMetadataService _metadataService;
     private readonly ITargetDataStructureService _targetDataStructureService;
-    private readonly ILogger<SyncEngineFunction> _logger;
+    private readonly ILogger<SyncEngineFunctionDemo> _logger;
 
-    public SyncEngineFunction(ISourceMetadataService metadataService, 
-        ITargetDataStructureService targetDataStructureService, ILogger<SyncEngineFunction> logger)
+    public SyncEngineFunctionDemo(ISourceMetadataService metadataService, 
+        ITargetDataStructureService targetDataStructureService, ILogger<SyncEngineFunctionDemo> logger)
     {
         _metadataService = metadataService;
         _targetDataStructureService = targetDataStructureService;
         _logger = logger;
     }
 
-    [Function(nameof(SyncEngineFunction))]
+    [Function(nameof(SyncEngineFunctionDemo))]
     public async Task<List<string>> RunOrchestrator(
         [OrchestrationTrigger] TaskOrchestrationContext context)
     {
-        ILogger logger = context.CreateReplaySafeLogger(nameof(SyncEngineFunction));
+        ILogger logger = context.CreateReplaySafeLogger(nameof(SyncEngineFunctionDemo));
         logger.LogInformation("Saying hello.");
         var outputs = new List<string>();
 
@@ -81,7 +81,7 @@ public class SyncEngineFunction
 
         // Function input comes from the request content.
         string instanceId = await client.ScheduleNewOrchestrationInstanceAsync(
-            nameof(SyncEngineFunction));
+            nameof(SyncEngineFunctionDemo));
 
         logger.LogInformation("Started orchestration with ID = '{instanceId}'.", instanceId);
 
