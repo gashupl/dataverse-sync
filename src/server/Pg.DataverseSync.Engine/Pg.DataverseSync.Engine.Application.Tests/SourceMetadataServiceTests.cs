@@ -3,9 +3,9 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Core.Model;
-using Pg.DataverseSync.Engine.Domain.Source;
+using Pg.DataverseSync.Engine.Application.Source;
 
-namespace Pg.DataverseSync.Engine.Domain.Tests
+namespace Pg.DataverseSync.Engine.Application.Tests
 {
     public class SourceMetadataServiceTests
     {
@@ -73,7 +73,7 @@ namespace Pg.DataverseSync.Engine.Domain.Tests
             var service = new SourceMetadataService(mockMetadataReader, mockLogger);
 
             // Act & Assert
-            var exception = Assert.Throws<DomainServiceException>(() => service.GetTables());
+            var exception = Assert.Throws<ApplicationServiceException>(() => service.GetTables());
             
             Assert.Equal("An error occurred while reading metadata for tables.", exception.Message);
             Assert.Equal(readException, exception.InnerException);
