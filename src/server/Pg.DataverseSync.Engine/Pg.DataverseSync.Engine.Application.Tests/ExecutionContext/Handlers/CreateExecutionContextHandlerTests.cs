@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using NSubstitute;
 using Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers;
+using Pg.DataverseSync.Engine.Core.ContextConstraints;
 
 namespace Pg.DataverseSync.Engine.Application.Tests.ExecutionContext.Handlers
 {
@@ -33,13 +34,13 @@ namespace Pg.DataverseSync.Engine.Application.Tests.ExecutionContext.Handlers
             var handler = new CreateExecutionContextHandler(logger);
             var context = new RemoteExecutionContext
             {
-                MessageName = "Create",
+                MessageName = MessageNames.Create,
                 CorrelationId = Guid.NewGuid()
             };
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => handler.HandleAsync(context));
-            Assert.Equal("Create message missing 'Target' in InputParameters.", exception.Message);
+            Assert.Equal($"{MessageNames.Create} message missing '{ParameterNames.Target}' in InputParameters.", exception.Message);
         }
 
         [Fact]
@@ -51,10 +52,10 @@ namespace Pg.DataverseSync.Engine.Application.Tests.ExecutionContext.Handlers
             var entity = new Entity("contact") { Id = Guid.NewGuid() };
             var context = new RemoteExecutionContext
             {
-                MessageName = "Create",
+                MessageName = MessageNames.Create,
                 CorrelationId = Guid.NewGuid()
             };
-            context.InputParameters.Add("Target", entity);
+            context.InputParameters.Add(ParameterNames.Target, entity);
 
             // Act
             var exception = await Record.ExceptionAsync(() => handler.HandleAsync(context));

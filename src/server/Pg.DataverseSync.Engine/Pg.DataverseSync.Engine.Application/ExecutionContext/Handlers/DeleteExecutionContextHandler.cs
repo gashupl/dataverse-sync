@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
+using Pg.DataverseSync.Engine.Core.ContextConstraints;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
     /// </summary>
     public class DeleteExecutionContextHandler : IExecutionContextHandler
     {
-        public string MessageName => "Delete";
+        public string MessageName => MessageNames.Delete;
 
         private readonly ILogger<DeleteExecutionContextHandler> _logger;
 
@@ -31,9 +32,9 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
                     "Processing Delete execution context (CorrelationId: {correlationId})",
                     context.CorrelationId);
 
-                if (!context.InputParameters.TryGetValue("Target", out var targetRef))
+                if (!context.InputParameters.TryGetValue(ParameterNames.Target, out var targetRef))
                 {
-                    throw new InvalidOperationException("Delete message missing 'Target' in InputParameters.");
+                    throw new InvalidOperationException($"{MessageNames.Delete} message missing '{ParameterNames.Target}' in InputParameters.");
                 }
 
                 var entity = (EntityReference)targetRef;

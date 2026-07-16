@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
+using Pg.DataverseSync.Engine.Core.ContextConstraints;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
     /// </summary>
     public class CreateExecutionContextHandler : IExecutionContextHandler
     {
-        public string MessageName => "Create";
+        public string MessageName => MessageNames.Create;
 
         private readonly ILogger<CreateExecutionContextHandler> _logger;
 
@@ -33,9 +34,9 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
                     "Processing Create execution context (CorrelationId: {correlationId})",
                     context.CorrelationId);
 
-                if (!context.InputParameters.TryGetValue("Target", out var targetEntity))
+                if (!context.InputParameters.TryGetValue(ParameterNames.Target, out var targetEntity))
                 {
-                    throw new InvalidOperationException("Create message missing 'Target' in InputParameters.");
+                    throw new InvalidOperationException($"{MessageNames.Create} message missing '{ParameterNames.Target}' in InputParameters.");
                 }
 
                 var entity = (Entity)targetEntity;

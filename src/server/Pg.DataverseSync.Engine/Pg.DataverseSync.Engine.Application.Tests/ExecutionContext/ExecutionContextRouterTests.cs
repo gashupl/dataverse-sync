@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using NSubstitute;
 using Pg.DataverseSync.Engine.Application.ExecutionContext;
+using Pg.DataverseSync.Engine.Core.ContextConstraints;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 
 namespace Pg.DataverseSync.Engine.Application.Tests.ExecutionContext
@@ -37,11 +38,11 @@ namespace Pg.DataverseSync.Engine.Application.Tests.ExecutionContext
             var logger = Substitute.For<ILogger<ExecutionContextRouter>>();
             var createHandler = Substitute.For<IExecutionContextHandler>();
             var updateHandler = Substitute.For<IExecutionContextHandler>();
-            createHandler.MessageName.Returns("Create");
-            updateHandler.MessageName.Returns("Update");
+            createHandler.MessageName.Returns(MessageNames.Create);
+            updateHandler.MessageName.Returns(MessageNames.Update);
 
             var router = new ExecutionContextRouter(new[] { createHandler, updateHandler }, logger);
-            var context = new RemoteExecutionContext { MessageName = "create", CorrelationId = Guid.NewGuid() };
+            var context = new RemoteExecutionContext { MessageName = MessageNames.Create.ToLowerInvariant(), CorrelationId = Guid.NewGuid() };
 
             // Act
             await router.RouteAsync(context);
@@ -57,14 +58,14 @@ namespace Pg.DataverseSync.Engine.Application.Tests.ExecutionContext
             // Arrange
             var logger = Substitute.For<ILogger<ExecutionContextRouter>>();
             var createHandler = Substitute.For<IExecutionContextHandler>();
-            createHandler.MessageName.Returns("Create");
+            createHandler.MessageName.Returns(MessageNames.Create);
 
             var router = new ExecutionContextRouter(new[] { createHandler }, logger);
-            var context = new RemoteExecutionContext { MessageName = "Merge", CorrelationId = Guid.NewGuid() };
+            var context = new RemoteExecutionContext { MessageName = MessageNames.Merge, CorrelationId = Guid.NewGuid() };
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<UnsupportedExecutionContextException>(() => router.RouteAsync(context));
-            Assert.Equal("Merge", exception.MessageName);
+            Assert.Equal(MessageNames.Merge, exception.MessageName);
             await createHandler.DidNotReceive().HandleAsync(Arg.Any<RemoteExecutionContext>(), Arg.Any<CancellationToken>());
         }
 
@@ -74,12 +75,12 @@ namespace Pg.DataverseSync.Engine.Application.Tests.ExecutionContext
             // Arrange
             var logger = Substitute.For<ILogger<ExecutionContextRouter>>();
             var createHandler = Substitute.For<IExecutionContextHandler>();
-            createHandler.MessageName.Returns("Create");
+            createHandler.MessageName.Returns(MessageNames.Create);
             createHandler.HandleAsync(Arg.Any<RemoteExecutionContext>(), Arg.Any<CancellationToken>())
                 .Returns(_ => throw new InvalidOperationException("Handler failure"));
 
             var router = new ExecutionContextRouter(new[] { createHandler }, logger);
-            var context = new RemoteExecutionContext { MessageName = "Create", CorrelationId = Guid.NewGuid() };
+            var context = new RemoteExecutionContext { MessageName = MessageNames.Create, CorrelationId = Guid.NewGuid() };
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => router.RouteAsync(context));

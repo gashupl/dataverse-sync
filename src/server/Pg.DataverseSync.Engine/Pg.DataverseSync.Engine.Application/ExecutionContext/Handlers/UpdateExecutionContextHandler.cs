@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
+using Pg.DataverseSync.Engine.Core.ContextConstraints;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
     /// </summary>
     public class UpdateExecutionContextHandler : IExecutionContextHandler
     {
-        public string MessageName => "Update";
+        public string MessageName => MessageNames.Update;
 
         private readonly ILogger<UpdateExecutionContextHandler> _logger;
 
@@ -31,9 +32,9 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
                     "Processing Update execution context (CorrelationId: {correlationId})",
                     context.CorrelationId);
 
-                if (!context.InputParameters.TryGetValue("Target", out var targetEntity))
+                if (!context.InputParameters.TryGetValue(ParameterNames.Target, out var targetEntity))
                 {
-                    throw new InvalidOperationException("Update message missing 'Target' in InputParameters.");
+                    throw new InvalidOperationException($"{MessageNames.Update} message missing '{ParameterNames.Target}' in InputParameters.");
                 }
 
                 var entity = (Entity)targetEntity;
