@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Engine.Application;
+using Pg.DataverseSync.Engine.Application.ExecutionContext;
+using Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers;
 using Pg.DataverseSync.Engine.Application.Source;
 using Pg.DataverseSync.Engine.Target;
 using Pg.DataverseSync.Engine.Source;
@@ -43,6 +45,14 @@ builder.Services.AddScoped<IOrganizationService>(sp =>
 
 builder.Services.AddScoped<IMetadataReader, MetadataReader>();
 builder.Services.AddScoped<ISourceMetadataService, SourceMetadataService>();
+
+// Register execution context handlers
+builder.Services.AddScoped<IExecutionContextHandler, CreateExecutionContextHandler>();
+builder.Services.AddScoped<IExecutionContextHandler, UpdateExecutionContextHandler>();
+builder.Services.AddScoped<IExecutionContextHandler, DeleteExecutionContextHandler>();
+
+// Register execution context router
+builder.Services.AddScoped<IExecutionContextRouter, ExecutionContextRouter>();
 
 //TODO: Reference to target data structure service should be injected based on configuration
 //(e.g. SQL Server, Synapse, etc.) in the future
