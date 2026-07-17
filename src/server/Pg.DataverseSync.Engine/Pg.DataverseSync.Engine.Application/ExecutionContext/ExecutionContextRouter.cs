@@ -16,59 +16,46 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext
             IEnumerable<IExecutionContextHandler> handlers,
             ILogger<ExecutionContextRouter> logger)
         {
-            if (handlers == null)
-            {
-                throw new ArgumentNullException(nameof(handlers));
-            }
+            ArgumentNullException.ThrowIfNull(handlers);
 
             _handlers = handlers.ToDictionary(h => h.MessageName, StringComparer.OrdinalIgnoreCase);
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            _logger.LogInformation(
-                "ExecutionContextRouter initialized with {handlerCount} handler(s): {handlerNames}",
-                _handlers.Count,
-                string.Join(", ", _handlers.Keys));
         }
 
         public async Task RouteAsync(RemoteExecutionContext context, CancellationToken cancellationToken = default)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
 
             var messageName = context.MessageName;
 
-            _logger.LogInformation(
-                "Routing execution context message: {messageName} (CorrelationId: {correlationId})",
-                messageName,
-                context.CorrelationId);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation(
+                    "Routing execution context message: {messageName} (CorrelationId: {correlationId})",
+                    messageName,
+                    context.CorrelationId);
+            }
+
 
             if (!_handlers.TryGetValue(messageName, out var handler))
             {
-                _logger.LogError(
-                    "No handler found for execution context message type: {messageName}",
+                if (_logger.IsEnabled(LogLevel.Error))
+                {
+                    _logger.LogError(
+                    "No handler found for execution context message type: {MessageName}",
                     messageName);
+                }
 
                 throw new UnsupportedExecutionContextException(messageName);
             }
 
-            try
+            await handler.HandleAsync(context, cancellationToken);
+            if (_logger.IsEnabled(LogLevel.Information))
             {
-                await handler.HandleAsync(context, cancellationToken);
                 _logger.LogInformation(
-                    "Successfully handled execution context message: {messageName} (CorrelationId: {correlationId})",
+                    "Successfully handled execution context message: {MessageName} (CorrelationId: {CorrelationId})",
                     messageName,
                     context.CorrelationId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    ex,
-                    "Error handling execution context message: {messageName} (CorrelationId: {correlationId})",
-                    messageName,
-                    context.CorrelationId);
-                throw;
             }
         }
     }
