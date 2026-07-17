@@ -9,7 +9,7 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext
     /// </summary>
     public class ExecutionContextRouter : IExecutionContextRouter
     {
-        private readonly IReadOnlyDictionary<string, IExecutionContextHandler> _handlers;
+        private readonly Dictionary<string, IExecutionContextHandler> _handlers;
         private readonly ILogger<ExecutionContextRouter> _logger;
 
         public ExecutionContextRouter(
@@ -31,7 +31,7 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext
             if (_logger.IsEnabled(LogLevel.Information))
             {
                 _logger.LogInformation(
-                    "Routing execution context message: {messageName} (CorrelationId: {correlationId})",
+                    "Routing execution context message: {MessageName} (CorrelationId: {CorrelationId})",
                     messageName,
                     context.CorrelationId);
             }

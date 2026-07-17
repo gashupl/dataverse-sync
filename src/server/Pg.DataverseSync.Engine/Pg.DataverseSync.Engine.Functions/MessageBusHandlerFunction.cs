@@ -19,6 +19,9 @@ public class MessageBusHandlerFunction
         ILogger<MessageBusHandlerFunction> logger,
         IExecutionContextRouter executionContextRouter)
     {
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(executionContextRouter);
+
         _logger = logger;
         _executionContextRouter = executionContextRouter;
     }

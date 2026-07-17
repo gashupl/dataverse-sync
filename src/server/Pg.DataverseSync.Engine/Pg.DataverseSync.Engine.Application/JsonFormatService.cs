@@ -11,5 +11,13 @@ namespace Pg.DataverseSync.Engine.Application
             var serializer = new DataContractJsonSerializer(typeof(T));
             return (T)serializer.ReadObject(ms)!;
         }
+
+        public static string SerializeToJsonString<T>(T obj)
+        {
+            using var ms = new MemoryStream();
+            var serializer = new DataContractJsonSerializer(typeof(T));
+            serializer.WriteObject(ms, obj);
+            return Encoding.UTF8.GetString(ms.ToArray());
+        }
     }
 }
