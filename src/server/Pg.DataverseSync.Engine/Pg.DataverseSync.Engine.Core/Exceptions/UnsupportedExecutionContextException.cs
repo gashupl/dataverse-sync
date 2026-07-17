@@ -4,6 +4,8 @@ namespace Pg.DataverseSync.Engine.Core.Exceptions
 {
     public class UnsupportedExecutionContextException : Exception
     {
+        public string MessageName { get; }
+
         public UnsupportedExecutionContextException(string messageName)
             : base($"No handler registered for execution context message type '{messageName}'.")
         {
@@ -15,7 +17,5 @@ namespace Pg.DataverseSync.Engine.Core.Exceptions
         {
             MessageName = messageName;
         }
-
-        public string MessageName { get; }
     }
 }

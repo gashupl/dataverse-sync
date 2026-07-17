@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Engine.Core.ContextConstraints;
+using Pg.DataverseSync.Engine.Core.Exceptions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,23 +24,22 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
 
         public async Task HandleAsync(RemoteExecutionContext context, CancellationToken cancellationToken = default)
         {
-            if (context == null)
+            ArgumentNullException.ThrowIfNull(context); 
+
+            _logger.LogInformation(
+                "Processing Create execution context (CorrelationId: {correlationId})",
+                context.CorrelationId);
+
+            if (!context.InputParameters.TryGetValue(ParameterNames.Target, out var targetEntity))
             {
-                throw new ArgumentNullException(nameof(context));
+                throw new InvalidOperationException($"{MessageNames.Create} message missing '{ParameterNames.Target}' in InputParameters.");
             }
+
+            var entity = (Entity)targetEntity;
 
             try
             {
-                _logger.LogInformation(
-                    "Processing Create execution context (CorrelationId: {correlationId})",
-                    context.CorrelationId);
 
-                if (!context.InputParameters.TryGetValue(ParameterNames.Target, out var targetEntity))
-                {
-                    throw new InvalidOperationException($"{MessageNames.Create} message missing '{ParameterNames.Target}' in InputParameters.");
-                }
-
-                var entity = (Entity)targetEntity;
                 _logger.LogInformation(
                     "Create handler: Entity LogicalName={logicalName}, Id={id}",
                     entity.LogicalName,
@@ -52,7 +52,7 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in CreateExecutionContextHandler");
-                throw;
+                throw new ExecutionContextHandlerException(MessageName, entity.Id, entity.LogicalName);
             }
         }
     }

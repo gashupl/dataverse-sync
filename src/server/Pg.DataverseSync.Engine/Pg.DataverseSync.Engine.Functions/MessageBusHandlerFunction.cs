@@ -53,6 +53,22 @@ public class MessageBusHandlerFunction
             };
             await messageActions.DeadLetterMessageAsync(message);
         }
+        catch(ExecutionContextHandlerException ex)
+        {
+            _logger.LogError(ex, 
+                    "Error processing execution context message: {messageName}, Id: {id}, LogicalName: {logicalName}", 
+                    ex.MessageName, 
+                    ex.Id, 
+                    ex.LogicalName);
+
+            // Move to dead-letter queue
+            var deadLetterOptions = new Dictionary<string, object>
+            {
+                { "UserProperties", new Dictionary<string, object> { { "Reason", "HandlerProcessingError" } } }
+            };
+
+            await messageActions.DeadLetterMessageAsync(message);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing message");
