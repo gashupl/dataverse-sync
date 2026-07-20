@@ -3,7 +3,7 @@ using System.Runtime.Serialization.Json;
 
 namespace Pg.DataverseSync.Engine.Application
 {
-    public class JsonFormatService
+    public static class JsonFormatService
     {
         public static T DeserializeJsonString<T>(string jsonString)
         {
