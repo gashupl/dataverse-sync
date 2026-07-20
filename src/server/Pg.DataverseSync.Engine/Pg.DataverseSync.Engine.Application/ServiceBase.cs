@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Pg.DataverseSync.Engine.Application
 {
+    [ExcludeFromCodeCoverage]
     public abstract class ServiceBase<T>
     {
         protected readonly ILogger logger;
