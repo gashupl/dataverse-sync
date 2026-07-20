@@ -17,7 +17,7 @@ namespace Pg.DataverseSync.Engine.Application
         {
             if (logger.IsEnabled(logLevel))
             {
-                logger.Log(logLevel, (Exception?)null, message, args);
+                logger.Log(logLevel, message, args);
             }
         }
 

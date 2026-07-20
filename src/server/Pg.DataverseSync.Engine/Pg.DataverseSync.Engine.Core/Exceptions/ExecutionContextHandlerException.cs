@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Pg.DataverseSync.Engine.Core.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     public class ExecutionContextHandlerException : Exception
     {
         public string MessageName { get; }

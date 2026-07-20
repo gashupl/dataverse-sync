@@ -1,6 +1,4 @@
 using Microsoft.Xrm.Sdk;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Pg.DataverseSync.Engine.Application.ExecutionContext
 {

@@ -1,7 +1,8 @@
-using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Pg.DataverseSync.Engine.Core.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     public class UnsupportedExecutionContextException : Exception
     {
         public string MessageName { get; }

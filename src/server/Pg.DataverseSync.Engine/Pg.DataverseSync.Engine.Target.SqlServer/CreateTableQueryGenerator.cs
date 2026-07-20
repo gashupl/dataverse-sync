@@ -1,6 +1,4 @@
 ﻿using Pg.DataverseSync.Engine.Core.Model;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Pg.DataverseSync.Engine.Target.SqlServer
