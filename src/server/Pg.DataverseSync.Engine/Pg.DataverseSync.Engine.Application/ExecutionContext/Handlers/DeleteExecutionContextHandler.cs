@@ -11,7 +11,7 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
     /// <summary>
     /// Handles 'Delete' execution context messages.
     /// </summary>
-    public class DeleteExecutionContextHandler : ServiceBase<DeleteExecutionContextHandler>, IExecutionContextHandler
+    public class DeleteExecutionContextHandler : LoggingServiceBase<DeleteExecutionContextHandler>, IExecutionContextHandler
     {
         public string MessageName => MessageNames.Delete;
 

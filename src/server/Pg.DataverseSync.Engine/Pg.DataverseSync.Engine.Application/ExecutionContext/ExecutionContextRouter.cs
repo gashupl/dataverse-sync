@@ -7,7 +7,7 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext
     /// <summary>
     /// Routes execution context messages to appropriate handlers based on message name.
     /// </summary>
-    public class ExecutionContextRouter : ServiceBase<ExecutionContextRouter>, IExecutionContextRouter
+    public class ExecutionContextRouter : LoggingServiceBase<ExecutionContextRouter>, IExecutionContextRouter
     {
         private readonly Dictionary<string, IExecutionContextHandler> _handlers;
 

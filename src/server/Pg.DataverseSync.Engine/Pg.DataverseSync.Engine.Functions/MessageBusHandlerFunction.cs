@@ -5,34 +5,31 @@ using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Engine.Application;
 using Pg.DataverseSync.Engine.Application.ExecutionContext;
 using Pg.DataverseSync.Engine.Core.Exceptions;
-using System;
-using System.Threading.Tasks;
 
 namespace Pg.DataverseSync.Engine.Functions;
 
-public class MessageBusHandlerFunction
+public class MessageBusHandlerFunction : LoggingServiceBase<MessageBusHandlerFunction>
 {
-    private readonly ILogger<MessageBusHandlerFunction> _logger;
     private readonly IExecutionContextRouter _executionContextRouter;
 
     public MessageBusHandlerFunction(
-        ILogger<MessageBusHandlerFunction> logger,
-        IExecutionContextRouter executionContextRouter)
+        IExecutionContextRouter executionContextRouter, 
+        ILogger<MessageBusHandlerFunction> logger) : base(logger)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(executionContextRouter);
 
-        _logger = logger;
         _executionContextRouter = executionContextRouter;
     }
+
 
     [Function(nameof(MessageBusHandlerFunction))]
     public async Task Run(
         [ServiceBusTrigger("dv-sync-queue", Connection = "ServiceBusConnectionString")]
-        ServiceBusReceivedMessage message,
-        ServiceBusMessageActions messageActions)
+            ServiceBusReceivedMessage message,
+            ServiceBusMessageActions messageActions)
     {
-        _logger.LogInformation("Message ID: {Id}; Body: {Body}; {ContentType}", 
+        LogIfEnabled(LogLevel.Information, "Message ID: {Id}; Body: {Body}; {ContentType}", 
             message.MessageId, 
             message.Body, 
             message.ContentType);
@@ -50,7 +47,7 @@ public class MessageBusHandlerFunction
         }
         catch (UnsupportedExecutionContextException ex)
         {
-            _logger.LogError(ex, "Unsupported execution context message type: {MessageName}", ex.MessageName);
+            LogIfEnabled(LogLevel.Error, ex, "Unsupported execution context message type: {MessageName}", ex.MessageName);
             // Move to dead-letter queue
             var deadLetterOptions = new Dictionary<string, object>
             {
@@ -60,7 +57,7 @@ public class MessageBusHandlerFunction
         }
         catch(ExecutionContextHandlerException ex)
         {
-            _logger.LogError(ex, 
+            LogIfEnabled(LogLevel.Error, ex, 
                     "Error processing execution context message: {MessageName}, Id: {Id}, LogicalName: {LogicalName}", 
                     ex.MessageName, 
                     ex.Id, 
@@ -76,7 +73,7 @@ public class MessageBusHandlerFunction
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing message");
+            LogIfEnabled(LogLevel.Error, ex, "Error processing message");
             // Move to dead-letter queue
             await messageActions.DeadLetterMessageAsync(message);
         }

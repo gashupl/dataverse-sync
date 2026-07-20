@@ -2,16 +2,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Engine.Core.ContextConstraints;
 using Pg.DataverseSync.Engine.Core.Exceptions;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
 {
     /// <summary>
     /// Handles 'Update' execution context messages.
     /// </summary>
-    public class UpdateExecutionContextHandler : ServiceBase<UpdateExecutionContextHandler>, IExecutionContextHandler
+    public class UpdateExecutionContextHandler : LoggingServiceBase<UpdateExecutionContextHandler>, IExecutionContextHandler
     {
         public string MessageName => MessageNames.Update;
 

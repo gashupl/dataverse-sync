@@ -23,7 +23,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
-                new MessageBusHandlerFunction(null!, router));
+                new MessageBusHandlerFunction(router, null!));
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
-                new MessageBusHandlerFunction(logger, null!));
+                new MessageBusHandlerFunction(null!, logger));
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
                 messageId: "test-message-id",
                 contentType: "application/json");
 
-            var function = new MessageBusHandlerFunction(logger, router);
+            var function = new MessageBusHandlerFunction(router, logger);
 
             // Act
             await function.Run(message, messageActions);
@@ -81,7 +81,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
                 messageId: "test-message-id",
                 contentType: "application/json");
 
-            var function = new MessageBusHandlerFunction(logger, router);
+            var function = new MessageBusHandlerFunction(router, logger);
 
             // Act
             await function.Run(message, messageActions);
@@ -114,7 +114,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
                 messageId: "test-message-id",
                 contentType: "application/json");
 
-            var function = new MessageBusHandlerFunction(logger, router);
+            var function = new MessageBusHandlerFunction(router, logger);
 
             // Act
             await function.Run(message, messageActions);
@@ -141,7 +141,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
                 messageId: "test-message-id",
                 contentType: "application/json");
 
-            var function = new MessageBusHandlerFunction(logger, router);
+            var function = new MessageBusHandlerFunction(router, logger);
 
             // Act
             await function.Run(message, messageActions);
@@ -164,7 +164,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
                 messageId: "test-message-id",
                 contentType: "application/json");
 
-            var function = new MessageBusHandlerFunction(logger, router);
+            var function = new MessageBusHandlerFunction(router, logger);
 
             // Act
             await function.Run(message, messageActions);
@@ -189,7 +189,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
                 messageId: messageId,
                 contentType: "application/json");
 
-            var function = new MessageBusHandlerFunction(logger, router);
+            var function = new MessageBusHandlerFunction(router, logger);
 
             // Act - should complete without throwing
             await function.Run(message, messageActions);
