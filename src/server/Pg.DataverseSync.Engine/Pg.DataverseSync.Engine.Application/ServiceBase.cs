@@ -6,9 +6,9 @@ namespace Pg.DataverseSync.Engine.Application
     [ExcludeFromCodeCoverage]
     public abstract class ServiceBase<T>
     {
-        protected readonly ILogger logger;
+        protected readonly ILogger<T> logger;
 
-        public ServiceBase(ILogger<T> logger) 
+        protected ServiceBase(ILogger<T> logger)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
