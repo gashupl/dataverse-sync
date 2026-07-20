@@ -6,60 +6,83 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
-using Pg.DataverseSync.Engine.Domain;
-using Pg.DataverseSync.Engine.Domain.Source;
-using Pg.DataverseSync.Engine.Target;
+using Pg.DataverseSync.Engine.Application;
+using Pg.DataverseSync.Engine.Application.ExecutionContext;
+using Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers;
+using Pg.DataverseSync.Engine.Application.Source;
 using Pg.DataverseSync.Engine.Source;
+using Pg.DataverseSync.Engine.Target;
 using Pg.DataverseSync.Engine.Target.SqlServer;
+using System.Diagnostics.CodeAnalysis;
 
-var builder = FunctionsApplication.CreateBuilder(args);
+namespace Pg.DataverseSync.Engine.Functions;
 
-builder.ConfigureFunctionsWebApplication();
-
-builder.Services
-    .AddApplicationInsightsTelemetryWorkerService()
-    .ConfigureFunctionsApplicationInsights();
-
-// Register Dataverse service
-builder.Services.AddScoped<IOrganizationService>(sp =>
+/// <summary>
+/// Program entry point for the Azure Functions application.
+/// </summary>
+[ExcludeFromCodeCoverage]
+internal static class Program
 {
-    var configuration = sp.GetRequiredService<IConfiguration>();
-    var connectionString = configuration["DataverseConnectionString"];
-    
-    if (string.IsNullOrEmpty(connectionString))
+    public static void Main(string[] args)
     {
-        throw new InvalidOperationException("DataverseConnectionString is not configured.");
+        var builder = FunctionsApplication.CreateBuilder(args);
+
+        builder.ConfigureFunctionsWebApplication();
+
+        builder.Services
+            .AddApplicationInsightsTelemetryWorkerService()
+            .ConfigureFunctionsApplicationInsights();
+
+        // Register Dataverse service
+        builder.Services.AddScoped<IOrganizationService>(sp =>
+        {
+            var configuration = sp.GetRequiredService<IConfiguration>();
+            var connectionString = configuration["DataverseConnectionString"];
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("DataverseConnectionString is not configured.");
+            }
+
+            var serviceClient = new ServiceClient(connectionString);
+
+            if (!serviceClient.IsReady)
+            {
+                throw new InvalidOperationException($"Failed to connect to Dataverse: {serviceClient.LastError}");
+            }
+
+            return serviceClient;
+        });
+
+        builder.Services.AddScoped<IMetadataReader, MetadataReader>();
+        builder.Services.AddScoped<ISourceMetadataService, SourceMetadataService>();
+
+        // Register execution context handlers
+        builder.Services.AddScoped<IExecutionContextHandler, CreateExecutionContextHandler>();
+        builder.Services.AddScoped<IExecutionContextHandler, UpdateExecutionContextHandler>();
+        builder.Services.AddScoped<IExecutionContextHandler, DeleteExecutionContextHandler>();
+
+        // Register execution context router
+        builder.Services.AddScoped<IExecutionContextRouter, ExecutionContextRouter>();
+
+        //TODO: Reference to target data structure service should be injected based on configuration
+        //(e.g. SQL Server, Synapse, etc.) in the future
+        builder.Services.AddScoped<IDatabaseSchemaRepository>(sp =>
+        {
+            var configuration = sp.GetRequiredService<IConfiguration>();
+            var connectionString = configuration["SqlServerConnectionString"];
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("SqlServerConnectionString is not configured.");
+            }
+
+            var logger = sp.GetRequiredService<ILogger<DatabaseSchemaRepository>>();
+
+            return new DatabaseSchemaRepository(connectionString, logger);
+        });
+        builder.Services.AddScoped<ITargetDataStructureService, TargetDataStructureService>();
+
+        builder.Build().Run();
     }
-    
-    var serviceClient = new ServiceClient(connectionString);
-    
-    if (!serviceClient.IsReady)
-    {
-        throw new InvalidOperationException($"Failed to connect to Dataverse: {serviceClient.LastError}");
-    }
-    
-    return serviceClient;
-});
-
-builder.Services.AddScoped<IMetadataReader, MetadataReader>();
-builder.Services.AddScoped<ISourceMetadataService, SourceMetadataService>();
-
-//TODO: Reference to target data structure service should be injected based on configuration
-//(e.g. SQL Server, Synapse, etc.) in the future
-builder.Services.AddScoped<IDatabaseSchemaRepository>(sp =>
-{
-    var configuration = sp.GetRequiredService<IConfiguration>();
-    var connectionString = configuration["SqlServerConnectionString"];
-
-    if (string.IsNullOrEmpty(connectionString))
-    {
-        throw new InvalidOperationException("SqlServerConnectionString is not configured.");
-    }
-
-    var logger = sp.GetRequiredService<ILogger<DatabaseSchemaRepository>>();
-
-    return new DatabaseSchemaRepository(connectionString, logger);
-});
-builder.Services.AddScoped<ITargetDataStructureService, TargetDataStructureService>();
-
-builder.Build().Run();
+}

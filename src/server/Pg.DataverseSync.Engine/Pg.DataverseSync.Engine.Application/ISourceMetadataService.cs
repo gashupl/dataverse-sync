@@ -1,9 +1,9 @@
 ﻿using Pg.DataverseSync.Engine.Core.Model;
 
-namespace Pg.DataverseSync.Engine.Domain
+namespace Pg.DataverseSync.Engine.Application
 {
     public interface ISourceMetadataService
     {
-        List<Table> GetTables();
+        List<Table>? GetTables();
     }
 }

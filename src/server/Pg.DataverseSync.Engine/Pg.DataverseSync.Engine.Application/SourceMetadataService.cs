@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
+using Pg.DataverseSync.Engine.Application.Source;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Core.Model;
-using Pg.DataverseSync.Engine.Domain.Source;
 
-namespace Pg.DataverseSync.Engine.Domain
+namespace Pg.DataverseSync.Engine.Application
 {
     public class SourceMetadataService : ISourceMetadataService
     {
@@ -29,7 +29,7 @@ namespace Pg.DataverseSync.Engine.Domain
             {
                 var message = "An error occurred while reading metadata for tables.";
                 _logger.LogError(ex, message);
-                throw new DomainServiceException(message, ex);
+                throw new ApplicationServiceException(message, ex);
             }
         }
     }
