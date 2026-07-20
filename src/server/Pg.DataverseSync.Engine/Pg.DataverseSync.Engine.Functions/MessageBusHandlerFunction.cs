@@ -32,9 +32,11 @@ public class MessageBusHandlerFunction
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
-        _logger.LogInformation("Message ID: {Id}", message.MessageId);
-        _logger.LogInformation("Message Body: {Body}", message.Body);
-        _logger.LogInformation("Message Content-Type: {ContentType}", message.ContentType);
+        _logger.LogInformation("Message ID: {Id}; Body: {Body}; {ContentType}", 
+            message.MessageId, 
+            message.Body, 
+            message.ContentType);
+
 
         try
         {
