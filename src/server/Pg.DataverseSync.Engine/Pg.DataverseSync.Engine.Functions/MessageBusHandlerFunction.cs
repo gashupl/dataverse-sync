@@ -32,9 +32,9 @@ public class MessageBusHandlerFunction
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
-        _logger.LogInformation("Message ID: {id}", message.MessageId);
-        _logger.LogInformation("Message Body: {body}", message.Body);
-        _logger.LogInformation("Message Content-Type: {contentType}", message.ContentType);
+        _logger.LogInformation("Message ID: {Id}", message.MessageId);
+        _logger.LogInformation("Message Body: {Body}", message.Body);
+        _logger.LogInformation("Message Content-Type: {ContentType}", message.ContentType);
 
         try
         {
@@ -48,18 +48,18 @@ public class MessageBusHandlerFunction
         }
         catch (UnsupportedExecutionContextException ex)
         {
-            _logger.LogError(ex, "Unsupported execution context message type: {messageName}", ex.MessageName);
+            _logger.LogError(ex, "Unsupported execution context message type: {MessageName}", ex.MessageName);
             // Move to dead-letter queue
             var deadLetterOptions = new Dictionary<string, object>
             {
                 { "UserProperties", new Dictionary<string, object> { { "Reason", "UnsupportedMessageType" } } }
             };
-            await messageActions.DeadLetterMessageAsync(message);
+            await messageActions.DeadLetterMessageAsync(message, deadLetterOptions);
         }
         catch(ExecutionContextHandlerException ex)
         {
             _logger.LogError(ex, 
-                    "Error processing execution context message: {messageName}, Id: {id}, LogicalName: {logicalName}", 
+                    "Error processing execution context message: {MessageName}, Id: {Id}, LogicalName: {LogicalName}", 
                     ex.MessageName, 
                     ex.Id, 
                     ex.LogicalName);
@@ -70,7 +70,7 @@ public class MessageBusHandlerFunction
                 { "UserProperties", new Dictionary<string, object> { { "Reason", "HandlerProcessingError" } } }
             };
 
-            await messageActions.DeadLetterMessageAsync(message);
+            await messageActions.DeadLetterMessageAsync(message, deadLetterOptions);
         }
         catch (Exception ex)
         {

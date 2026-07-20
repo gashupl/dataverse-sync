@@ -87,7 +87,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
             await function.Run(message, messageActions);
 
             // Assert
-            await messageActions.Received(1).DeadLetterMessageAsync(message);
+            await messageActions.Received(1).DeadLetterMessageAsync(message, Arg.Any<Dictionary<string, object>?>());
             await messageActions.DidNotReceive().CompleteMessageAsync(message);
         }
 
@@ -120,7 +120,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
             await function.Run(message, messageActions);
 
             // Assert
-            await messageActions.Received(1).DeadLetterMessageAsync(message);
+            await messageActions.Received(1).DeadLetterMessageAsync(message, Arg.Any<Dictionary<string, object>?>());
             await messageActions.DidNotReceive().CompleteMessageAsync(message);
         }
 
