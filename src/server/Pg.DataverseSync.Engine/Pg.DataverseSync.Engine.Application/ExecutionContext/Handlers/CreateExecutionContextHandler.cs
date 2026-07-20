@@ -11,23 +11,20 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
     /// <summary>
     /// Handles 'Create' execution context messages.
     /// </summary>
-    public class CreateExecutionContextHandler : IExecutionContextHandler
+    public class CreateExecutionContextHandler : ServiceBase<CreateExecutionContextHandler>, IExecutionContextHandler
     {
         public string MessageName => MessageNames.Create;
 
-        private readonly ILogger<CreateExecutionContextHandler> _logger;
-
-        public CreateExecutionContextHandler(ILogger<CreateExecutionContextHandler> logger)
+        public CreateExecutionContextHandler(ILogger<CreateExecutionContextHandler> logger) : base(logger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task HandleAsync(RemoteExecutionContext context, CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(context); 
+            ArgumentNullException.ThrowIfNull(context);
 
-            _logger.LogInformation(
-                "Processing Create execution context (CorrelationId: {correlationId})",
+            LogIfEnabled(LogLevel.Information,
+                "Processing Create execution context (CorrelationId: {CorrelationId})",
                 context.CorrelationId);
 
             if (!context.InputParameters.TryGetValue(ParameterNames.Target, out var targetEntity))
@@ -39,9 +36,8 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
 
             try
             {
-
-                _logger.LogInformation(
-                    "Create handler: Entity LogicalName={logicalName}, Id={id}",
+                LogIfEnabled(LogLevel.Information,
+                    "Create handler: Entity LogicalName={LogicalName}, Id={Id}",
                     entity.LogicalName,
                     entity.Id);
 
@@ -51,8 +47,8 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in CreateExecutionContextHandler");
-                throw new ExecutionContextHandlerException(MessageName, entity.Id, entity.LogicalName);
+                LogIfEnabled(LogLevel.Error, "Error in CreateExecutionContextHandler: {Message}", ex.Message);
+                throw new ExecutionContextHandlerException(MessageName, entity.Id, entity.LogicalName, ex);
             }
         }
     }

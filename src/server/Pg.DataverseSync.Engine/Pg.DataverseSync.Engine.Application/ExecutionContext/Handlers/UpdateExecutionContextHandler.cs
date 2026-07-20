@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Engine.Core.ContextConstraints;
+using Pg.DataverseSync.Engine.Core.Exceptions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,36 +11,33 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
     /// <summary>
     /// Handles 'Update' execution context messages.
     /// </summary>
-    public class UpdateExecutionContextHandler : IExecutionContextHandler
+    public class UpdateExecutionContextHandler : ServiceBase<UpdateExecutionContextHandler>, IExecutionContextHandler
     {
         public string MessageName => MessageNames.Update;
 
-        private readonly ILogger<UpdateExecutionContextHandler> _logger;
-
-        public UpdateExecutionContextHandler(ILogger<UpdateExecutionContextHandler> logger)
+        public UpdateExecutionContextHandler(ILogger<UpdateExecutionContextHandler> logger) : base(logger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task HandleAsync(RemoteExecutionContext context, CancellationToken cancellationToken = default)
         {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
+            ArgumentNullException.ThrowIfNull(context);
+
+            LogIfEnabled(LogLevel.Information,
+                "Processing Update execution context (CorrelationId: {CorrelationId})",
+                context.CorrelationId);
+
+            if (!context.InputParameters.TryGetValue(ParameterNames.Target, out var targetEntity))
+            {
+                throw new InvalidOperationException($"{MessageNames.Update} message missing '{ParameterNames.Target}' in InputParameters.");
+            }
+
+            var entity = (Entity)targetEntity;
 
             try
             {
-                _logger.LogInformation(
-                    "Processing Update execution context (CorrelationId: {correlationId})",
-                    context.CorrelationId);
-
-                if (!context.InputParameters.TryGetValue(ParameterNames.Target, out var targetEntity))
-                {
-                    throw new InvalidOperationException($"{MessageNames.Update} message missing '{ParameterNames.Target}' in InputParameters.");
-                }
-
-                var entity = (Entity)targetEntity;
-                _logger.LogInformation(
-                    "Update handler: Entity LogicalName={logicalName}, Id={id}",
+                LogIfEnabled(LogLevel.Information,
+                    "Update handler: Entity LogicalName={LogicalName}, Id={Id}",
                     entity.LogicalName,
                     entity.Id);
 
@@ -49,8 +47,8 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in UpdateExecutionContextHandler");
-                throw;
+                LogIfEnabled(LogLevel.Error, "Error in UpdateExecutionContextHandler: {Message}", ex.Message);
+                throw new ExecutionContextHandlerException(MessageName, entity.Id, entity.LogicalName, ex);
             }
         }
     }

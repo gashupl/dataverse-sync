@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Engine.Core.ContextConstraints;
+using Pg.DataverseSync.Engine.Core.Exceptions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,38 +11,35 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
     /// <summary>
     /// Handles 'Delete' execution context messages.
     /// </summary>
-    public class DeleteExecutionContextHandler : IExecutionContextHandler
+    public class DeleteExecutionContextHandler : ServiceBase<DeleteExecutionContextHandler>, IExecutionContextHandler
     {
         public string MessageName => MessageNames.Delete;
 
-        private readonly ILogger<DeleteExecutionContextHandler> _logger;
-
-        public DeleteExecutionContextHandler(ILogger<DeleteExecutionContextHandler> logger)
+        public DeleteExecutionContextHandler(ILogger<DeleteExecutionContextHandler> logger) : base(logger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task HandleAsync(RemoteExecutionContext context, CancellationToken cancellationToken = default)
         {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
+            ArgumentNullException.ThrowIfNull(context);
+
+            LogIfEnabled(LogLevel.Information,
+                "Processing Delete execution context (CorrelationId: {CorrelationId})",
+                context.CorrelationId);
+
+            if (!context.InputParameters.TryGetValue(ParameterNames.Target, out var targetRef))
+            {
+                throw new InvalidOperationException($"{MessageNames.Delete} message missing '{ParameterNames.Target}' in InputParameters.");
+            }
+
+            var entityRef = (EntityReference)targetRef;
 
             try
             {
-                _logger.LogInformation(
-                    "Processing Delete execution context (CorrelationId: {correlationId})",
-                    context.CorrelationId);
-
-                if (!context.InputParameters.TryGetValue(ParameterNames.Target, out var targetRef))
-                {
-                    throw new InvalidOperationException($"{MessageNames.Delete} message missing '{ParameterNames.Target}' in InputParameters.");
-                }
-
-                var entity = (EntityReference)targetRef;
-                _logger.LogInformation(
-                    "Delete handler: Entity LogicalName={logicalName}, Id={id}",
-                    entity.LogicalName,
-                    entity.Id);
+                LogIfEnabled(LogLevel.Information,
+                    "Delete handler: Entity LogicalName={LogicalName}, Id={Id}",
+                    entityRef.LogicalName,
+                    entityRef.Id);
 
                 // TODO: Add business logic for handling Delete message
 
@@ -49,8 +47,8 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in DeleteExecutionContextHandler");
-                throw;
+                LogIfEnabled(LogLevel.Error, "Error in DeleteExecutionContextHandler: {Message}", ex.Message);
+                throw new ExecutionContextHandlerException(MessageName, entityRef.Id, entityRef.LogicalName, ex);
             }
         }
     }
