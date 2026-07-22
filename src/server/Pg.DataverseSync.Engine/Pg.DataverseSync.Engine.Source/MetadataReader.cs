@@ -6,23 +6,23 @@ using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Core.Model;
 using Pg.DataverseSync.Engine.Application.Source;
 using System.ServiceModel;
+using Pg.DataverseSync.Engine.Application;
 
 namespace Pg.DataverseSync.Engine.Source
 {
-    public class MetadataReader : IMetadataReader
+    public class MetadataReader : LoggingServiceBase<MetadataReader>, IMetadataReader
     {
         private readonly IOrganizationService _service;
-        private readonly ILogger<MetadataReader> _logger;
 
-        public MetadataReader(IOrganizationService service, ILogger<MetadataReader> logger)
+        public MetadataReader(IOrganizationService service, ILogger<MetadataReader> logger) 
+            : base(logger)
         {
             _service = service; 
-            _logger = logger;
         }
 
         public List<Table>? GetTables()
         {
-            _logger.LogInformation("Retrieving table metadata from Dataverse...");
+            LogIfEnabled(LogLevel.Information, "Retrieving table metadata from Dataverse...");
 
             try
             {
@@ -44,33 +44,33 @@ namespace Pg.DataverseSync.Engine.Source
                     tables.Add(new Table(logicalName, displayName, isActivity));
                 }
 
-                _logger.LogInformation("Retrieved {Count} tables from Dataverse.", tables.Count);
+                LogIfEnabled(LogLevel.Information, "Retrieved {Count} tables from Dataverse.", tables.Count);
                 return tables;
             }
             catch (FaultException<OrganizationServiceFault> ex)
             {
                 var msg = $"Dataverse service fault while retrieving tables. " +
                     $"Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}"; 
-                _logger.LogError(ex, msg);
+                LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex); 
             }
             catch (TimeoutException ex)
             {
                 var msg = "Timeout while retrieving tables from Dataverse. Consider increasing the timeout settings.";
-                _logger.LogError(ex, msg);
+                LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }
             catch (Exception ex)
             {
                 var msg = "An unexpected error occurred while retrieving tables from Dataverse.";
-                _logger.LogError(ex, msg);
+                LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }
         }
 
         public List<Column> GetColumns(string tableName)
         {
-            _logger.LogInformation("Retrieving columns metadata from Dataverse table {tableName}...", tableName);
+            LogIfEnabled(LogLevel.Information, "Retrieving columns metadata from Dataverse table {tableName}...", tableName);
 
             try
             {
@@ -99,21 +99,21 @@ namespace Pg.DataverseSync.Engine.Source
             {
                 var msg = $"Dataverse service fault while retrieving columns metadata from  Dataverse table {tableName}. " +
                     $"Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}";
-                _logger.LogError(ex, msg);
+                LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }
             catch (TimeoutException ex)
             {
                 var msg = 
                     $"Timeout while retrieving columns metadata from Dataverse table {tableName}. Consider increasing the timeout settings.";
-                _logger.LogError(ex, msg);
+                LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }
             catch (Exception ex)
             {
                 var msg = 
                     $"An unexpected error occurred while retrieving columns metadata from Dataverse table {tableName}";
-                _logger.LogError(ex, msg);
+                LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }
 
