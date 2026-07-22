@@ -5,10 +5,10 @@ using Pg.DataverseSync.Engine.Core.Model;
 
 namespace Pg.DataverseSync.Engine.Application
 {
-    public class SourceMetadataService : LoggingServiceBase<SourceMetadataService>, ISourceMetadataService
+    public class SyncMetadataService : LoggingServiceBase<SyncMetadataService>, ISyncMetadataService
     {
         private readonly IMetadataReader _metadataReader;
-        public SourceMetadataService(IMetadataReader metadataReader, ILogger<SourceMetadataService> logger)
+        public SyncMetadataService(IMetadataReader metadataReader, ILogger<SyncMetadataService> logger)
             : base(logger)
         {
             _metadataReader = metadataReader;   

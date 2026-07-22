@@ -7,14 +7,14 @@ using Pg.DataverseSync.Engine.Application.Source;
 
 namespace Pg.DataverseSync.Engine.Application.Tests
 {
-    public class SourceMetadataServiceTests
+    public class SyncMetadataServiceTests
     {
         [Fact]
         public void GetTables_SuccessfullRequest_ReturnsTables()
         {
             // Arrange
             var mockMetadataReader = Substitute.For<IMetadataReader>();
-            var mockLogger = Substitute.For<ILogger<SourceMetadataService>>();
+            var mockLogger = Substitute.For<ILogger<SyncMetadataService>>();
 
             var tables = new List<Table>
             {
@@ -25,7 +25,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             mockMetadataReader.GetTables().Returns(tables);
 
-            var service = new SourceMetadataService(mockMetadataReader, mockLogger);
+            var service = new SyncMetadataService(mockMetadataReader, mockLogger);
 
             // Act
             var result = service.GetTables();
@@ -45,11 +45,11 @@ namespace Pg.DataverseSync.Engine.Application.Tests
         {
             // Arrange
             var mockMetadataReader = Substitute.For<IMetadataReader>();
-            var mockLogger = Substitute.For<ILogger<SourceMetadataService>>();
+            var mockLogger = Substitute.For<ILogger<SyncMetadataService>>();
 
             mockMetadataReader.GetTables().Returns((List<Table>?)null);
 
-            var service = new SourceMetadataService(mockMetadataReader, mockLogger);
+            var service = new SyncMetadataService(mockMetadataReader, mockLogger);
 
             // Act
             var result = service.GetTables();
@@ -65,12 +65,12 @@ namespace Pg.DataverseSync.Engine.Application.Tests
         {
             // Arrange
             var mockMetadataReader = Substitute.For<IMetadataReader>();
-            var mockLogger = Substitute.For<ILogger<SourceMetadataService>>();
+            var mockLogger = Substitute.For<ILogger<SyncMetadataService>>();
 
             var readException = new ReadMetadataException("Failed to read metadata from source.");
             mockMetadataReader.GetTables().Throws(readException);
 
-            var service = new SourceMetadataService(mockMetadataReader, mockLogger);
+            var service = new SyncMetadataService(mockMetadataReader, mockLogger);
 
             // Act & Assert
             var exception = Assert.Throws<ApplicationServiceException>(() => service.GetTables());

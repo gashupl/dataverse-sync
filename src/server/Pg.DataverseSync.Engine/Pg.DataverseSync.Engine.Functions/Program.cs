@@ -55,7 +55,7 @@ internal static class Program
         });
 
         builder.Services.AddScoped<IMetadataReader, MetadataReader>();
-        builder.Services.AddScoped<ISourceMetadataService, SourceMetadataService>();
+        builder.Services.AddScoped<ISyncMetadataService, SyncMetadataService>();
 
         // Register execution context handlers
         builder.Services.AddScoped<IExecutionContextHandler, CreateExecutionContextHandler>();
