@@ -54,6 +54,7 @@ internal static class Program
             return serviceClient;
         });
 
+        builder.Services.AddScoped<IDataRepository, DataRepository>();
         builder.Services.AddScoped<IMetadataRepository, MetadataRepository>();
         builder.Services.AddScoped<ISyncMetadataService, SyncMetadataService>();
 

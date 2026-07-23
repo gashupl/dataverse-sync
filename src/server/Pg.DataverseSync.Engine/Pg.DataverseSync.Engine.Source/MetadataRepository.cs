@@ -6,18 +6,14 @@ using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Core.Model;
 using Pg.DataverseSync.Engine.Application.Source;
 using System.ServiceModel;
-using Pg.DataverseSync.Engine.Application;
 
 namespace Pg.DataverseSync.Engine.Source
 {
-    public class MetadataRepository : LoggingServiceBase<MetadataRepository>, IMetadataRepository
+    public class MetadataRepository : DataverseRepositoryBase, IMetadataRepository
     {
-        private readonly IOrganizationService _service;
-
-        public MetadataRepository(IOrganizationService service, ILogger<MetadataRepository> logger) 
-            : base(logger)
+        public MetadataRepository(IOrganizationService service, ILogger<DataverseRepositoryBase> logger) 
+            : base(service, logger)
         {
-            _service = service; 
         }
 
         public List<Table>? GetTables()
@@ -32,7 +28,7 @@ namespace Pg.DataverseSync.Engine.Source
                     RetrieveAsIfPublished = true
                 };
 
-                var response = (RetrieveAllEntitiesResponse)_service.Execute(request);
+                var response = (RetrieveAllEntitiesResponse)service.Execute(request);
                 var tables = new List<Table>();
 
                 foreach (var entityMetadata in response.EntityMetadata)
@@ -81,7 +77,7 @@ namespace Pg.DataverseSync.Engine.Source
                     RetrieveAsIfPublished = true
                 };
 
-                var response = (RetrieveEntityResponse)_service.Execute(request);
+                var response = (RetrieveEntityResponse)service.Execute(request);
                 var columns = new List<Column>();
 
                 foreach (var attributeMetadata in response.EntityMetadata.Attributes)
