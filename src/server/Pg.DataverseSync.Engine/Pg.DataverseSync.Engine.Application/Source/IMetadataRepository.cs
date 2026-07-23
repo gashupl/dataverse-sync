@@ -2,7 +2,7 @@
 
 namespace Pg.DataverseSync.Engine.Application.Source
 {
-    public interface IMetadataReader
+    public interface IMetadataRepository
     {
         List<Table>? GetTables();
 

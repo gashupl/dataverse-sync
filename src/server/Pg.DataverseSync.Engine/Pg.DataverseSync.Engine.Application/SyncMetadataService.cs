@@ -7,11 +7,11 @@ namespace Pg.DataverseSync.Engine.Application
 {
     public class SyncMetadataService : LoggingServiceBase<SyncMetadataService>, ISyncMetadataService
     {
-        private readonly IMetadataReader _metadataReader;
-        public SyncMetadataService(IMetadataReader metadataReader, ILogger<SyncMetadataService> logger)
+        private readonly IMetadataRepository _metadataRepo;
+        public SyncMetadataService(IMetadataRepository metadataRepo, ILogger<SyncMetadataService> logger)
             : base(logger)
         {
-            _metadataReader = metadataReader;   
+            _metadataRepo = metadataRepo;   
         }
 
         public List<Table>? GetTables()
@@ -19,7 +19,7 @@ namespace Pg.DataverseSync.Engine.Application
             LogIfEnabled(LogLevel.Information, "Getting tables from source metadata service...");
             try
             {
-                var tables = _metadataReader.GetTables();
+                var tables = _metadataRepo.GetTables();
                 LogIfEnabled(LogLevel.Information, "Successfully retrieved {Count} table.", tables?.Count);
                 return tables; 
 

@@ -54,7 +54,7 @@ internal static class Program
             return serviceClient;
         });
 
-        builder.Services.AddScoped<IMetadataReader, MetadataReader>();
+        builder.Services.AddScoped<IMetadataRepository, MetadataRepository>();
         builder.Services.AddScoped<ISyncMetadataService, SyncMetadataService>();
 
         // Register execution context handlers

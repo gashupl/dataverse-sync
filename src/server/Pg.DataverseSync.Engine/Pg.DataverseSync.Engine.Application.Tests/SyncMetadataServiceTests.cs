@@ -13,7 +13,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
         public void GetTables_SuccessfullRequest_ReturnsTables()
         {
             // Arrange
-            var mockMetadataReader = Substitute.For<IMetadataReader>();
+            var mockMetadataRepo = Substitute.For<IMetadataRepository>();
             var mockLogger = Substitute.For<ILogger<SyncMetadataService>>();
 
             var tables = new List<Table>
@@ -23,9 +23,9 @@ namespace Pg.DataverseSync.Engine.Application.Tests
                 new Table("opportunity", "Opportunity", false)
             };
 
-            mockMetadataReader.GetTables().Returns(tables);
+            mockMetadataRepo.GetTables().Returns(tables);
 
-            var service = new SyncMetadataService(mockMetadataReader, mockLogger);
+            var service = new SyncMetadataService(mockMetadataRepo, mockLogger);
 
             // Act
             var result = service.GetTables();
@@ -37,19 +37,19 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             Assert.Equal("contact", result[1].Name);
             Assert.Equal("opportunity", result[2].Name);
 
-            mockMetadataReader.Received(1).GetTables();
+            mockMetadataRepo.Received(1).GetTables();
         }
 
         [Fact]
         public void GetTables_SuccessfullRequestReturnsNull_ReturnsNull()
         {
             // Arrange
-            var mockMetadataReader = Substitute.For<IMetadataReader>();
+            var mockMetadataRepo = Substitute.For<IMetadataRepository>();
             var mockLogger = Substitute.For<ILogger<SyncMetadataService>>();
 
-            mockMetadataReader.GetTables().Returns((List<Table>?)null);
+            mockMetadataRepo.GetTables().Returns((List<Table>?)null);
 
-            var service = new SyncMetadataService(mockMetadataReader, mockLogger);
+            var service = new SyncMetadataService(mockMetadataRepo, mockLogger);
 
             // Act
             var result = service.GetTables();
@@ -57,20 +57,20 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             // Assert
             Assert.Null(result);
 
-            mockMetadataReader.Received(1).GetTables();
+            mockMetadataRepo.Received(1).GetTables();
         }
 
         [Fact]
         public void GetTablesNames_ReadMetadataException_ThrowsDomainServiceException()
         {
             // Arrange
-            var mockMetadataReader = Substitute.For<IMetadataReader>();
+            var mockMetadataRepo = Substitute.For<IMetadataRepository>();
             var mockLogger = Substitute.For<ILogger<SyncMetadataService>>();
 
             var readException = new ReadMetadataException("Failed to read metadata from source.");
-            mockMetadataReader.GetTables().Throws(readException);
+            mockMetadataRepo.GetTables().Throws(readException);
 
-            var service = new SyncMetadataService(mockMetadataReader, mockLogger);
+            var service = new SyncMetadataService(mockMetadataRepo, mockLogger);
 
             // Act & Assert
             var exception = Assert.Throws<ApplicationServiceException>(() => service.GetTables());
@@ -78,7 +78,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             Assert.Equal("An error occurred while reading metadata for tables.", exception.Message);
             Assert.Equal(readException, exception.InnerException);
 
-            mockMetadataReader.Received(1).GetTables();
+            mockMetadataRepo.Received(1).GetTables();
         }
     }
 }

@@ -10,11 +10,11 @@ using Pg.DataverseSync.Engine.Application;
 
 namespace Pg.DataverseSync.Engine.Source
 {
-    public class MetadataReader : LoggingServiceBase<MetadataReader>, IMetadataReader
+    public class MetadataRepository : LoggingServiceBase<MetadataRepository>, IMetadataRepository
     {
         private readonly IOrganizationService _service;
 
-        public MetadataReader(IOrganizationService service, ILogger<MetadataReader> logger) 
+        public MetadataRepository(IOrganizationService service, ILogger<MetadataRepository> logger) 
             : base(logger)
         {
             _service = service; 
