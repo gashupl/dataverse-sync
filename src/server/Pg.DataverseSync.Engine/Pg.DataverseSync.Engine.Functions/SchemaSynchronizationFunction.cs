@@ -7,16 +7,16 @@ namespace Pg.DataverseSync.Engine.Functions;
 
 public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchronizationFunction>
 {
-    private readonly ISourceMetadataService _sourceMetadataService;
+    private readonly ISyncMetadataService _syncMetadataService;
 
     public SchemaSynchronizationFunction(
-        ISourceMetadataService sourceMetadataService,
+        ISyncMetadataService syncMetadataService,
         ILogger<SchemaSynchronizationFunction> logger) : base(logger)
     {
-        ArgumentNullException.ThrowIfNull(sourceMetadataService);
+        ArgumentNullException.ThrowIfNull(syncMetadataService);
         ArgumentNullException.ThrowIfNull(logger);
 
-        _sourceMetadataService = sourceMetadataService;
+        _syncMetadataService = syncMetadataService;
     }
 
     [Function(nameof(SchemaSynchronizationFunction))]
@@ -29,20 +29,31 @@ public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchroniz
     {
         LogIfEnabled(LogLevel.Information, "SchemaSynchronizationFunction triggered at: {UtcNow}", DateTime.UtcNow);
 
-        var tables = _sourceMetadataService.GetTables();
+        var result = _syncMetadataService.Execute();
 
-        if (tables is null || tables.Count == 0)
+        if (result?.TablesSyncResult == null) 
         {
-            LogIfEnabled(LogLevel.Warning, "No sync tables found. Schema synchronization skipped.");
+            LogIfEnabled(LogLevel.Error, "Schema synchronization failed. Result is null.");
             return;
         }
 
-        LogIfEnabled(LogLevel.Information, "Starting schema synchronization for {Count} table(s).", tables.Count);
+        var succeeded = result.TablesSyncResult.Where(t => t.IsSynchronized).ToList();
+        var failed = result.TablesSyncResult.Where(t => !t.IsSynchronized).ToList();
 
-        foreach (var table in tables)
+        foreach (var table in succeeded)
         {
-            LogIfEnabled(LogLevel.Information, "Upserting schema for table: {TableName}", table.Name);
+            LogIfEnabled(LogLevel.Information, "Table {TableName} synchronized successfully.", table.TableName);
         }
+
+        foreach (var table in failed)
+        {
+            LogIfEnabled(LogLevel.Error, "Table {TableName} synchronization failed. Error: {ErrorMessage}",
+                table.TableName, table.ErrorMessage);
+        }
+
+        LogIfEnabled(LogLevel.Information,
+            "Schema synchronization completed. Succeeded: {SucceededCount}, Failed: {FailedCount}.",
+            succeeded.Count, failed.Count);
 
         LogIfEnabled(LogLevel.Information, "Schema synchronization completed.");
     }

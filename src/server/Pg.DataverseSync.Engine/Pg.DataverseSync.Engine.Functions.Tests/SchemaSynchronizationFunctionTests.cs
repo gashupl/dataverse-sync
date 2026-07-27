@@ -2,7 +2,6 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Pg.DataverseSync.Engine.Application;
-using Pg.DataverseSync.Engine.Core.Model;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Pg.DataverseSync.Engine.Functions.Tests
@@ -25,7 +24,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
         public void Constructor_NullLogger_ThrowsArgumentNullException()
         {
             // Arrange
-            var syncMetadataService = Substitute.For<ISourceMetadataService>();
+            var syncMetadataService = Substitute.For<ISyncMetadataService>();
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
@@ -33,66 +32,131 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
         }
 
         [Fact]
-        public void Run_WithTables_CallsGetTablesOnce()
+        public void Run_Execute_IsCalledOnce()
         {
             // Arrange
             var logger = Substitute.For<ILogger<SchemaSynchronizationFunction>>();
-            var syncMetadataService = Substitute.For<ISourceMetadataService>();
+            var syncMetadataService = Substitute.For<ISyncMetadataService>();
             var timer = Substitute.For<TimerInfo>();
 
-            var tables = new List<Table>
+            syncMetadataService.Execute().Returns(new SyncMetadataResult { TablesSyncResult = [] });
+
+            var function = new SchemaSynchronizationFunction(syncMetadataService, logger);
+
+            // Act
+            function.Run(timer);
+
+            // Assert
+            syncMetadataService.Received(1).Execute();
+        }
+
+        [Fact]
+        public void Run_ExecuteReturnsNullTablesSyncResult_SkipsSynchronization()
+        {
+            // Arrange
+            var logger = Substitute.For<ILogger<SchemaSynchronizationFunction>>();
+            var syncMetadataService = Substitute.For<ISyncMetadataService>();
+            var timer = Substitute.For<TimerInfo>();
+
+            syncMetadataService.Execute().Returns(new SyncMetadataResult { TablesSyncResult = null });
+
+            var function = new SchemaSynchronizationFunction(syncMetadataService, logger);
+
+            // Act
+            function.Run(timer);
+
+            // Assert
+            syncMetadataService.Received(1).Execute();
+        }
+
+        [Fact]
+        public void Run_ExecuteReturnsSucceededResults_ReturnsSucceededTables()
+        {
+            // Arrange
+            var logger = Substitute.For<ILogger<SchemaSynchronizationFunction>>();
+            var syncMetadataService = Substitute.For<ISyncMetadataService>();
+            var timer = Substitute.For<TimerInfo>();
+
+            var syncResult = new SyncMetadataResult
             {
-                new("account", "Account", false),
-                new("contact", "Contact", false)
+                TablesSyncResult =
+                [
+                    new TableSyncResult("account", isSynchronized: true),
+                    new TableSyncResult("contact", isSynchronized: true)
+                ]
             };
 
-            syncMetadataService.GetTables().Returns(tables);
+            syncMetadataService.Execute().Returns(syncResult);
 
             var function = new SchemaSynchronizationFunction(syncMetadataService, logger);
 
             // Act
             function.Run(timer);
 
-            // Assert (check if method has been executed once)
-            syncMetadataService.Received(1).GetTables();
+            // Assert
+            syncMetadataService.Received(1).Execute();
+            Assert.Equal(2, syncResult.TablesSyncResult.Count(t => t.IsSynchronized));
+            Assert.DoesNotContain(syncResult.TablesSyncResult, t => !t.IsSynchronized);
         }
 
         [Fact]
-        public void Run_NullTablesResult_SkipsSynchronization()
+        public void Run_ExecuteReturnsFailedResults_ReturnsFailedTablesWithErrors()
         {
             // Arrange
             var logger = Substitute.For<ILogger<SchemaSynchronizationFunction>>();
-            var syncMetadataService = Substitute.For<ISourceMetadataService>();
+            var syncMetadataService = Substitute.For<ISyncMetadataService>();
             var timer = Substitute.For<TimerInfo>();
 
-            syncMetadataService.GetTables().Returns((List<Table>?)null);
+            var syncResult = new SyncMetadataResult
+            {
+                TablesSyncResult =
+                [
+                    new TableSyncResult("account", isSynchronized: false, errorMessage: "Connection timeout"),
+                    new TableSyncResult("contact", isSynchronized: false, errorMessage: "Permission denied")
+                ]
+            };
+
+            syncMetadataService.Execute().Returns(syncResult);
 
             var function = new SchemaSynchronizationFunction(syncMetadataService, logger);
 
             // Act
             function.Run(timer);
 
-            // Assert (check if method has been executed once)
-            syncMetadataService.Received(1).GetTables();
+            // Assert
+            syncMetadataService.Received(1).Execute();
+            Assert.Equal(2, syncResult.TablesSyncResult.Count(t => !t.IsSynchronized));
+            Assert.All(syncResult.TablesSyncResult, t => Assert.False(string.IsNullOrEmpty(t.ErrorMessage)));
         }
 
         [Fact]
-        public void Run_EmptyTablesList_SkipsSynchronization()
+        public void Run_ExecuteReturnsMixedResults_ReturnsBothSucceededAndFailedTables()
         {
             // Arrange
             var logger = Substitute.For<ILogger<SchemaSynchronizationFunction>>();
-            var syncMetadataService = Substitute.For<ISourceMetadataService>();
+            var syncMetadataService = Substitute.For<ISyncMetadataService>();
             var timer = Substitute.For<TimerInfo>();
 
-            syncMetadataService.GetTables().Returns(new List<Table>());
+            var syncResult = new SyncMetadataResult
+            {
+                TablesSyncResult =
+                [
+                    new TableSyncResult("account", isSynchronized: true),
+                    new TableSyncResult("contact", isSynchronized: false, errorMessage: "Schema mismatch")
+                ]
+            };
+
+            syncMetadataService.Execute().Returns(syncResult);
 
             var function = new SchemaSynchronizationFunction(syncMetadataService, logger);
 
             // Act
             function.Run(timer);
 
-            // Assert (check if method has been executed once)
-            syncMetadataService.Received(1).GetTables();
+            // Assert
+            syncMetadataService.Received(1).Execute();
+            Assert.Equal(1, syncResult.TablesSyncResult.Count(t => t.IsSynchronized));
+            Assert.Equal(1, syncResult.TablesSyncResult.Count(t => !t.IsSynchronized));
         }
     }
 }
