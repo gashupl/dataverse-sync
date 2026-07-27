@@ -53,7 +53,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
             // Act
             function.Run(timer);
 
-            // Assert
+            // Assert (check if method has been executed once)
             syncMetadataService.Received(1).GetTables();
         }
 
@@ -72,7 +72,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
             // Act
             function.Run(timer);
 
-            // Assert
+            // Assert (check if method has been executed once)
             syncMetadataService.Received(1).GetTables();
         }
 
@@ -91,7 +91,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
             // Act
             function.Run(timer);
 
-            // Assert
+            // Assert (check if method has been executed once)
             syncMetadataService.Received(1).GetTables();
         }
     }
