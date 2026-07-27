@@ -7,16 +7,16 @@ namespace Pg.DataverseSync.Engine.Functions;
 
 public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchronizationFunction>
 {
-    private readonly ISyncMetadataService _syncMetadataService;
+    private readonly ISourceMetadataService _sourceMetadataService;
 
     public SchemaSynchronizationFunction(
-        ISyncMetadataService syncMetadataService,
+        ISourceMetadataService sourceMetadataService,
         ILogger<SchemaSynchronizationFunction> logger) : base(logger)
     {
-        ArgumentNullException.ThrowIfNull(syncMetadataService);
+        ArgumentNullException.ThrowIfNull(sourceMetadataService);
         ArgumentNullException.ThrowIfNull(logger);
 
-        _syncMetadataService = syncMetadataService;
+        _sourceMetadataService = sourceMetadataService;
     }
 
     [Function(nameof(SchemaSynchronizationFunction))]
@@ -29,7 +29,7 @@ public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchroniz
     {
         LogIfEnabled(LogLevel.Information, "SchemaSynchronizationFunction triggered at: {UtcNow}", DateTime.UtcNow);
 
-        var tables = _syncMetadataService.GetTables();
+        var tables = _sourceMetadataService.GetTables();
 
         if (tables is null || tables.Count == 0)
         {

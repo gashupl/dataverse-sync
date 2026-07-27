@@ -25,7 +25,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
         public void Constructor_NullLogger_ThrowsArgumentNullException()
         {
             // Arrange
-            var syncMetadataService = Substitute.For<ISyncMetadataService>();
+            var syncMetadataService = Substitute.For<ISourceMetadataService>();
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
@@ -37,7 +37,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
         {
             // Arrange
             var logger = Substitute.For<ILogger<SchemaSynchronizationFunction>>();
-            var syncMetadataService = Substitute.For<ISyncMetadataService>();
+            var syncMetadataService = Substitute.For<ISourceMetadataService>();
             var timer = Substitute.For<TimerInfo>();
 
             var tables = new List<Table>
@@ -62,7 +62,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
         {
             // Arrange
             var logger = Substitute.For<ILogger<SchemaSynchronizationFunction>>();
-            var syncMetadataService = Substitute.For<ISyncMetadataService>();
+            var syncMetadataService = Substitute.For<ISourceMetadataService>();
             var timer = Substitute.For<TimerInfo>();
 
             syncMetadataService.GetTables().Returns((List<Table>?)null);
@@ -81,7 +81,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
         {
             // Arrange
             var logger = Substitute.For<ILogger<SchemaSynchronizationFunction>>();
-            var syncMetadataService = Substitute.For<ISyncMetadataService>();
+            var syncMetadataService = Substitute.For<ISourceMetadataService>();
             var timer = Substitute.For<TimerInfo>();
 
             syncMetadataService.GetTables().Returns(new List<Table>());
