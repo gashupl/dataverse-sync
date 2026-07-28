@@ -18,6 +18,12 @@ namespace Pg.DataverseSync.Engine.Application
         public SyncMetadataResult Execute()
         {
             // Implementation of the Execute method
+
+            //TODO: Retrieve list of synchronized tables using IDataRepository
+            //TODO: Retrieve list of tables from source using ISourceMetadataService
+            //TODO: For every synchronized table, check if it exists in the target schema using ITargetSchemaService
+            //TODO: If table does not exist in the target schema, craete it in the target schema
+            //TODO: If table exists in the target schema, check if the schema is up to date using ITargetSchemaService
             return new SyncMetadataResult();
         }
     }
