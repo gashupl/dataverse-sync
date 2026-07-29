@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Pg.DataverseSync.Engine.Application.Source;
+using Pg.DataverseSync.Engine.Core.Model;
 
 namespace Pg.DataverseSync.Engine.Application
 {
@@ -10,6 +11,26 @@ namespace Pg.DataverseSync.Engine.Application
         public TargetSchemaService(ITargetSchemaRepository schemaRepository, ILogger<TargetSchemaService> logger) : base(logger)
         {
             _schemaRepository = schemaRepository;
+        }
+
+        public bool TargetTableExists(string tableName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CreateTargetTable(Table table)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsTargetTableSchemaUpToDate(Table table)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateTargetTable(Table table)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -14,6 +14,11 @@ namespace Pg.DataverseSync.Engine.Application
             _metadataRepo = metadataRepo;   
         }
 
+        public List<string> GetSynchronizedTableNames()
+        {
+            throw new NotImplementedException();
+        }
+
         public List<Table>? GetTables()
         {
             LogIfEnabled(LogLevel.Information, "Getting tables from source metadata service...");
