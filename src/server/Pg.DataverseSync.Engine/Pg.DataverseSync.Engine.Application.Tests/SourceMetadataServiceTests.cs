@@ -3,7 +3,7 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Core.Model;
-using Pg.DataverseSync.Engine.Application.Source;
+using Pg.DataverseSync.Engine.Application.Data;
 
 namespace Pg.DataverseSync.Engine.Application.Tests
 {

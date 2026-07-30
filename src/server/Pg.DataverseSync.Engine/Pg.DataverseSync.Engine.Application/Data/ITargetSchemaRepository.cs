@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Pg.DataverseSync.Engine.Application.Source
+namespace Pg.DataverseSync.Engine.Application.Data
 {
     public interface ITargetSchemaRepository
     {

@@ -1,6 +1,6 @@
 ﻿using Pg.DataverseSync.Engine.Core.Model;
 
-namespace Pg.DataverseSync.Engine.Application.Source
+namespace Pg.DataverseSync.Engine.Application.Data
 {
     public interface IMetadataRepository
     {

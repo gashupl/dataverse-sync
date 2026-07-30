@@ -4,7 +4,7 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Core.Model;
-using Pg.DataverseSync.Engine.Application.Source;
+using Pg.DataverseSync.Engine.Application.Data;
 using System.ServiceModel;
 
 namespace Pg.DataverseSync.Engine.Source

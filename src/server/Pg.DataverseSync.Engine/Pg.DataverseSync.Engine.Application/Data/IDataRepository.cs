@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
-namespace Pg.DataverseSync.Engine.Application.Source
+namespace Pg.DataverseSync.Engine.Application.Data
 {
     public interface IDataRepository
     {
