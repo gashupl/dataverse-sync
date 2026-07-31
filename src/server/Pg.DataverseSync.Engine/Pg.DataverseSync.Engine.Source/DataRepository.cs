@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using Pg.DataverseSync.Engine.Application;
 using Pg.DataverseSync.Engine.Application.Data;
-using Pg.DataverseSync.Engine.Source.Schema;
+using Pg.DataverseSync.Engine.Core.Schema;
 
 namespace Pg.DataverseSync.Engine.Source
 {

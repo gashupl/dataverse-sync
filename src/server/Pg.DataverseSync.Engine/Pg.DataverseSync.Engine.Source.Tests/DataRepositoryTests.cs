@@ -2,7 +2,7 @@
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using NSubstitute;
-using Pg.DataverseSync.Engine.Source.Schema;
+using Pg.DataverseSync.Engine.Core.Schema;
 
 namespace Pg.DataverseSync.Engine.Source.Tests
 {
@@ -217,10 +217,10 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             var mockLogger = Substitute.For<ILogger<DataverseRepositoryBase>>();
 
             var entity1 = new Entity(SyncTable.EntityName);
-            entity1.Attributes[SyncTable.Columns.Name] = "SyncTable1";
+            entity1.Attributes[SyncTable.Columns.Name] = "SyncedTable1";
 
             var entity2 = new Entity(SyncTable.EntityName);
-            entity2.Attributes[SyncTable.Columns.Name] = "SyncTable2";
+            entity2.Attributes[SyncTable.Columns.Name] = "SyncedTable2";
 
             var entityCollection = new EntityCollection(new List<Entity> { entity1, entity2 })
             {
@@ -237,8 +237,8 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             // Assert
             Assert.NotNull(result);
             Assert.Equal(2, result.Count);
-            Assert.Equal("SyncTable1", result[0][SyncTable.Columns.Name]);
-            Assert.Equal("SyncTable2", result[1][SyncTable.Columns.Name]);
+            Assert.Equal("SyncedTable1", result[0][SyncTable.Columns.Name]);
+            Assert.Equal("SyncedTable2", result[1][SyncTable.Columns.Name]);
             mockService.Received(1).RetrieveMultiple(Arg.Any<QueryExpression>());
         }
 
@@ -250,7 +250,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             var mockLogger = Substitute.For<ILogger<DataverseRepositoryBase>>();
 
             var entity = new Entity(SyncTable.EntityName);
-            entity.Attributes[SyncTable.Columns.Name] = "SyncTable1";
+            entity.Attributes[SyncTable.Columns.Name] = "SyncedTable1";
 
             var entityCollection = new EntityCollection(new List<Entity> { entity })
             {
@@ -269,7 +269,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             Assert.Single(result);
             Assert.Equal(SyncTable.EntityName, result[0].LogicalName);
             Assert.True(result[0].Attributes.ContainsKey(SyncTable.Columns.Name));
-            Assert.Equal("SyncTable1", result[0][SyncTable.Columns.Name]);
+            Assert.Equal("SyncedTable1", result[0][SyncTable.Columns.Name]);
         }
 
         [Fact]

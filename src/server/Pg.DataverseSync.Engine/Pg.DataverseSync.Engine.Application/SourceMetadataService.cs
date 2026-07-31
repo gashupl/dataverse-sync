@@ -2,21 +2,30 @@
 using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Core.Model;
+using Pg.DataverseSync.Engine.Core.Schema;
 
 namespace Pg.DataverseSync.Engine.Application
 {
     public class SourceMetadataService : LoggingServiceBase<SourceMetadataService>, ISourceMetadataService
     {
         private readonly IMetadataRepository _metadataRepo;
-        public SourceMetadataService(IMetadataRepository metadataRepo, ILogger<SourceMetadataService> logger)
+        private readonly IDataRepository _dataRepository; 
+
+        public SourceMetadataService(IMetadataRepository metadataRepo, 
+            IDataRepository dataRepository, ILogger<SourceMetadataService> logger)
             : base(logger)
         {
             _metadataRepo = metadataRepo;   
+            _dataRepository = dataRepository;
         }
 
         public List<string> GetSynchronizedTableNames()
         {
-            throw new NotImplementedException();
+            var names = _dataRepository
+                .GetActiveSyncTables().Select(t => t.Attributes[SyncTable.Columns.Name] as string)
+                .Where(n => n != null);
+
+            return names.ToList()!; 
         }
 
         public List<Table>? GetTables()
