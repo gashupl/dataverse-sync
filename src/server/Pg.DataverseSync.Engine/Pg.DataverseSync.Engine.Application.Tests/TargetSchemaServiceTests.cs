@@ -14,7 +14,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var mockLogger = Substitute.For<ILogger<TargetSchemaService>>();
             const string tableName = "account";
 
-            mockSchemaRepository.TargetTableExists(tableName).Returns(true);
+            mockSchemaRepository.TableExists(tableName).Returns(true);
 
             var service = new TargetSchemaService(mockSchemaRepository, mockLogger);
 
@@ -23,7 +23,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             // Assert
             Assert.True(result);
-            mockSchemaRepository.Received(1).TargetTableExists(tableName);
+            mockSchemaRepository.Received(1).TableExists(tableName);
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var mockLogger = Substitute.For<ILogger<TargetSchemaService>>();
             const string tableName = "account";
 
-            mockSchemaRepository.TargetTableExists(tableName).Returns(false);
+            mockSchemaRepository.TableExists(tableName).Returns(false);
 
             var service = new TargetSchemaService(mockSchemaRepository, mockLogger);
 
@@ -43,7 +43,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             // Assert
             Assert.False(result);
-            mockSchemaRepository.Received(1).TargetTableExists(tableName);
+            mockSchemaRepository.Received(1).TableExists(tableName);
         }
     }
 }

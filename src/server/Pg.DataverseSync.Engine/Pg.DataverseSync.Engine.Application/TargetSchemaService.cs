@@ -15,12 +15,12 @@ namespace Pg.DataverseSync.Engine.Application
 
         public bool TargetTableExists(string tableName)
         {
-            return _schemaRepository.TargetTableExists(tableName);  
+            return _schemaRepository.TableExists(tableName);  
         }
 
         public void CreateTargetTable(Table table)
         {
-            throw new NotImplementedException();
+            _schemaRepository.CreateTable(table); 
         }
 
         public bool IsTargetTableSchemaUpToDate(Table table)

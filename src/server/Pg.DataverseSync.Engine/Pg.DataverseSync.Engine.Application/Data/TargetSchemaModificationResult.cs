@@ -1,6 +1,6 @@
-﻿namespace Pg.DataverseSync.Engine.Target.SqlServer
+﻿namespace Pg.DataverseSync.Engine.Application.Data
 {
-    public class SchemaModificationResult
+    public class TargetSchemaModificationResult
     {
         public SchemaModificationResultEnum Success { get; set; }
         public string? Message { get; set; }

@@ -19,7 +19,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             _logger = logger;
         }
 
-        public SchemaModificationResult CreateTargetTable(Table table)
+        public TargetSchemaModificationResult CreateTable(Table table)
         {
             _logger.LogInformation($"Creating table '{table.Name}' in target database...");
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -35,18 +35,19 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                         _logger.LogInformation($"Executing query to create table: {query}");
                         command.ExecuteNonQuery();
                         _logger.LogInformation("Table created successfully.");
-                        return new SchemaModificationResult { Success = SchemaModificationResultEnum.Success };
+                        return new TargetSchemaModificationResult { Success = SchemaModificationResultEnum.Success };
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError($"An error occurred: {ex.Message}");
-                    return new SchemaModificationResult { Success = SchemaModificationResultEnum.Failure, Message = ex.Message };
+                    return new TargetSchemaModificationResult { Success = SchemaModificationResultEnum.Failure, Message = ex.Message };
                 }
             }
         }
 
-        public bool TargetTableExists(string tableName)
+
+        public bool TableExists(string tableName)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -59,7 +60,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             }
         }
 
-        public SchemaModificationResult UpdateTargetTable(Table table)
+        public TargetSchemaModificationResult UpdateTable(Table table)
         {
             throw new NotImplementedException();
         }

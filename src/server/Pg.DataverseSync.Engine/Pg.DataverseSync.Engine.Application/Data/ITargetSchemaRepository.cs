@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Pg.DataverseSync.Engine.Core.Model;
 
 namespace Pg.DataverseSync.Engine.Application.Data
 {
     public interface ITargetSchemaRepository
     {
-        bool TargetTableExists(string tableName); 
+        bool TableExists(string tableName);
+
+        TargetSchemaModificationResult CreateTable(Table table); 
     }
 }
