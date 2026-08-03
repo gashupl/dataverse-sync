@@ -70,7 +70,7 @@ internal static class Program
 
         //TODO: Reference to target data structure service should be injected based on configuration
         //(e.g. SQL Server, Synapse, etc.) in the future
-        builder.Services.AddScoped<IDatabaseSchemaRepository>(sp =>
+        builder.Services.AddScoped<ITargetSchemaRepository>(sp =>
         {
             var configuration = sp.GetRequiredService<IConfiguration>();
             var connectionString = configuration["SqlServerConnectionString"];

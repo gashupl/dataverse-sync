@@ -1,17 +1,18 @@
 ﻿using Microsoft.Extensions.Logging;
+using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Core.Model;
 
 namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
     public class TargetDataStructureService : ITargetDataStructureService
     {
-        private readonly IDatabaseSchemaRepository _databaseSchemaRepository;
+        private readonly ITargetSchemaRepository _targetSchemaRepository;
         private readonly ILogger<TargetDataStructureService> _logger;
 
         public TargetDataStructureService(
-            IDatabaseSchemaRepository databaseSchemaRepository, ILogger<TargetDataStructureService> logger)
+            ITargetSchemaRepository targetSchemaRepository, ILogger<TargetDataStructureService> logger)
         {
-            _databaseSchemaRepository = databaseSchemaRepository;
+            _targetSchemaRepository = targetSchemaRepository    ;
             _logger = logger;
         }
 

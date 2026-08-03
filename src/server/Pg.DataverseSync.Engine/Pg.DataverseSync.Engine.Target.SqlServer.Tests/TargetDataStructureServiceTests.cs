@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Core.Model;
 
 namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
@@ -9,7 +10,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         [Fact]
         public void UpsertTable_ThrowsNotImplementedException()
         {
-            var mockRepo = Substitute.For<IDatabaseSchemaRepository>();
+            var mockRepo = Substitute.For<ITargetSchemaRepository>();
             var mockLogger = Substitute.For<ILogger<TargetDataStructureService>>(); 
             // Arrange
             var repository = new TargetDataStructureService(mockRepo, mockLogger);
