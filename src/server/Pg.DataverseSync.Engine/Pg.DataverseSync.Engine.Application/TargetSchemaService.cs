@@ -15,7 +15,7 @@ namespace Pg.DataverseSync.Engine.Application
 
         public bool TargetTableExists(string tableName)
         {
-            throw new NotImplementedException();
+            return _schemaRepository.TargetTableExists(tableName);  
         }
 
         public void CreateTargetTable(Table table)
