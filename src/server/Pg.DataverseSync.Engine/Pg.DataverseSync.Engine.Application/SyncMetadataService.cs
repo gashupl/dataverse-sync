@@ -2,6 +2,7 @@
 using Pg.DataverseSync.Engine.Core.Model;
 using Pg.DataverseSync.Engine.Application.Synchronization;
 using Pg.DataverseSync.Engine.Core.Exceptions;
+using Pg.DataverseSync.Engine.Application.Data;
 
 namespace Pg.DataverseSync.Engine.Application
 {
@@ -60,15 +61,12 @@ namespace Pg.DataverseSync.Engine.Application
                     {
                         if (!targetTableExists)
                         {
-                            _targetSchemaService.CreateTargetTable(sourceTable);
-                            result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, true));
-                            continue;
-                        }
-
-                        var isUpToDate = _targetSchemaService.IsTargetTableSchemaUpToDate(sourceTable);
-                        if (!isUpToDate)
-                        {
-                            _targetSchemaService.UpdateTargetTable(sourceTable);
+                            var modificationResult = _targetSchemaService.UpsertTargetTable(sourceTable);
+                            if (modificationResult.Success != SchemaModificationResultEnum.Success)
+                            {
+                                result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false, modificationResult.Message));
+                                continue;
+                            }
                         }
 
                         result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, true));

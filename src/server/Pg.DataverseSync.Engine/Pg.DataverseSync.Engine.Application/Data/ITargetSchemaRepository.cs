@@ -6,6 +6,8 @@ namespace Pg.DataverseSync.Engine.Application.Data
     {
         bool TableExists(string tableName);
 
-        TargetSchemaModificationResult CreateTable(Table table); 
+        TargetSchemaModificationResult CreateTable(Table table);
+
+        TargetSchemaModificationResult UpdateTable(Table table);
     }
 }

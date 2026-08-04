@@ -18,19 +18,29 @@ namespace Pg.DataverseSync.Engine.Application
             return _schemaRepository.TableExists(tableName);  
         }
 
-        public void CreateTargetTable(Table table)
+        public TargetSchemaModificationResult UpsertTargetTable(Table table)
         {
-            _schemaRepository.CreateTable(table); 
+            try
+            {
+                if (_schemaRepository.TableExists(table.Name))
+                {
+                    return _schemaRepository.UpdateTable(table);
+                }
+                else
+                {
+                    return _schemaRepository.CreateTable(table);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogIfEnabled(LogLevel.Error, ex, "An error occurred while upserting table {TableName}.", table.Name);
+                return new TargetSchemaModificationResult
+                {
+                    Success = SchemaModificationResultEnum.Failure,
+                    Message = ex.Message
+                };
+            }
         }
 
-        public bool IsTargetTableSchemaUpToDate(Table table)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateTargetTable(Table table)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

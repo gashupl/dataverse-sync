@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Core.Model;
 
@@ -19,6 +20,8 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             sourceMetadataService.GetSynchronizedTableNames().Returns(new List<string> { "account" });
             sourceMetadataService.GetTables().Returns(new List<Table> { new Table("account", "Account", false) });
             targetSchemaService.TargetTableExists("account").Returns(false);
+            targetSchemaService.UpsertTargetTable(Arg.Any<Table>())
+                .Returns(new TargetSchemaModificationResult { Success = SchemaModificationResultEnum.Success });
 
             var service = new SyncMetadataService(sourceMetadataService, targetSchemaService, logger);
 
@@ -28,33 +31,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             // Assert
             Assert.Single(result.TablesSyncResult);
             Assert.True(result.TablesSyncResult[0].IsSynchronized);
-            targetSchemaService.Received(1).CreateTargetTable(Arg.Is<Table>(t => t.Name == "account"));
-            targetSchemaService.DidNotReceive().UpdateTargetTable(Arg.Any<Table>());
-        }
-
-        [Fact]
-        public void Execute_TargetTableExistsAndSchemaOutdated_UpdatesTargetTable()
-        {
-            // Arrange
-            var sourceMetadataService = Substitute.For<ISourceMetadataService>();
-            var targetSchemaService = Substitute.For<ITargetSchemaService>();
-            var logger = Substitute.For<ILogger<SyncMetadataService>>();
-
-            sourceMetadataService.GetSynchronizedTableNames().Returns(new List<string> { "account" });
-            sourceMetadataService.GetTables().Returns(new List<Table> { new Table("account", "Account", false) });
-            targetSchemaService.TargetTableExists("account").Returns(true);
-            targetSchemaService.IsTargetTableSchemaUpToDate(Arg.Is<Table>(t => t.Name == "account")).Returns(false);
-
-            var service = new SyncMetadataService(sourceMetadataService, targetSchemaService, logger);
-
-            // Act
-            var result = service.Execute();
-
-            // Assert
-            Assert.Single(result.TablesSyncResult);
-            Assert.True(result.TablesSyncResult[0].IsSynchronized);
-            targetSchemaService.Received(1).UpdateTargetTable(Arg.Is<Table>(t => t.Name == "account"));
-            targetSchemaService.DidNotReceive().CreateTargetTable(Arg.Any<Table>());
+            targetSchemaService.Received(1).UpsertTargetTable(Arg.Is<Table>(t => t.Name == "account"));
         }
 
         [Fact]
@@ -68,7 +45,6 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             sourceMetadataService.GetSynchronizedTableNames().Returns(new List<string> { "account" });
             sourceMetadataService.GetTables().Returns(new List<Table> { new Table("account", "Account", false) });
             targetSchemaService.TargetTableExists("account").Returns(true);
-            targetSchemaService.IsTargetTableSchemaUpToDate(Arg.Is<Table>(t => t.Name == "account")).Returns(true);
 
             var service = new SyncMetadataService(sourceMetadataService, targetSchemaService, logger);
 
@@ -78,8 +54,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             // Assert
             Assert.Single(result.TablesSyncResult);
             Assert.True(result.TablesSyncResult[0].IsSynchronized);
-            targetSchemaService.DidNotReceive().UpdateTargetTable(Arg.Any<Table>());
-            targetSchemaService.DidNotReceive().CreateTargetTable(Arg.Any<Table>());
+            targetSchemaService.DidNotReceive().UpsertTargetTable(Arg.Any<Table>());
         }
 
         [Fact]
@@ -103,8 +78,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             Assert.Single(result.TablesSyncResult);
             Assert.False(result.TablesSyncResult[0].IsSynchronized);
             Assert.Equal("Table is missing in source metadata.", result.TablesSyncResult[0].ErrorMessage);
-            targetSchemaService.DidNotReceive().CreateTargetTable(Arg.Any<Table>());
-            targetSchemaService.DidNotReceive().UpdateTargetTable(Arg.Any<Table>());
+            targetSchemaService.DidNotReceive().UpsertTargetTable(Arg.Any<Table>());
         }
 
         [Fact]
@@ -122,9 +96,20 @@ namespace Pg.DataverseSync.Engine.Application.Tests
                 new Table("contact", "Contact", false)
             });
             targetSchemaService.TargetTableExists(Arg.Any<string>()).Returns(false);
-            targetSchemaService
-                .When(x => x.CreateTargetTable(Arg.Is<Table>(t => t.Name == "account")))
-                .Do(_ => throw new InvalidOperationException("creation failed"));
+
+            // Setup first table to fail, second to succeed
+            var failureMessage = "creation failed";
+            targetSchemaService.UpsertTargetTable(Arg.Is<Table>(t => t.Name == "account"))
+                .Returns(new TargetSchemaModificationResult 
+                { 
+                    Success = SchemaModificationResultEnum.Failure, 
+                    Message = failureMessage 
+                });
+            targetSchemaService.UpsertTargetTable(Arg.Is<Table>(t => t.Name == "contact"))
+                .Returns(new TargetSchemaModificationResult 
+                { 
+                    Success = SchemaModificationResultEnum.Success 
+                });
 
             var service = new SyncMetadataService(sourceMetadataService, targetSchemaService, logger);
 
@@ -136,7 +121,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             var accountResult = result.TablesSyncResult.Single(x => x.TableName == "account");
             Assert.False(accountResult.IsSynchronized);
-            Assert.Equal("creation failed", accountResult.ErrorMessage);
+            Assert.Equal(failureMessage, accountResult.ErrorMessage);
 
             var contactResult = result.TablesSyncResult.Single(x => x.TableName == "contact");
             Assert.True(contactResult.IsSynchronized);
@@ -187,6 +172,37 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             Assert.Equal("An error occurred while executing metadata synchronization.", exception.Message);
             Assert.NotNull(exception.InnerException);
             Assert.IsType<ArgumentNullException>(exception.InnerException);
+        }
+
+        [Fact]
+        public void Execute_UpsertTargetTableReturnsFailure_AddsFailedResultWithErrorMessage()
+        {
+            // Arrange
+            var sourceMetadataService = Substitute.For<ISourceMetadataService>();
+            var targetSchemaService = Substitute.For<ITargetSchemaService>();
+            var logger = Substitute.For<ILogger<SyncMetadataService>>();
+            var errorMessage = "Table creation failed: Column mismatch detected";
+
+            sourceMetadataService.GetSynchronizedTableNames().Returns(new List<string> { "account" });
+            sourceMetadataService.GetTables().Returns(new List<Table> { new Table("account", "Account", false) });
+            targetSchemaService.TargetTableExists("account").Returns(false);
+            targetSchemaService.UpsertTargetTable(Arg.Any<Table>())
+                .Returns(new TargetSchemaModificationResult 
+                { 
+                    Success = SchemaModificationResultEnum.Failure, 
+                    Message = errorMessage 
+                });
+
+            var service = new SyncMetadataService(sourceMetadataService, targetSchemaService, logger);
+
+            // Act
+            var result = service.Execute();
+
+            // Assert
+            Assert.Single(result.TablesSyncResult);
+            Assert.False(result.TablesSyncResult[0].IsSynchronized);
+            Assert.Equal(errorMessage, result.TablesSyncResult[0].ErrorMessage);
+            targetSchemaService.Received(1).UpsertTargetTable(Arg.Is<Table>(t => t.Name == "account"));
         }
     }
 }

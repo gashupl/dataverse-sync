@@ -1,4 +1,5 @@
-﻿using Pg.DataverseSync.Engine.Core.Model;
+﻿using Pg.DataverseSync.Engine.Application.Data;
+using Pg.DataverseSync.Engine.Core.Model;
 
 namespace Pg.DataverseSync.Engine.Application
 {
@@ -6,10 +7,7 @@ namespace Pg.DataverseSync.Engine.Application
     {
         bool TargetTableExists(string tableName);
 
-        void CreateTargetTable(Table table);
+        TargetSchemaModificationResult UpsertTargetTable(Table table);
 
-        bool IsTargetTableSchemaUpToDate(Table table);
-
-        void UpdateTargetTable(Table table);
     }
 }
