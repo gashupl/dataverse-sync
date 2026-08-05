@@ -15,7 +15,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Pg.DataverseSync.Engine.Application\Pg.DataverseSync.Engine.Application.csproj" />
     <ProjectReference Include="..\Pg.DataverseSync.Engine.Target\Pg.DataverseSync.Engine.Target.csproj" />
   </ItemGroup>
 

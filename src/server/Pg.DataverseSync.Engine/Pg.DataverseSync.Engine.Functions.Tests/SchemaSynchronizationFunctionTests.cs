@@ -58,7 +58,7 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
             var syncMetadataService = Substitute.For<ISyncMetadataService>();
             var timer = Substitute.For<TimerInfo>();
 
-            syncMetadataService.Execute().Returns(new SyncMetadataResult { TablesSyncResult = null });
+            syncMetadataService.Execute().Returns(new SyncMetadataResult { TablesSyncResult = null! });
 
             var function = new SchemaSynchronizationFunction(syncMetadataService, logger);
 

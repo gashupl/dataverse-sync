@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Core.Model;
+using Pg.DataverseSync.Engine.Target;
 
 namespace Pg.DataverseSync.Engine.Application.Tests
 {

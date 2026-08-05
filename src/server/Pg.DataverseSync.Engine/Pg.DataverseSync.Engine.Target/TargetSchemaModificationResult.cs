@@ -1,4 +1,4 @@
-﻿namespace Pg.DataverseSync.Engine.Application.Data
+﻿namespace Pg.DataverseSync.Engine.Target
 {
     public class TargetSchemaModificationResult
     {

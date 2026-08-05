@@ -84,7 +84,6 @@ internal static class Program
 
             return new DatabaseSchemaRepository(connectionString, logger);
         });
-        builder.Services.AddScoped<ITargetDataStructureService, TargetDataStructureService>();
 
         builder.Build().Run();
     }

@@ -1,5 +1,5 @@
-﻿using Pg.DataverseSync.Engine.Application.Data;
-using Pg.DataverseSync.Engine.Core.Model;
+﻿using Pg.DataverseSync.Engine.Core.Model;
+using Pg.DataverseSync.Engine.Target;
 
 namespace Pg.DataverseSync.Engine.Application
 {

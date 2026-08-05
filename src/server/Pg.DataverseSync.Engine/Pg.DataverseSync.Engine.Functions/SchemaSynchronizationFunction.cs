@@ -1,7 +1,6 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Pg.DataverseSync.Engine.Application;
-using Pg.DataverseSync.Engine.Target;
 
 namespace Pg.DataverseSync.Engine.Functions;
 

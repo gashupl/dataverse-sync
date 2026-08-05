@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Pg.DataverseSync.Engine.Core.Schema
+﻿namespace Pg.DataverseSync.Engine.Core.Schema
 {
     //See ADR-0003: docs/adr/0003-lightweight-manual-created-schema.md
     public static class SyncTable

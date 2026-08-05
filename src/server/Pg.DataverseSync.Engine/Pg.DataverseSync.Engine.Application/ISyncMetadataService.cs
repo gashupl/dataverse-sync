@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Pg.DataverseSync.Engine.Application
+﻿namespace Pg.DataverseSync.Engine.Application
 {
     public interface ISyncMetadataService
     {
