@@ -14,7 +14,8 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             for (int i = 0; i < table.Columns.Count; i++)
             {
                 Column column = table.Columns[i];
-                query.Append($"{column.Name} {column.DataType}");
+                var dataType = DataTypesConverter.MapToSqlDataType(column.DataType);
+                query.Append($"{column.Name} {dataType}");
 
                 if (column.IsIdentity)
                 {

@@ -1,8 +1,8 @@
 ﻿namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
-    internal class DataTypesConverter
+    internal static class DataTypesConverter
     {
-        internal string? MapToSqlDataType(string dataType)
+        internal static string? MapToSqlDataType(string dataType)
         {
             string? sqlDataType;
 
