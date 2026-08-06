@@ -1,5 +1,3 @@
-using Pg.DataverseSync.Engine.Target.SqlServer;
-
 namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
 {
     public class DataTypesConverterTests

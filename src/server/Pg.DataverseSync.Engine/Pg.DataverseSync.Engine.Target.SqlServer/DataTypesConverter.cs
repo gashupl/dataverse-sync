@@ -1,4 +1,6 @@
-﻿namespace Pg.DataverseSync.Engine.Target.SqlServer
+﻿using Pg.DataverseSync.Engine.Core.Schema;
+
+namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
     internal static class DataTypesConverter
     {
@@ -8,79 +10,76 @@
 
             switch (dataType)
             {
-                case "BooleanType":
-                    sqlDataType = "BIT";
+                case DataverseDataTypes.Boolean:
+                    sqlDataType = SqlDataTypes.Bit; 
                     break;
-                case "CustomerType":
-                    sqlDataType = "UNIQUEIDENTIFIER";
+                case DataverseDataTypes.Customer:
+                    sqlDataType = SqlDataTypes.UniqueIdentifier;
                     break;
-                case "DateTimeType":
-                    sqlDataType = "DATETIME";
+                case DataverseDataTypes.DateTime:
+                    sqlDataType = SqlDataTypes.DateTime;
                     break;
-                case "DecimalType":
-                    sqlDataType = $"DECIMAL(38,0)";
+                case DataverseDataTypes.Decimal:
+                    sqlDataType = SqlDataTypes.Decimal;
                     break;
-                case "DoubleType":
-                    sqlDataType = "FLOAT";
+                case DataverseDataTypes.Double:
+                    sqlDataType = SqlDataTypes.Float;
                     break;
-                case "IntegerType":
-                    sqlDataType = "INT";
+                case DataverseDataTypes.Integer:
+                    sqlDataType = SqlDataTypes.Int;
                     break;
-                case "LookupType":
-                    sqlDataType = "UNIQUEIDENTIFIER";
+                case DataverseDataTypes.Lookup:
+                    sqlDataType = SqlDataTypes.UniqueIdentifier;
                     break;
-                case "MemoType":
-                    sqlDataType = "NTEXT";
+                case DataverseDataTypes.Memo:
+                    sqlDataType = SqlDataTypes.NText;
                     break;
-                case "MoneyType":
-                    sqlDataType = "MONEY";
+                case DataverseDataTypes.Money:
+                    sqlDataType = SqlDataTypes.Money;
                     break;
-                case "OwnerType":
-                    sqlDataType = "UNIQUEIDENTIFIER";
+                case DataverseDataTypes.Owner:
+                    sqlDataType = SqlDataTypes.UniqueIdentifier;
                     break;
-                //case "PartyListType":
-                //    sqlDataType = "NVARCHAR(MAX)";
-                //    break;
-                case "PicklistType":
-                    sqlDataType = "INT";
+                case DataverseDataTypes.Picklist:
+                    sqlDataType = SqlDataTypes.Int;
                     break;
-                case "StateType":
-                    sqlDataType = "INT";
+                case DataverseDataTypes.State:
+                    sqlDataType = SqlDataTypes.Int;
                     break;
-                case "StatusType":
-                    sqlDataType = "INT";
+                case DataverseDataTypes.Status:
+                    sqlDataType = SqlDataTypes.Int;
                     break;
-                case "StringType":
-                    sqlDataType = "NVARCHAR(MAX)";
+                case DataverseDataTypes.String:
+                    sqlDataType = SqlDataTypes.NVarcharMax;
                     break;
-                case "UniqueidentifierType":
-                    sqlDataType = "UNIQUEIDENTIFIER";
+                case DataverseDataTypes.Uniqueidentifier:
+                    sqlDataType = SqlDataTypes.UniqueIdentifier;
                     break;
-                case "CalendarRulesType":
-                    sqlDataType = "NVARCHAR(MAX)";
+                case DataverseDataTypes.CalendarRules:
+                    sqlDataType = SqlDataTypes.NVarcharMax;
                     break;
-                case "VirtualType":
-                    sqlDataType = "NVARCHAR(MAX)";
+                case DataverseDataTypes.Virtual:
+                    sqlDataType = SqlDataTypes.NVarcharMax;
                     break;
-                case "BigIntType":
-                    sqlDataType = "BIGINT";
+                case DataverseDataTypes.BigInt:
+                    sqlDataType = SqlDataTypes.BigInt;
                     break;
-                case "ManagedPropertyType":
-                    sqlDataType = "NVARCHAR(MAX)";
+                case DataverseDataTypes.ManagedProperty:
+                    sqlDataType = SqlDataTypes.NVarcharMax;
                     break;
-                case "EntityNameType":
-                    sqlDataType = "NVARCHAR(MAX)";
+                case DataverseDataTypes.EntityName:
+                    sqlDataType = SqlDataTypes.NVarcharMax;
                     break;
-                case "ImageType":
-                    sqlDataType = "VARBINARY(MAX)";
+                case DataverseDataTypes.Image:
+                    sqlDataType = SqlDataTypes.VarBinaryMax;
                     break;
-                case "MultiSelectPicklistType":
-                    sqlDataType = "NVARCHAR(MAX)";
+                case DataverseDataTypes.MultiSelectPicklist:
+                    sqlDataType = SqlDataTypes.NVarcharMax;
                     break;
-                case "FileType":
-                    sqlDataType = "VARBINARY(MAX)";
+                case DataverseDataTypes.File:
+                    sqlDataType = SqlDataTypes.VarBinaryMax;
                     break;
-                case "CustomType":
+                case DataverseDataTypes.Custom:
                     sqlDataType = null;
                     break;
                 default:

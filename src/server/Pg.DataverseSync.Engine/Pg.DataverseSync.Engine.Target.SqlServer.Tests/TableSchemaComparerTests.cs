@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Pg.DataverseSync.Engine.Core.Model;
-using Pg.DataverseSync.Engine.Target.SqlServer;
 
 namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
 {
