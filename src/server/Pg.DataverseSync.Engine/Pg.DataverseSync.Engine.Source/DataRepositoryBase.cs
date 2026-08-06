@@ -4,11 +4,11 @@ using Pg.DataverseSync.Engine.Application;
 
 namespace Pg.DataverseSync.Engine.Source
 {
-    public abstract class DataverseRepositoryBase : LoggingServiceBase<DataverseRepositoryBase>
+    public abstract class DataRepositoryBase : LoggingServiceBase<DataRepositoryBase>
     {
         protected readonly IOrganizationService service;
 
-        public DataverseRepositoryBase(IOrganizationService service, ILogger<DataverseRepositoryBase> logger)
+        protected DataRepositoryBase(IOrganizationService service, ILogger<DataRepositoryBase> logger)
             : base(logger)
         {
             this.service = service;

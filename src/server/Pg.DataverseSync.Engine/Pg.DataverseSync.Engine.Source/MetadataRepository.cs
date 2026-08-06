@@ -9,9 +9,9 @@ using System.ServiceModel;
 
 namespace Pg.DataverseSync.Engine.Source
 {
-    public class MetadataRepository : DataverseRepositoryBase, IMetadataRepository
+    public class MetadataRepository : DataRepositoryBase, IMetadataRepository
     {
-        public MetadataRepository(IOrganizationService service, ILogger<DataverseRepositoryBase> logger) 
+        public MetadataRepository(IOrganizationService service, ILogger<DataRepositoryBase> logger) 
             : base(service, logger)
         {
         }

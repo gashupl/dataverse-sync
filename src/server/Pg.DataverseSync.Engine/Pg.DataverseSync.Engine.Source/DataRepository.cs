@@ -6,7 +6,7 @@ using Pg.DataverseSync.Engine.Core.Schema;
 
 namespace Pg.DataverseSync.Engine.Source
 {
-    public class DataRepository : DataverseRepositoryBase, IDataRepository
+    public class DataRepository : DataRepositoryBase, IDataRepository
     {
         public DataRepository(IOrganizationService service, ILogger<DataRepository> logger) 
             : base(service, logger)
