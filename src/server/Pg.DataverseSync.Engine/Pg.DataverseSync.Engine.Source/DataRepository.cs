@@ -19,7 +19,7 @@ namespace Pg.DataverseSync.Engine.Source
 
             var filter = new FilterExpression(LogicalOperator.And);
             filter.AddCondition(SyncTable.Columns.StateCode, 
-                ConditionOperator.Equal, SyncTable.StateCode.Active);
+                ConditionOperator.Equal, SyncTable.StateCodes.Active);
 
             var syncTables = this.GetRecords(SyncTable.EntityName, new List<string> { SyncTable.Columns.Name },
                 filter);

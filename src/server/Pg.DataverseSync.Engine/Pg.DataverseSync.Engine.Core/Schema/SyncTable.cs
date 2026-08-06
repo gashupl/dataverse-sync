@@ -11,7 +11,7 @@
             public const string StateCode = "statecode";    
         }
 
-        public static class StateCode
+        public static class StateCodes
         {
             public const int Active = 0;
             public const int Inactive = 1;
