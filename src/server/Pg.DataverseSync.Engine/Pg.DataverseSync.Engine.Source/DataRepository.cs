@@ -8,7 +8,7 @@ namespace Pg.DataverseSync.Engine.Source
 {
     public class DataRepository : DataverseRepositoryBase, IDataRepository
     {
-        public DataRepository(IOrganizationService service, ILogger<DataverseRepositoryBase> logger) 
+        public DataRepository(IOrganizationService service, ILogger<DataRepository> logger) 
             : base(service, logger)
         {
         }
@@ -28,7 +28,7 @@ namespace Pg.DataverseSync.Engine.Source
             return syncTables;
         }
 
-        public List<Entity> GetRecords(string tableName, List<string> columns, FilterExpression? filter = null)
+        public List<Entity> GetRecords(string tableName, List<string> columns, FilterExpression? filter)
         {
             var records = new List<Entity>();
             var query = new QueryExpression(tableName)
@@ -50,12 +50,9 @@ namespace Pg.DataverseSync.Engine.Source
                 foreach (var entity in results.Entities)
                 {
                     var newEntity = new Entity(tableName);
-                    foreach (var attr in entity.Attributes)
+                    foreach (var attr in entity.Attributes.Where(attr => columns.Contains(attr.Key)))
                     {
-                        if (columns.Contains(attr.Key))
-                        {
-                            newEntity.Attributes.Add(attr);
-                        }
+                        newEntity.Attributes.Add(attr);
                     }
                     records.Add(newEntity);
                 }

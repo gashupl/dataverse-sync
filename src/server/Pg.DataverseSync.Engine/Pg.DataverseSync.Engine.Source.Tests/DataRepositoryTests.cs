@@ -13,7 +13,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<DataverseRepositoryBase>>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
             var columns = new List<string> { "name", "accountid" };
 
             var entity = new Entity("account");
@@ -30,7 +30,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             var repository = new DataRepository(mockService, mockLogger);
 
             // Act
-            var result = repository.GetRecords("account", columns);
+            var result = repository.GetRecords("account", columns, null);
 
             // Assert
             Assert.NotNull(result);
@@ -45,7 +45,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<DataverseRepositoryBase>>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
             var columns = new List<string> { "name" };
 
             var entity1 = new Entity("account");
@@ -71,7 +71,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             var repository = new DataRepository(mockService, mockLogger);
 
             // Act
-            var result = repository.GetRecords("account", columns);
+            var result = repository.GetRecords("account", columns, null);
 
             // Assert
             Assert.NotNull(result);
@@ -86,7 +86,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<DataverseRepositoryBase>>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
             var columns = new List<string> { "name" };
 
             var emptyCollection = new EntityCollection(new List<Entity>())
@@ -99,7 +99,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             var repository = new DataRepository(mockService, mockLogger);
 
             // Act
-            var result = repository.GetRecords("account", columns);
+            var result = repository.GetRecords("account", columns, null);
 
             // Assert
             Assert.NotNull(result);
@@ -112,7 +112,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<DataverseRepositoryBase>>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
             var columns = new List<string> { "name" };
 
             var entity = new Entity("account");
@@ -130,7 +130,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             var repository = new DataRepository(mockService, mockLogger);
 
             // Act
-            var result = repository.GetRecords("account", columns);
+            var result = repository.GetRecords("account", columns, null);
 
             // Assert
             Assert.Single(result);
@@ -144,7 +144,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<DataverseRepositoryBase>>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
             var columns = new List<string> { "name", "statecode" };
 
             var filter = new FilterExpression(LogicalOperator.And);
@@ -179,7 +179,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<DataverseRepositoryBase>>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
             var columns = new List<string> { "name", "statecode" };
 
             var filter = new FilterExpression(LogicalOperator.And);
@@ -214,7 +214,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<DataverseRepositoryBase>>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
 
             var entity1 = new Entity(SyncTable.EntityName);
             entity1.Attributes[SyncTable.Columns.Name] = "SyncedTable1";
@@ -247,7 +247,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<DataverseRepositoryBase>>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
 
             var entity = new Entity(SyncTable.EntityName);
             entity.Attributes[SyncTable.Columns.Name] = "SyncedTable1";
@@ -277,7 +277,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<DataverseRepositoryBase>>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
 
             var activeEntity1 = new Entity(SyncTable.EntityName);
             activeEntity1.Attributes[SyncTable.Columns.Name] = "ActiveTable1";
@@ -308,7 +308,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<DataverseRepositoryBase>>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
 
             var entityCollection = new EntityCollection(new List<Entity>())
             {
