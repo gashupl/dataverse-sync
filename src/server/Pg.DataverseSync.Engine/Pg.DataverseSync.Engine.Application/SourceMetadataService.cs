@@ -34,7 +34,14 @@ namespace Pg.DataverseSync.Engine.Application
             try
             {
                 var tables = _metadataRepo.GetTables();
-                LogIfEnabled(LogLevel.Information, "Successfully retrieved {Count} table.", tables?.Count);
+                if(tables == null || tables.Count == 0)
+                {
+                    LogIfEnabled(LogLevel.Warning, "No tables found in source metadata service.");
+                }
+                else
+                {
+                    LogIfEnabled(LogLevel.Information, "Successfully retrieved {Count} table.", tables.Count);
+                }
                 return tables; 
 
             }
