@@ -11,7 +11,7 @@ namespace Pg.DataverseSync.Engine.Source
 {
     public class MetadataRepository : DataRepositoryBase, IMetadataRepository
     {
-        public MetadataRepository(IOrganizationService service, ILogger<DataRepositoryBase> logger) 
+        public MetadataRepository(IOrganizationService service, ILogger<MetadataRepository> logger) 
             : base(service, logger)
         {
         }
