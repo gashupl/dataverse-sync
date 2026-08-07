@@ -57,7 +57,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             mockSchemaRepository.TableExists(table.Name).Returns(false);
             mockSchemaRepository.CreateTable(table)
-                .Returns(new TargetSchemaModificationResult { Success = SchemaModificationResultEnum.Success });
+                .Returns(new TargetSchemaModificationResult { Success = SchemaModificationResult.Success });
 
             var service = new TargetSchemaService(mockSchemaRepository, mockLogger);
 
@@ -65,7 +65,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var result = service.UpsertTargetTable(table);
 
             // Assert
-            Assert.Equal(SchemaModificationResultEnum.Success, result.Success);
+            Assert.Equal(SchemaModificationResult.Success, result.Success);
             mockSchemaRepository.Received(1).TableExists(table.Name);
             mockSchemaRepository.Received(1).CreateTable(table);
             mockSchemaRepository.DidNotReceive().UpdateTable(Arg.Any<Table>());
@@ -84,7 +84,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             mockSchemaRepository.CreateTable(table)
                 .Returns(new TargetSchemaModificationResult 
                 { 
-                    Success = SchemaModificationResultEnum.Failure, 
+                    Success = SchemaModificationResult.Failure, 
                     Message = failureMessage 
                 });
 
@@ -94,7 +94,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var result = service.UpsertTargetTable(table);
 
             // Assert
-            Assert.Equal(SchemaModificationResultEnum.Failure, result.Success);
+            Assert.Equal(SchemaModificationResult.Failure, result.Success);
             Assert.Equal(failureMessage, result.Message);
             mockSchemaRepository.Received(1).TableExists(table.Name);
             mockSchemaRepository.Received(1).CreateTable(table);
@@ -110,7 +110,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             mockSchemaRepository.TableExists(table.Name).Returns(true);
             mockSchemaRepository.UpdateTable(table)
-                .Returns(new TargetSchemaModificationResult { Success = SchemaModificationResultEnum.Success });
+                .Returns(new TargetSchemaModificationResult { Success = SchemaModificationResult.Success });
 
             var service = new TargetSchemaService(mockSchemaRepository, mockLogger);
 
@@ -118,7 +118,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var result = service.UpsertTargetTable(table);
 
             // Assert
-            Assert.Equal(SchemaModificationResultEnum.Success, result.Success);
+            Assert.Equal(SchemaModificationResult.Success, result.Success);
             mockSchemaRepository.Received(1).TableExists(table.Name);
             mockSchemaRepository.Received(1).UpdateTable(table);
             mockSchemaRepository.DidNotReceive().CreateTable(Arg.Any<Table>());
@@ -137,7 +137,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             mockSchemaRepository.UpdateTable(table)
                 .Returns(new TargetSchemaModificationResult 
                 { 
-                    Success = SchemaModificationResultEnum.Failure, 
+                    Success = SchemaModificationResult.Failure, 
                     Message = failureMessage 
                 });
 
@@ -147,7 +147,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var result = service.UpsertTargetTable(table);
 
             // Assert
-            Assert.Equal(SchemaModificationResultEnum.Failure, result.Success);
+            Assert.Equal(SchemaModificationResult.Failure, result.Success);
             Assert.Equal(failureMessage, result.Message);
             mockSchemaRepository.Received(1).TableExists(table.Name);
             mockSchemaRepository.Received(1).UpdateTable(table);
@@ -171,7 +171,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var result = service.UpsertTargetTable(table);
 
             // Assert
-            Assert.Equal(SchemaModificationResultEnum.Failure, result.Success);
+            Assert.Equal(SchemaModificationResult.Failure, result.Success);
             Assert.Equal(exceptionMessage, result.Message);
             mockSchemaRepository.Received(1).TableExists(table.Name);
             mockSchemaRepository.DidNotReceive().CreateTable(Arg.Any<Table>());

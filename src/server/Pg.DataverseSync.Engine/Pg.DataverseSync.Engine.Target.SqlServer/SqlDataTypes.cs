@@ -1,6 +1,6 @@
 ﻿namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
-    internal class SqlDataTypes
+    internal static class SqlDataTypes
     {
         public const string Bit = "BIT";
         public const string UniqueIdentifier = "UNIQUEIDENTIFIER";

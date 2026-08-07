@@ -2,11 +2,11 @@
 {
     public class TargetSchemaModificationResult
     {
-        public SchemaModificationResultEnum Success { get; set; }
+        public SchemaModificationResult Success { get; set; }
         public string? Message { get; set; }
     }
 
-    public enum SchemaModificationResultEnum
+    public enum SchemaModificationResult
     {
         Success = 0,
         PartialSuccess = 1,

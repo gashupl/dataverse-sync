@@ -1,6 +1,6 @@
 ﻿namespace Pg.DataverseSync.Engine.Core.Schema
 {
-    public class DataverseDataTypes
+    public static class DataverseDataTypes
     {
         public const string Boolean = "BooleanType";
         public const string Customer = "CustomerType";

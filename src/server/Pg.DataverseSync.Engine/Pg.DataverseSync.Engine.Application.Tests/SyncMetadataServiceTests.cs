@@ -21,7 +21,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             sourceMetadataService.GetTables().Returns(new List<Table> { new Table("account", "Account", false) });
             targetSchemaService.TargetTableExists("account").Returns(false);
             targetSchemaService.UpsertTargetTable(Arg.Any<Table>())
-                .Returns(new TargetSchemaModificationResult { Success = SchemaModificationResultEnum.Success });
+                .Returns(new TargetSchemaModificationResult { Success = SchemaModificationResult.Success });
 
             var service = new SyncMetadataService(sourceMetadataService, targetSchemaService, logger);
 
@@ -102,13 +102,13 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             targetSchemaService.UpsertTargetTable(Arg.Is<Table>(t => t.Name == "account"))
                 .Returns(new TargetSchemaModificationResult 
                 { 
-                    Success = SchemaModificationResultEnum.Failure, 
+                    Success = SchemaModificationResult.Failure, 
                     Message = failureMessage 
                 });
             targetSchemaService.UpsertTargetTable(Arg.Is<Table>(t => t.Name == "contact"))
                 .Returns(new TargetSchemaModificationResult 
                 { 
-                    Success = SchemaModificationResultEnum.Success 
+                    Success = SchemaModificationResult.Success 
                 });
 
             var service = new SyncMetadataService(sourceMetadataService, targetSchemaService, logger);
@@ -189,7 +189,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             targetSchemaService.UpsertTargetTable(Arg.Any<Table>())
                 .Returns(new TargetSchemaModificationResult 
                 { 
-                    Success = SchemaModificationResultEnum.Failure, 
+                    Success = SchemaModificationResult.Failure, 
                     Message = errorMessage 
                 });
 

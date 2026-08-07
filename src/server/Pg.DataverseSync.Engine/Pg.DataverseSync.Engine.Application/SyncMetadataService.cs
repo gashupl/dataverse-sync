@@ -62,7 +62,7 @@ namespace Pg.DataverseSync.Engine.Application
                         if (!targetTableExists)
                         {
                             var modificationResult = _targetSchemaService.UpsertTargetTable(sourceTable);
-                            if (modificationResult.Success != SchemaModificationResultEnum.Success)
+                            if (modificationResult.Success != SchemaModificationResult.Success)
                             {
                                 result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false, modificationResult.Message));
                                 continue;

@@ -36,7 +36,7 @@ namespace Pg.DataverseSync.Engine.Application
                 LogIfEnabled(LogLevel.Error, ex, "An error occurred while upserting table {TableName}.", table.Name);
                 return new TargetSchemaModificationResult
                 {
-                    Success = SchemaModificationResultEnum.Failure,
+                    Success = SchemaModificationResult.Failure,
                     Message = ex.Message
                 };
             }

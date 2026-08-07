@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Pg.DataverseSync.Engine.Core.Model;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
@@ -34,13 +35,13 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                         _logger.LogInformation($"Executing query to create table: {query}");
                         command.ExecuteNonQuery();
                         _logger.LogInformation("Table created successfully.");
-                        return new TargetSchemaModificationResult { Success = SchemaModificationResultEnum.Success };
+                        return new TargetSchemaModificationResult { Success = SchemaModificationResult.Success };
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError($"An error occurred: {ex.Message}");
-                    return new TargetSchemaModificationResult { Success = SchemaModificationResultEnum.Failure, Message = ex.Message };
+                    return new TargetSchemaModificationResult { Success = SchemaModificationResult.Failure, Message = ex.Message };
                 }
             }
         }
@@ -68,10 +69,10 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to retrieve target table '{sourceTable.Name}': {ex.Message}");
+                _logger.LogError(ex, "Failed to retrieve target table '{SourceTableName}': {Message}", sourceTable.Name, ex.Message);
                 return new TargetSchemaModificationResult
                 {
-                    Success = SchemaModificationResultEnum.Failure,
+                    Success = SchemaModificationResult.Failure,
                     Message = $"Failed to retrieve target table '{sourceTable.Name}': {ex.Message}"
                 };
             }
@@ -89,16 +90,16 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             var totalOperations = columnsToRemove.Count + columnsToAdd.Count;
             var failedOperations = 0;
 
-            foreach (var column in columnsToRemove)
+            foreach (var columnName in columnsToRemove.Select(c => c.Name))
             {
                 try
                 {
-                    RemoveTargetColumn(targetTable.Name, column.Name);
+                    RemoveTargetColumn(targetTable.Name, columnName);
                 }
                 catch (Exception ex)
                 {
                     failedOperations++;
-                    var message = $"Failed to remove column '{column.Name}' from table '{targetTable.Name}': {ex.Message}";
+                    var message = $"Failed to remove column '{columnName}' from table '{targetTable.Name}': {ex.Message}";
                     _logger.LogError(message);
                     errors.Add(message);
                 }
@@ -114,29 +115,29 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 {
                     failedOperations++;
                     var message = $"Failed to add column '{column.Name}' to table '{targetTable.Name}': {ex.Message}";
-                    _logger.LogError(message);
+                    _logger.LogError(ex, message);
                     errors.Add(message);
                 }
             }
 
             if (failedOperations == 0)
             {
-                _logger.LogInformation($"Table '{targetTable.Name}' updated successfully.");
-                return new TargetSchemaModificationResult { Success = SchemaModificationResultEnum.Success };
+                _logger.LogInformation("Table '{TargetTableName}' updated successfully.", targetTable.Name);
+                return new TargetSchemaModificationResult { Success = SchemaModificationResult.Success };
             }
 
             if (failedOperations == totalOperations)
             {
                 return new TargetSchemaModificationResult
                 {
-                    Success = SchemaModificationResultEnum.Failure,
+                    Success = SchemaModificationResult.Failure,
                     Message = string.Join(Environment.NewLine, errors)
                 };
             }
 
             return new TargetSchemaModificationResult
             {
-                Success = SchemaModificationResultEnum.PartialSuccess,
+                Success = SchemaModificationResult.PartialSuccess,
                 Message = string.Join(Environment.NewLine, errors)
             };
         }
@@ -159,14 +160,14 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 {
                     while (reader.Read())
                     {
-                        string name = reader["COLUMN_NAME"].ToString();
-                        string dataType = reader["DATA_TYPE"].ToString();
+                        string? name = reader["COLUMN_NAME"]?.ToString() ?? string.Empty; 
+                        string? dataType = reader["DATA_TYPE"]?.ToString() ?? string.Empty;
                         if (dataType != null && dataType.ToLower().Equals("nvarchar"))
                         {
                             dataType = "NVARCHAR(MAX)";
                         }
-                        bool isNullable = reader["IS_NULLABLE"].ToString() == "YES";
-                        bool isIdentity = (int)reader["IsIdentity"] == 1;
+                        bool isNullable = reader["IS_NULLABLE"] != null && reader["IS_NULLABLE"].ToString() == "YES";
+                        bool isIdentity = reader["IsIdentity"] != null && (int)reader["IsIdentity"] == 1;
 
                         columns.Add(new Column(name, dataType, isNullable: isNullable, isIdentity: isIdentity));
                     }
@@ -180,14 +181,29 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
         {
             using (var connection = new SqlConnection(_connectionString))
             {
-                connection.Open();
-                var command = new SqlCommand(
-                    $"ALTER TABLE {tableName} ADD {column.Name} {column.DataType}" +
-                    $"{(column.IsNullable ? " NULL" : " NOT NULL")}" +
-                    $"{(column.IsIdentity ? " IDENTITY(1,1)" : "")}" +
-                    $"{(column.IsPrimaryKey ? " PRIMARY KEY" : "")}", connection);
-                command.ExecuteNonQuery();
-                _logger.LogInformation($"Column {column.Name} added successfully to table {tableName}.");
+                // Build the ALTER TABLE statement with parameters
+                var sqlBuilder = new StringBuilder("ALTER TABLE ");
+                sqlBuilder.Append($"[{tableName}] ADD [{column.Name}] {column.DataType}");
+
+                if (!column.IsNullable)
+                    sqlBuilder.Append(" NOT NULL");
+                else
+                    sqlBuilder.Append(" NULL");
+
+                if (column.IsIdentity)
+                    sqlBuilder.Append(" IDENTITY(1,1)");
+
+                if (column.IsPrimaryKey)
+                    sqlBuilder.Append(" PRIMARY KEY");
+
+                using (var command = new SqlCommand(sqlBuilder.ToString(), connection))
+                {
+                    command.ExecuteNonQuery();
+                    _logger.LogInformation(
+                        "Column {ColumnName} added successfully to table {TableName}.", 
+                        column.Name,
+                        tableName);
+                }
             }
         }
 
