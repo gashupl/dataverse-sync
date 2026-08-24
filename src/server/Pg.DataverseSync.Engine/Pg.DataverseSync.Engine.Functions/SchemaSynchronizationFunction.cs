@@ -53,7 +53,5 @@ public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchroniz
         LogIfEnabled(LogLevel.Information,
             "Schema synchronization completed. Succeeded: {SucceededCount}, Failed: {FailedCount}.",
             succeeded.Count, failed.Count);
-
-        LogIfEnabled(LogLevel.Information, "Schema synchronization completed.");
     }
 }

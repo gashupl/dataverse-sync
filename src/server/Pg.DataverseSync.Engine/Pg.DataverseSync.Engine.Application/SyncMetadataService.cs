@@ -36,11 +36,11 @@ namespace Pg.DataverseSync.Engine.Application
                     .SetNext(checkTargetSchemaHandler);
 
                 retrieveSynchronizedTablesHandler.Handle(context);
-
-                var result = new SyncMetadataResult();
+                
                 var sourceTables = context.SourceTables ?? new List<Table>();
                 var sourceTableMap = sourceTables.ToDictionary(table => table.Name, StringComparer.OrdinalIgnoreCase);
 
+                var result = new SyncMetadataResult();
                 foreach (var synchronizedTableName in context.SynchronizedTableNames)
                 {
                     if (!sourceTableMap.TryGetValue(synchronizedTableName, out var sourceTable))
