@@ -73,11 +73,11 @@ internal static class Program
         builder.Services.AddScoped<ITargetSchemaRepository>(sp =>
         {
             var configuration = sp.GetRequiredService<IConfiguration>();
-            var connectionString = configuration["SqlServerConnectionString"];
+            var connectionString = configuration["TargetDatabaseConnectionString"];
 
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new InvalidOperationException("SqlServerConnectionString is not configured.");
+                throw new InvalidOperationException("TargetDatabaseConnectionString is not configured.");
             }
 
             var logger = sp.GetRequiredService<ILogger<DatabaseSchemaRepository>>();
