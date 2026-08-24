@@ -12,7 +12,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
     public class SourceMetadataServiceTests
     {
         [Fact]
-        public void GetTables_SuccessfullRequest_ReturnsTables()
+        public void GetTables_SuccessfullRequest_ReturnsTablesWithColumns()
         {
             // Arrange
             var mockMetadataRepo = Substitute.For<IMetadataRepository>();
@@ -21,12 +21,38 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             var tables = new List<Table>
             {
-                new Table("account", "Account", false),
-                new Table("contact", "Contact", false),
+                new Table("account", "Account", false)
+                {
+                    Columns = new List<Column>
+                    {
+                        new Column("accountid", "Guid", true),
+                        new Column("name", "String")
+                    }
+                },
+                new Table("contact", "Contact", false)
+                {
+                    Columns = new List<Column>
+                    {
+                        new Column("contactid", "Guid", true),
+                        new Column("firstname", "String"),
+                        new Column("lastname", "String")
+                    }
+                },
                 new Table("opportunity", "Opportunity", false)
+                {
+                    Columns = new List<Column>
+                    {
+                        new Column("opportunityid", "Guid", true),
+                        new Column("name", "String"),
+                        new Column("estimatedvalue", "Double")
+                    }
+                }
             };
 
             mockMetadataRepo.GetTables().Returns(tables);
+            mockMetadataRepo.GetColumns("account").Returns(tables[0].Columns);
+            mockMetadataRepo.GetColumns("contact").Returns(tables[1].Columns);
+            mockMetadataRepo.GetColumns("opportunity").Returns(tables[2].Columns);  
 
             var service = new SourceMetadataService(mockMetadataRepo, mockDataRepository, mockLogger);
 
@@ -39,6 +65,11 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             Assert.Equal("account", result[0].Name);
             Assert.Equal("contact", result[1].Name);
             Assert.Equal("opportunity", result[2].Name);
+
+            Assert.All(result, table => Assert.NotEmpty(table.Columns));
+            Assert.Equal(2, result[0].Columns.Count);
+            Assert.Equal(3, result[1].Columns.Count);
+            Assert.Equal(3, result[2].Columns.Count);
 
             mockMetadataRepo.Received(1).GetTables();
         }
