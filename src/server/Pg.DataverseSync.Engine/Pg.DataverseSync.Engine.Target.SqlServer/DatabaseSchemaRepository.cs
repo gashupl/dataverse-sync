@@ -109,6 +109,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             {
                 try
                 {
+                    //TODO: Column type is Dataverse type here, it needs to be converted to SQL Server type before adding it to the target table.
                     AddTargetColumn(targetTable.Name, column);
                 }
                 catch (Exception ex)
@@ -181,6 +182,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
         {
             using (var connection = new SqlConnection(_connectionString))
             {
+                connection.Open();
                 // Build the ALTER TABLE statement with parameters
                 var sqlBuilder = new StringBuilder("ALTER TABLE ");
                 sqlBuilder.Append($"[{tableName}] ADD [{column.Name}] {column.DataType}");

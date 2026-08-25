@@ -31,7 +31,10 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             {
                 var targetColumn = targetTable.Columns
                     .FirstOrDefault(tc => tc.Name.ToLower() == column.Name.ToLower());
-                if (targetColumn != null && targetColumn.DataType.ToLower() != column.DataType.ToLower())
+                
+                if (targetColumn != null && 
+                    !StringComparer.OrdinalIgnoreCase.Equals(
+                        targetColumn.DataType, DataTypesConverter.MapToSqlDataType(column.DataType!)))
                 {
                     modifiedSourceColumns.Add(column);
                     modifiedTargetColumns.Add(targetColumn);

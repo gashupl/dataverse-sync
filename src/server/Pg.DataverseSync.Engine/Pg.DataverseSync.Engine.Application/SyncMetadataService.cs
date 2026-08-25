@@ -59,14 +59,11 @@ namespace Pg.DataverseSync.Engine.Application
 
                     try
                     {
-                        if (!targetTableExists)
+                        var modificationResult = _targetSchemaService.UpsertTargetTable(sourceTable);
+                        if (modificationResult.Success != SchemaModificationResult.Success)
                         {
-                            var modificationResult = _targetSchemaService.UpsertTargetTable(sourceTable);
-                            if (modificationResult.Success != SchemaModificationResult.Success)
-                            {
-                                result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false, modificationResult.Message));
-                                continue;
-                            }
+                            result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false, modificationResult.Message));
+                            continue;
                         }
 
                         result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, true));

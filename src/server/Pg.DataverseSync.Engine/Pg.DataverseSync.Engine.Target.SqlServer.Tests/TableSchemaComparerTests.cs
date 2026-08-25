@@ -125,7 +125,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         public void GetModifiedColumns_ReturnsEmptyLists_WhenDataTypesMatch()
         {
             var sourceTable = new Table("account", "Account", false);
-            sourceTable.Columns.Add(new Column("Amount", "MONEY"));
+            sourceTable.Columns.Add(new Column("Amount", "MoneyType"));
 
             var targetTable = new SqlTable("account", new List<Column>
             {
@@ -142,7 +142,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         public void GetModifiedColumns_ReturnsEmptyLists_WhenColumnDoesNotExistInTarget()
         {
             var sourceTable = new Table("account", "Account", false);
-            sourceTable.Columns.Add(new Column("NewColumn", "MONEY"));
+            sourceTable.Columns.Add(new Column("NewColumn", "MoneyType"));
 
             var targetTable = new SqlTable("account", new List<Column>());
 

@@ -36,30 +36,6 @@ namespace Pg.DataverseSync.Engine.Application.Tests
         }
 
         [Fact]
-        public void Execute_TargetTableExistsAndSchemaUpToDate_DoesNotUpdateTargetTable()
-        {
-            // Arrange
-            var sourceMetadataService = Substitute.For<ISourceMetadataService>();
-            var targetSchemaService = Substitute.For<ITargetSchemaService>();
-            var logger = Substitute.For<ILogger<SyncMetadataService>>();
-
-            var tableNames = new List<string> { "account" };
-            sourceMetadataService.GetSynchronizedTableNames().Returns(tableNames);
-            sourceMetadataService.GetTables(Arg.Any<List<string>>()).Returns(new List<Table> { new Table("account", "Account", false) });
-            targetSchemaService.TargetTableExists("account").Returns(true);
-
-            var service = new SyncMetadataService(sourceMetadataService, targetSchemaService, logger);
-
-            // Act
-            var result = service.Execute();
-
-            // Assert
-            Assert.Single(result.TablesSyncResult);
-            Assert.True(result.TablesSyncResult[0].IsSynchronized);
-            targetSchemaService.DidNotReceive().UpsertTargetTable(Arg.Any<Table>());
-        }
-
-        [Fact]
         public void Execute_SourceTableMissing_AddsFailedResult()
         {
             // Arrange
