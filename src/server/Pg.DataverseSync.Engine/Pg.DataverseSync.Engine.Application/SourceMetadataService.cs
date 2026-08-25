@@ -28,26 +28,29 @@ namespace Pg.DataverseSync.Engine.Application
             return names.ToList()!; 
         }
 
-        public List<Table>? GetTables()
+        public List<Table>? GetTables(List<string> tableNames)
         {
             LogIfEnabled(LogLevel.Information, "Getting tables from source metadata service...");
             try
             {
-                var tables = _metadataRepo.GetTables();
-                if(tables == null || tables.Count == 0)
+                var allTables = _metadataRepo.GetTables();
+                if(allTables == null || allTables.Count == 0)
                 {
                     LogIfEnabled(LogLevel.Warning, "No tables found in source metadata service.");
+                    return null; 
                 }
                 else
                 {
-                    foreach (var table in tables) 
+                    var tables = allTables.Where(t => tableNames.Contains(t.Name)); 
+                    foreach (var table in tables)
                     {
                         table.Columns = _metadataRepo.GetColumns(table.Name);
                         LogIfEnabled(LogLevel.Information, "Successfully retrieved {Count} columns for table {TableName}.", table.Columns.Count, table.Name);
                     }
-                    LogIfEnabled(LogLevel.Information, "Successfully retrieved {Count} table.", tables.Count);
+                    LogIfEnabled(LogLevel.Information, "Successfully retrieved {Count} table.", tables.Count());
+                    return tables.ToList();
                 }
-                return tables; 
+                
 
             }
             catch(ReadMetadataException ex)

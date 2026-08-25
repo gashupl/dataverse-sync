@@ -56,8 +56,10 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             var service = new SourceMetadataService(mockMetadataRepo, mockDataRepository, mockLogger);
 
+            var tableNames = new List<string> { "account", "contact", "opportunity" };
+
             // Act
-            var result = service.GetTables();
+            var result = service.GetTables(tableNames);
 
             // Assert
             Assert.NotNull(result);
@@ -86,8 +88,10 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             var service = new SourceMetadataService(mockMetadataRepo, mockDataRepository, mockLogger);
 
+            var tableNames = new List<string> { "account" };
+
             // Act
-            var result = service.GetTables();
+            var result = service.GetTables(tableNames);
 
             // Assert
             Assert.Null(result);
@@ -108,8 +112,10 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             var service = new SourceMetadataService(mockMetadataRepo, mockDataRepository, mockLogger);
 
+            var tableNames = new List<string> { "account" };
+
             // Act & Assert
-            var exception = Assert.Throws<ApplicationServiceException>(() => service.GetTables());
+            var exception = Assert.Throws<ApplicationServiceException>(() => service.GetTables(tableNames));
             
             Assert.Equal("An error occurred while reading metadata for tables.", exception.Message);
             Assert.Equal(readException, exception.InnerException);

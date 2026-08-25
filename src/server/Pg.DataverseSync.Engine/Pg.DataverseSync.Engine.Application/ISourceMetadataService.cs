@@ -6,6 +6,6 @@ namespace Pg.DataverseSync.Engine.Application
     {
         List<string> GetSynchronizedTableNames();
 
-        List<Table>? GetTables();
+        List<Table>? GetTables(List<string> tableNames);
     }
 }

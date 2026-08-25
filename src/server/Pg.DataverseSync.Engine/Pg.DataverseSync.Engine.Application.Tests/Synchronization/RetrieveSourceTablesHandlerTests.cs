@@ -18,10 +18,14 @@ namespace Pg.DataverseSync.Engine.Application.Tests.Synchronization
                 new Table("account", "Account", false),
                 new Table("contact", "Contact", false)
             };
-            sourceMetadataService.GetTables().Returns(tables);
+            var tableNames = new List<string> { "account", "contact" };
+            sourceMetadataService.GetTables(tableNames).Returns(tables);
 
             var handler = new RetrieveSourceTablesHandler(sourceMetadataService);
-            var context = new SyncMetadataExecutionContext();
+            var context = new SyncMetadataExecutionContext()
+            {
+                SynchronizedTableNames = tableNames
+            };
 
             // Act
             handler.Handle(context);
@@ -37,10 +41,14 @@ namespace Pg.DataverseSync.Engine.Application.Tests.Synchronization
         {
             // Arrange
             var sourceMetadataService = Substitute.For<ISourceMetadataService>();
-            sourceMetadataService.GetTables().Returns((List<Table>?)null);
+            var tableNames = new List<string> { "account" };
+            sourceMetadataService.GetTables(tableNames).Returns((List<Table>?)null);
 
             var handler = new RetrieveSourceTablesHandler(sourceMetadataService);
-            var context = new SyncMetadataExecutionContext();
+            var context = new SyncMetadataExecutionContext()
+            {
+                SynchronizedTableNames = tableNames
+            };
 
             // Act
             handler.Handle(context);
@@ -56,10 +64,14 @@ namespace Pg.DataverseSync.Engine.Application.Tests.Synchronization
             // Arrange
             var sourceMetadataService = Substitute.For<ISourceMetadataService>();
             var innerException = new InvalidOperationException("metadata error");
-            sourceMetadataService.GetTables().Throws(innerException);
+            var tableNames = new List<string> { "account" };
+            sourceMetadataService.GetTables(tableNames).Throws(innerException);
 
             var handler = new RetrieveSourceTablesHandler(sourceMetadataService);
-            var context = new SyncMetadataExecutionContext();
+            var context = new SyncMetadataExecutionContext()
+            {
+                SynchronizedTableNames = tableNames
+            };
 
             // Act
             var exception = Assert.Throws<ApplicationServiceException>(() => handler.Handle(context));

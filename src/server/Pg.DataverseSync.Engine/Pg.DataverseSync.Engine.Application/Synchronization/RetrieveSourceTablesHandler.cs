@@ -16,7 +16,8 @@ namespace Pg.DataverseSync.Engine.Application.Synchronization
         {
             try
             {
-                context.SourceTables = _sourceMetadataService.GetTables() ?? new List<Table>();
+                context.SourceTables = _sourceMetadataService
+                    .GetTables(context.SynchronizedTableNames) ?? new List<Table>();
             }
             catch (Exception ex)
             {

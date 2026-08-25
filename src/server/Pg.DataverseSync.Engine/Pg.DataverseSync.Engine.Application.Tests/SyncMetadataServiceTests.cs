@@ -17,8 +17,9 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var targetSchemaService = Substitute.For<ITargetSchemaService>();
             var logger = Substitute.For<ILogger<SyncMetadataService>>();
 
-            sourceMetadataService.GetSynchronizedTableNames().Returns(new List<string> { "account" });
-            sourceMetadataService.GetTables().Returns(new List<Table> { new Table("account", "Account", false) });
+            var tableNames = new List<string> { "account" };
+            sourceMetadataService.GetSynchronizedTableNames().Returns(tableNames);
+            sourceMetadataService.GetTables(Arg.Any<List<string>>()).Returns(new List<Table> { new Table("account", "Account", false) });
             targetSchemaService.TargetTableExists("account").Returns(false);
             targetSchemaService.UpsertTargetTable(Arg.Any<Table>())
                 .Returns(new TargetSchemaModificationResult { Success = SchemaModificationResult.Success });
@@ -42,8 +43,9 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var targetSchemaService = Substitute.For<ITargetSchemaService>();
             var logger = Substitute.For<ILogger<SyncMetadataService>>();
 
-            sourceMetadataService.GetSynchronizedTableNames().Returns(new List<string> { "account" });
-            sourceMetadataService.GetTables().Returns(new List<Table> { new Table("account", "Account", false) });
+            var tableNames = new List<string> { "account" };
+            sourceMetadataService.GetSynchronizedTableNames().Returns(tableNames);
+            sourceMetadataService.GetTables(Arg.Any<List<string>>()).Returns(new List<Table> { new Table("account", "Account", false) });
             targetSchemaService.TargetTableExists("account").Returns(true);
 
             var service = new SyncMetadataService(sourceMetadataService, targetSchemaService, logger);
@@ -65,8 +67,9 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var targetSchemaService = Substitute.For<ITargetSchemaService>();
             var logger = Substitute.For<ILogger<SyncMetadataService>>();
 
-            sourceMetadataService.GetSynchronizedTableNames().Returns(new List<string> { "account" });
-            sourceMetadataService.GetTables().Returns(new List<Table> { new Table("contact", "Contact", false) });
+            var tableNames = new List<string> { "account" };
+            sourceMetadataService.GetSynchronizedTableNames().Returns(tableNames);
+            sourceMetadataService.GetTables(Arg.Any<List<string>>()).Returns(new List<Table> { new Table("contact", "Contact", false) });
             targetSchemaService.TargetTableExists("account").Returns(true);
 
             var service = new SyncMetadataService(sourceMetadataService, targetSchemaService, logger);
@@ -89,8 +92,9 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var targetSchemaService = Substitute.For<ITargetSchemaService>();
             var logger = Substitute.For<ILogger<SyncMetadataService>>();
 
-            sourceMetadataService.GetSynchronizedTableNames().Returns(new List<string> { "account", "contact" });
-            sourceMetadataService.GetTables().Returns(new List<Table>
+            var tableNames = new List<string> { "account", "contact" };
+            sourceMetadataService.GetSynchronizedTableNames().Returns(tableNames);
+            sourceMetadataService.GetTables(Arg.Any<List<string>>()).Returns(new List<Table>
             {
                 new Table("account", "Account", false),
                 new Table("contact", "Contact", false)
@@ -156,8 +160,9 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var targetSchemaService = Substitute.For<ITargetSchemaService>();
             var logger = Substitute.For<ILogger<SyncMetadataService>>();
 
-            sourceMetadataService.GetSynchronizedTableNames().Returns(new List<string> { "account" });
-            sourceMetadataService.GetTables().Returns(new List<Table>
+            var tableNames = new List<string> { "account" };
+            sourceMetadataService.GetSynchronizedTableNames().Returns(tableNames);
+            sourceMetadataService.GetTables(Arg.Any<List<string>>()).Returns(new List<Table>
             {
                 new Table(null!, "Broken", false)
             });
@@ -183,8 +188,9 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var logger = Substitute.For<ILogger<SyncMetadataService>>();
             var errorMessage = "Table creation failed: Column mismatch detected";
 
-            sourceMetadataService.GetSynchronizedTableNames().Returns(new List<string> { "account" });
-            sourceMetadataService.GetTables().Returns(new List<Table> { new Table("account", "Account", false) });
+            var tableNames = new List<string> { "account" };
+            sourceMetadataService.GetSynchronizedTableNames().Returns(tableNames);
+            sourceMetadataService.GetTables(Arg.Any<List<string>>()).Returns(new List<Table> { new Table("account", "Account", false) });
             targetSchemaService.TargetTableExists("account").Returns(false);
             targetSchemaService.UpsertTargetTable(Arg.Any<Table>())
                 .Returns(new TargetSchemaModificationResult 
