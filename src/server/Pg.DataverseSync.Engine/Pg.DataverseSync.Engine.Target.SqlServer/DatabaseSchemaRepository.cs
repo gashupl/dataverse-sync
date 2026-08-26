@@ -79,6 +79,9 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 
             var tableComparer = new TableSchemaComparer(_logger);
 
+            //TODO: Find out why there are always following columns on the list of ones to be added or removed (alternately):
+            //entityimage - "VARBINARY(MAX)"
+            //exchangerate - DECIMAL(38, 0)
             var columnsToRemove = tableComparer.GetColumnsToBeRemoved(sourceTable, targetTable);
             var columnsToAdd = tableComparer.GetColumnsToBeAdded(sourceTable, targetTable);
             var modifiedColumns = tableComparer.GetModifiedColumns(sourceTable, targetTable);
@@ -109,7 +112,6 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             {
                 try
                 {
-                    //TODO: Column type is Dataverse type here, it needs to be converted to SQL Server type before adding it to the target table.
                     AddTargetColumn(targetTable.Name, column);
                 }
                 catch (Exception ex)

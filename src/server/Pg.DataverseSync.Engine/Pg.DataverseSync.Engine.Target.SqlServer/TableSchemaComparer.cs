@@ -19,7 +19,15 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 
         internal List<Column> GetColumnsToBeAdded(Table sourceTable, SqlTable targetTable)
         {
-            return sourceTable.Columns.Where(c => targetTable.Columns.All(tc => tc.Name != c.Name)).ToList();
+            var columnsToBeAdded = sourceTable.Columns.Where(c => targetTable.Columns.All(tc => tc.Name != c.Name)).ToList();
+
+            // Convert Column DataTypes to SQL equivalents
+            foreach (var column in columnsToBeAdded)
+            {
+                column.DataType = DataTypesConverter.MapToSqlDataType(column.DataType!);
+            }
+
+            return columnsToBeAdded;    
         }
 
         internal (List<Column> SourceChanges, List<Column> TargetChanges) GetModifiedColumns(Table sourceTable, SqlTable targetTable)
