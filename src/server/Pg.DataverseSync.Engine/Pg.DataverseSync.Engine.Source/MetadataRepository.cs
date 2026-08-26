@@ -40,13 +40,12 @@ namespace Pg.DataverseSync.Engine.Source
                     tables.Add(new Table(logicalName, displayName, isActivity));
                 }
 
-                LogIfEnabled(LogLevel.Information, "Retrieved {Count} tables from Dataverse.", tables.Count);
+                LogIfEnabled(LogLevel.Information, "Retrieved {TableCount} tables from Dataverse.", tables.Count);
                 return tables;
             }
             catch (FaultException<OrganizationServiceFault> ex)
             {
-                var msg = $"Dataverse service fault while retrieving tables. " +
-                    $"Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}"; 
+                var msg = $"Dataverse service fault while retrieving tables. Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}"; 
                 LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex); 
             }
@@ -66,7 +65,7 @@ namespace Pg.DataverseSync.Engine.Source
 
         public List<Column> GetColumns(string tableName)
         {
-            LogIfEnabled(LogLevel.Information, "Retrieving columns metadata from Dataverse table {tableName}...", tableName);
+            LogIfEnabled(LogLevel.Information, "Retrieving columns metadata from Dataverse table {TableName}...", tableName);
 
             try
             {
@@ -93,8 +92,7 @@ namespace Pg.DataverseSync.Engine.Source
             }
             catch (FaultException<OrganizationServiceFault> ex)
             {
-                var msg = $"Dataverse service fault while retrieving columns metadata from  Dataverse table {tableName}. " +
-                    $"Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}";
+                var msg = $"Dataverse service fault while retrieving columns metadata from Dataverse table {tableName}. Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}";
                 LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }

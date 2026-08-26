@@ -76,7 +76,7 @@ namespace Pg.DataverseSync.Engine.Application
                     }
                 }
 
-                LogIfEnabled(LogLevel.Information, "Metadata synchronization completed for {Count} table(s).",
+                LogIfEnabled(LogLevel.Information, "Metadata synchronization completed for {SyncedTableCount} table(s).",
                     result.TablesSyncResult.Count);
 
                 return result;

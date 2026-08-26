@@ -40,7 +40,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"An error occurred: {ex.Message}");
+                    _logger.LogError(ex, "An error occurred: {ErrorMessage}", ex.Message);
                     return new TargetSchemaModificationResult { Success = SchemaModificationResult.Failure, Message = ex.Message };
                 }
             }
@@ -163,13 +163,13 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 {
                     while (reader.Read())
                     {
-                        string? name = reader["COLUMN_NAME"]?.ToString() ?? string.Empty; 
-                        string? dataType = reader["DATA_TYPE"]?.ToString() ?? string.Empty;
-                        if (dataType != null && dataType.ToLower().Equals("nvarchar"))
+                        string name = reader["COLUMN_NAME"]?.ToString() ?? string.Empty; 
+                        string dataType = reader["DATA_TYPE"]?.ToString() ?? string.Empty;
+                        if (dataType.ToLower().Equals("nvarchar"))
                         {
                             dataType = "NVARCHAR(MAX)";
                         }
-                        bool isNullable = reader["IS_NULLABLE"] != null && reader["IS_NULLABLE"].ToString() == "YES";
+                        bool isNullable = reader["IS_NULLABLE"]?.ToString() == "YES";
                         bool isIdentity = reader["IsIdentity"] != null && (int)reader["IsIdentity"] == 1;
 
                         columns.Add(new Column(name, dataType, isNullable: isNullable, isIdentity: isIdentity));

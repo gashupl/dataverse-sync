@@ -45,9 +45,9 @@ namespace Pg.DataverseSync.Engine.Application
                     foreach (var table in tables)
                     {
                         table.Columns = _metadataRepo.GetColumns(table.Name);
-                        LogIfEnabled(LogLevel.Information, "Successfully retrieved {Count} columns for table {TableName}.", table.Columns.Count, table.Name);
+                        LogIfEnabled(LogLevel.Information, "Successfully retrieved {ColumnCount} columns for table {TableName}.", table.Columns.Count, table.Name);
                     }
-                    LogIfEnabled(LogLevel.Information, "Successfully retrieved {Count} table.", tables.Count());
+                    LogIfEnabled(LogLevel.Information, "Successfully retrieved {TableCount} table.", tables.Count());
                     return tables.ToList();
                 }
                 
