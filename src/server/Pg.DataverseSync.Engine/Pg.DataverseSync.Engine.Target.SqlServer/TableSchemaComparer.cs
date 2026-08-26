@@ -14,12 +14,12 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 
         internal List<Column> GetColumnsToBeRemoved(Table sourceTable, SqlTable targetTable)
         {
-            return targetTable.Columns.Where(tc => sourceTable.Columns.All(c => c.Name != tc.Name)).ToList();
+            return targetTable.Columns.Where(tc => sourceTable.Columns.All(c => !StringComparer.OrdinalIgnoreCase.Equals(c.Name, tc.Name))).ToList();
         }
 
         internal List<Column> GetColumnsToBeAdded(Table sourceTable, SqlTable targetTable)
         {
-            var columnsToBeAdded = sourceTable.Columns.Where(c => targetTable.Columns.All(tc => tc.Name != c.Name)).ToList();
+            var columnsToBeAdded = sourceTable.Columns.Where(c => targetTable.Columns.All(tc => !StringComparer.OrdinalIgnoreCase.Equals(tc.Name, c.Name))).ToList();
 
             // Convert Column DataTypes to SQL equivalents
             foreach (var column in columnsToBeAdded)
@@ -38,8 +38,8 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             foreach (var column in sourceTable.Columns)
             {
                 var targetColumn = targetTable.Columns
-                    .FirstOrDefault(tc => tc.Name.ToLower() == column.Name.ToLower());
-                
+                    .FirstOrDefault(tc => StringComparer.OrdinalIgnoreCase.Equals(tc.Name, column.Name));
+
                 if (targetColumn != null && 
                     !StringComparer.OrdinalIgnoreCase.Equals(
                         targetColumn.DataType, DataTypesConverter.MapToSqlDataType(column.DataType!)))

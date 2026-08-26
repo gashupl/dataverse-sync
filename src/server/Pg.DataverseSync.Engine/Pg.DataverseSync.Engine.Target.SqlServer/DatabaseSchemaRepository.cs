@@ -21,7 +21,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 
         public TargetSchemaModificationResult CreateTable(Table sourceTable)
         {
-            _logger.LogInformation($"Creating table '{sourceTable.Name}' in target database...");
+            _logger.LogInformation("Creating table '{TableName}' in target database...", sourceTable.Name);
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 try
@@ -32,7 +32,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                     var query = CreateTableQueryGenerator.Generate(sourceTable); 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        _logger.LogInformation($"Executing query to create table: {query}");
+                        _logger.LogInformation("Executing query to create table: {Query}", query);
                         command.ExecuteNonQuery();
                         _logger.LogInformation("Table created successfully.");
                         return new TargetSchemaModificationResult { Success = SchemaModificationResult.Success };
@@ -103,7 +103,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 {
                     failedOperations++;
                     var message = $"Failed to remove column '{columnName}' from table '{targetTable.Name}': {ex.Message}";
-                    _logger.LogError(message);
+                    _logger.LogError(ex, message);
                     errors.Add(message);
                 }
             }
@@ -165,7 +165,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                     {
                         string name = reader["COLUMN_NAME"]?.ToString() ?? string.Empty; 
                         string dataType = reader["DATA_TYPE"]?.ToString() ?? string.Empty;
-                        if (dataType.ToLower().Equals("nvarchar"))
+                        if (StringComparer.OrdinalIgnoreCase.Equals(dataType, "nvarchar"))
                         {
                             dataType = "NVARCHAR(MAX)";
                         }

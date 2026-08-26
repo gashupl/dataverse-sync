@@ -36,8 +36,8 @@ namespace Pg.DataverseSync.Engine.Application
                     .SetNext(checkTargetSchemaHandler);
 
                 retrieveSynchronizedTablesHandler.Handle(context);
-                
-                var sourceTables = context.SourceTables ?? new List<Table>();
+
+                var sourceTables = context.SourceTables ?? [];
                 var sourceTableMap = sourceTables.ToDictionary(table => table.Name, StringComparer.OrdinalIgnoreCase);
 
                 var result = new SyncMetadataResult();
@@ -50,7 +50,7 @@ namespace Pg.DataverseSync.Engine.Application
                         continue;
                     }
 
-                    if (!context.TargetTableExists.TryGetValue(synchronizedTableName, out var targetTableExists))
+                    if (!context.TargetTableExists.ContainsKey(synchronizedTableName))
                     {
                         result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false,
                             "Target table existence could not be determined."));
