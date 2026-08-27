@@ -13,52 +13,40 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 
         internal static List<Column> GetColumnsToBeAdded(Table sourceTable, SqlTable targetTable)
         {
-            var columnsToBeAdded = sourceTable.Columns.Where(c => targetTable.Columns.All(tc => !StringComparer.OrdinalIgnoreCase.Equals(tc.Name, c.Name))).ToList();
-
-            // Convert Column DataTypes to SQL equivalents
-            foreach (var column in columnsToBeAdded)
-            {
-                column.DataType = DataTypesConverter.MapToSqlDataType(column.DataType!);
-            }
-
-            return columnsToBeAdded;    
+            return sourceTable.Columns
+                .Where(c => targetTable.Columns.All(tc => !StringComparer.OrdinalIgnoreCase.Equals(tc.Name, c.Name)))
+                .Select(c => new Column(c.Name, DataTypesConverter.MapToSqlDataType(c.DataType!), c.IsPrimaryKey, c.IsNullable, c.IsIdentity))
+                .ToList();
         }
 
         internal static (List<Column> SourceChanges, List<Column> TargetChanges) GetModifiedColumns(Table sourceTable, SqlTable targetTable)
         {
-            var modifiedSourceColumns = new List<Column>();
-            var modifiedTargetColumns = new List<Column>();
-
-            foreach (var column in sourceTable.Columns)
-            {
-                var targetColumn = targetTable.Columns
-                    .FirstOrDefault(tc => StringComparer.OrdinalIgnoreCase.Equals(tc.Name, column.Name));
-
-                if (targetColumn != null && 
-                    !StringComparer.OrdinalIgnoreCase.Equals(
-                        targetColumn.DataType, DataTypesConverter.MapToSqlDataType(column.DataType!)))
+            var modifiedColumns = sourceTable.Columns
+                .Select(column => new
                 {
-                    modifiedSourceColumns.Add(column);
-                    modifiedTargetColumns.Add(targetColumn);
-                }
-            }
+                    SourceColumn = column,
+                    TargetColumn = targetTable.Columns.FirstOrDefault(tc => StringComparer.OrdinalIgnoreCase.Equals(tc.Name, column.Name))
+                })
+                .Where(x => x.TargetColumn != null && 
+                    !StringComparer.OrdinalIgnoreCase.Equals(
+                        x.TargetColumn.DataType, DataTypesConverter.MapToSqlDataType(x.SourceColumn.DataType!)))
+                .ToList();
 
-            return (modifiedSourceColumns, modifiedTargetColumns);
+            return (
+                modifiedColumns.Select(x => x.SourceColumn!).ToList(),
+                modifiedColumns.Select(x => x.TargetColumn!).ToList()
+            );
         }
 
         internal static List<Column> MergeColumns(List<Column> columnsTable1, List<Column> columnsTable2)
         {
             var mergedColumns = new List<Column>(columnsTable1);
-
-            foreach (var column in columnsTable2)
-            {
-                if (!mergedColumns
+            var columnToAdd = columnsTable2
+                .Where(column => !mergedColumns
                     .Any(c => c.Name != null && c.Name.Equals(column.Name, StringComparison.OrdinalIgnoreCase)))
-                {
-                    mergedColumns.Add(column);
-                }
-            }
+                .ToList();
 
+            mergedColumns.AddRange(columnToAdd);
             return mergedColumns;
         }
 
