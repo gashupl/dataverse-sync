@@ -7,14 +7,6 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
 {
     public class TableSchemaComparerTests
     {
-        private readonly ILogger _logger;
-        private readonly TableSchemaComparer _comparer;
-
-        public TableSchemaComparerTests()
-        {
-            _logger = Substitute.For<ILogger>();
-            _comparer = new TableSchemaComparer(_logger);
-        }
 
         [Fact]
         public void GetColumnsToBeRemoved_ReturnsColumns_NotPresentInSourceTable()
@@ -28,7 +20,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
                 new Column("ObsoleteColumn", "INT")
             });
 
-            var result = _comparer.GetColumnsToBeRemoved(sourceTable, targetTable);
+            var result = TableSchemaComparer.GetColumnsToBeRemoved(sourceTable, targetTable);
 
             var removedColumn = Assert.Single(result);
             Assert.Equal("ObsoleteColumn", removedColumn.Name);
@@ -45,7 +37,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
                 new Column("Name", "NVARCHAR(MAX)")
             });
 
-            var result = _comparer.GetColumnsToBeRemoved(sourceTable, targetTable);
+            var result = TableSchemaComparer.GetColumnsToBeRemoved(sourceTable, targetTable);
 
             Assert.Empty(result);
         }
@@ -62,7 +54,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
                 new Column("Name", "NVARCHAR(MAX)")
             });
 
-            var result = _comparer.GetColumnsToBeAdded(sourceTable, targetTable);
+            var result = TableSchemaComparer.GetColumnsToBeAdded(sourceTable, targetTable);
 
             var addedColumn = Assert.Single(result);
             Assert.Equal("NewColumn", addedColumn.Name);
@@ -80,7 +72,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
                 new Column("Name", "NVARCHAR(MAX)")
             });
 
-            var result = _comparer.GetColumnsToBeAdded(sourceTable, targetTable);
+            var result = TableSchemaComparer.GetColumnsToBeAdded(sourceTable, targetTable);
 
             Assert.Empty(result);
         }
@@ -97,7 +89,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
 
             var targetTable = new SqlTable("account", new List<Column>());
 
-            var result = _comparer.GetColumnsToBeAdded(sourceTable, targetTable);
+            var result = TableSchemaComparer.GetColumnsToBeAdded(sourceTable, targetTable);
 
             Assert.Equal(5, result.Count);
 
@@ -134,7 +126,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
                 new Column("Amount", "FLOAT")
             });
 
-            var (sourceChanges, targetChanges) = _comparer.GetModifiedColumns(sourceTable, targetTable);
+            var (sourceChanges, targetChanges) = TableSchemaComparer.GetModifiedColumns(sourceTable, targetTable);
 
             var sourceChange = Assert.Single(sourceChanges);
             var targetChange = Assert.Single(targetChanges);
@@ -155,7 +147,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
                 new Column("AMOUNT", "FLOAT")
             });
 
-            var (sourceChanges, targetChanges) = _comparer.GetModifiedColumns(sourceTable, targetTable);
+            var (sourceChanges, targetChanges) = TableSchemaComparer.GetModifiedColumns(sourceTable, targetTable);
 
             Assert.Single(sourceChanges);
             Assert.Single(targetChanges);
@@ -172,7 +164,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
                 new Column("Amount", "MONEY")
             });
 
-            var (sourceChanges, targetChanges) = _comparer.GetModifiedColumns(sourceTable, targetTable);
+            var (sourceChanges, targetChanges) = TableSchemaComparer.GetModifiedColumns(sourceTable, targetTable);
 
             Assert.Empty(sourceChanges);
             Assert.Empty(targetChanges);
@@ -186,7 +178,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
 
             var targetTable = new SqlTable("account", new List<Column>());
 
-            var (sourceChanges, targetChanges) = _comparer.GetModifiedColumns(sourceTable, targetTable);
+            var (sourceChanges, targetChanges) = TableSchemaComparer.GetModifiedColumns(sourceTable, targetTable);
 
             Assert.Empty(sourceChanges);
             Assert.Empty(targetChanges);
