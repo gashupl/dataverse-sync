@@ -77,14 +77,12 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 };
             }
 
-            var tableComparer = new TableSchemaComparer(_logger);
-
             //TODO: Find out why there are always following columns on the list of ones to be added or removed (alternately):
             //entityimage - "VARBINARY(MAX)"
             //exchangerate - DECIMAL(38, 0)
-            var columnsToRemove = tableComparer.GetColumnsToBeRemoved(sourceTable, targetTable);
-            var columnsToAdd = tableComparer.GetColumnsToBeAdded(sourceTable, targetTable);
-            var modifiedColumns = tableComparer.GetModifiedColumns(sourceTable, targetTable);
+            var columnsToRemove = TableSchemaComparer.GetColumnsToBeRemoved(sourceTable, targetTable);
+            var columnsToAdd = TableSchemaComparer.GetColumnsToBeAdded(sourceTable, targetTable);
+            var modifiedColumns = TableSchemaComparer.GetModifiedColumns(sourceTable, targetTable);
 
             columnsToRemove = TableSchemaComparer.MergeColumns(columnsToRemove, modifiedColumns.TargetChanges);
             columnsToAdd = TableSchemaComparer.MergeColumns(columnsToAdd, modifiedColumns.SourceChanges);

@@ -3,21 +3,15 @@ using Pg.DataverseSync.Engine.Core.Model;
 
 namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
-    public class TableSchemaComparer
+    public static class TableSchemaComparer
     {
-        private readonly ILogger _logger;
 
-        public TableSchemaComparer(ILogger logger)
-        {
-            _logger = logger;
-        }
-
-        internal List<Column> GetColumnsToBeRemoved(Table sourceTable, SqlTable targetTable)
+        internal static List<Column> GetColumnsToBeRemoved(Table sourceTable, SqlTable targetTable)
         {
             return targetTable.Columns.Where(tc => sourceTable.Columns.All(c => !StringComparer.OrdinalIgnoreCase.Equals(c.Name, tc.Name))).ToList();
         }
 
-        internal List<Column> GetColumnsToBeAdded(Table sourceTable, SqlTable targetTable)
+        internal static List<Column> GetColumnsToBeAdded(Table sourceTable, SqlTable targetTable)
         {
             var columnsToBeAdded = sourceTable.Columns.Where(c => targetTable.Columns.All(tc => !StringComparer.OrdinalIgnoreCase.Equals(tc.Name, c.Name))).ToList();
 
@@ -30,7 +24,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             return columnsToBeAdded;    
         }
 
-        internal (List<Column> SourceChanges, List<Column> TargetChanges) GetModifiedColumns(Table sourceTable, SqlTable targetTable)
+        internal static (List<Column> SourceChanges, List<Column> TargetChanges) GetModifiedColumns(Table sourceTable, SqlTable targetTable)
         {
             var modifiedSourceColumns = new List<Column>();
             var modifiedTargetColumns = new List<Column>();
@@ -58,7 +52,8 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 
             foreach (var column in columnsTable2)
             {
-                if (!mergedColumns.Any(c => c.Name.Equals(column.Name, StringComparison.OrdinalIgnoreCase)))
+                if (!mergedColumns
+                    .Any(c => c.Name != null && c.Name.Equals(column.Name, StringComparison.OrdinalIgnoreCase)))
                 {
                     mergedColumns.Add(column);
                 }
