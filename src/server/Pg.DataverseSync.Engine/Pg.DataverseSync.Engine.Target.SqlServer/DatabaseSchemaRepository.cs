@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using Pg.DataverseSync.Engine.Application;
 using Pg.DataverseSync.Engine.Core.Model;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -8,12 +9,13 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
     //See ADR-0001: docs/adr/0001-excluding-database-schema-repository-from-code-coverage.md
     [ExcludeFromCodeCoverage]
-    public class DatabaseSchemaRepository : ITargetSchemaRepository
+    public class DatabaseSchemaRepository :  LoggingServiceBase<DatabaseSchemaRepository>, ITargetSchemaRepository
     {
         private readonly string _connectionString;
         private readonly ILogger<DatabaseSchemaRepository> _logger;
 
-        public DatabaseSchemaRepository(string connectionString, ILogger<DatabaseSchemaRepository> logger)
+        public DatabaseSchemaRepository(string connectionString, ILogger<DatabaseSchemaRepository> logger) 
+            : base(logger)
         {
             _connectionString = connectionString;
             _logger = logger;
@@ -21,7 +23,8 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 
         public TargetSchemaModificationResult CreateTable(Table sourceTable)
         {
-            _logger.LogInformation("Creating table '{TableName}' in target database...", sourceTable.Name);
+            LogIfEnabled(LogLevel.Information, "Creating table '{TableName}' in target database...", sourceTable.Name); 
+
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 try
@@ -29,10 +32,10 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                     connection.Open();
                     _logger.LogInformation("Connection to target database established successfully.");
 
-                    var query = CreateTableQueryGenerator.Generate(sourceTable); 
+                    var query = CreateTableQueryGenerator.Generate(sourceTable);
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        _logger.LogInformation("Executing query to create table: {Query}", query);
+                        LogIfEnabled(LogLevel.Information, "Executing query to create table: {Query}", query);
                         command.ExecuteNonQuery();
                         _logger.LogInformation("Table created successfully.");
                         return new TargetSchemaModificationResult { Success = SchemaModificationResult.Success };
@@ -91,7 +94,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             var totalOperations = columnsToRemove.Count + columnsToAdd.Count;
             var failedOperations = 0;
 
-            foreach (var columnName in columnsToRemove.Select(c => c.Name))
+            foreach (var columnName in columnsToRemove.Select(c => c.Name).OfType<string>())
             {
                 try
                 {
@@ -101,7 +104,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 {
                     failedOperations++;
                     var message = $"Failed to remove column '{columnName}' from table '{targetTable.Name}': {ex.Message}";
-                    _logger.LogError(ex, message);
+                    _logger.LogError(ex, "Failed to remove column '{ColumnName}' from table '{TableName}': {ErrorMessage}", columnName, targetTable.Name, ex.Message);
                     errors.Add(message);
                 }
             }
@@ -116,14 +119,14 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 {
                     failedOperations++;
                     var message = $"Failed to add column '{column.Name}' to table '{targetTable.Name}': {ex.Message}";
-                    _logger.LogError(ex, message);
+                    _logger.LogError(ex, "Failed to add column '{ColumnName}' to table '{TableName}': {ErrorMessage}", column.Name, targetTable.Name, ex.Message);
                     errors.Add(message);
                 }
             }
 
             if (failedOperations == 0)
             {
-                _logger.LogInformation("Table '{TargetTableName}' updated successfully.", targetTable.Name);
+                LogIfEnabled(LogLevel.Information, "Table '{TargetTableName}' updated successfully.", targetTable.Name);
                 return new TargetSchemaModificationResult { Success = SchemaModificationResult.Success };
             }
 
@@ -201,9 +204,10 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 using (var command = new SqlCommand(sqlBuilder.ToString(), connection))
                 {
                     command.ExecuteNonQuery();
-                    _logger.LogInformation(
-                        "Column {ColumnName} added successfully to table {TableName}.", 
-                        column.Name,
+                    LogIfEnabled(
+                        LogLevel.Information,
+                        "Column {ColumnName} added successfully to table {TableName}.",
+                        column.Name ?? string.Empty,
                         tableName);
                 }
             }
@@ -214,9 +218,13 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                var command = new SqlCommand(
-                    $"ALTER TABLE {tableName} DROP COLUMN {columnName}", connection);
-                command.ExecuteNonQuery();
+                var sqlBuilder = new StringBuilder("ALTER TABLE ");
+                sqlBuilder.Append($"[{tableName}] DROP COLUMN [{columnName}]");
+
+                using (var command = new SqlCommand(sqlBuilder.ToString(), connection))
+                {
+                    command.ExecuteNonQuery();
+                }
             }
         }
     }

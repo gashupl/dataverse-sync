@@ -33,7 +33,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 .ToList();
 
             return (
-                modifiedColumns.Select(x => x.SourceColumn!).ToList(),
+                modifiedColumns.Select(x => x.SourceColumn).ToList(),
                 modifiedColumns.Select(x => x.TargetColumn!).ToList()
             );
         }
