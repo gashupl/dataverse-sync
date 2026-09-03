@@ -80,15 +80,12 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 };
             }
 
-            //TODO: Find out why there are always following columns on the list of ones to be added or removed (alternately):
-            //entityimage - "VARBINARY(MAX)"
-            //exchangerate - DECIMAL(38, 0)
             var columnsToRemove = TableSchemaComparer.GetColumnsToBeRemoved(sourceTable, targetTable);
-            var columnsToAdd = TableSchemaComparer.GetColumnsToBeAdded(sourceTable, targetTable);
+            var columnsToAdd = TableSchemaComparer.GetColumnsToBeAdded(sourceTable, targetTable); //target types
             var modifiedColumns = TableSchemaComparer.GetModifiedColumns(sourceTable, targetTable);
 
-            columnsToRemove = TableSchemaComparer.MergeColumns(columnsToRemove, modifiedColumns.TargetChanges);
-            columnsToAdd = TableSchemaComparer.MergeColumns(columnsToAdd, modifiedColumns.SourceChanges);
+            columnsToRemove = TableSchemaComparer.MergeColumnsToBeRemoved(columnsToRemove, modifiedColumns.TargetChanges);    
+            columnsToAdd = TableSchemaComparer.MergeColumnsToBeAdded(columnsToAdd, modifiedColumns.SourceChanges);
 
             var errors = new List<string>();
             var totalOperations = columnsToRemove.Count + columnsToAdd.Count;
@@ -165,11 +162,8 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                     while (reader.Read())
                     {
                         string name = reader["COLUMN_NAME"]?.ToString() ?? string.Empty; 
-                        string dataType = reader["DATA_TYPE"]?.ToString() ?? string.Empty;
-                        if (StringComparer.OrdinalIgnoreCase.Equals(dataType, "nvarchar"))
-                        {
-                            dataType = "NVARCHAR(MAX)";
-                        }
+                        string dataType 
+                            = DataTypesConverter.NormalizeSqlDataType(reader["DATA_TYPE"]?.ToString() ?? string.Empty);
                         bool isNullable = reader["IS_NULLABLE"]?.ToString() == "YES";
                         bool isIdentity = reader["IsIdentity"] != null && (int)reader["IsIdentity"] == 1;
 
@@ -188,7 +182,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 connection.Open();
                 // Build the ALTER TABLE statement with parameters
                 var sqlBuilder = new StringBuilder("ALTER TABLE ");
-                sqlBuilder.Append($"[{tableName}] ADD [{column.Name}] {column.DataType}");
+                sqlBuilder.Append($"[{tableName}] ADD [{column.Name}] {column?.DataType}");
 
                 if (!column.IsNullable)
                     sqlBuilder.Append(" NOT NULL");

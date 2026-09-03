@@ -4,7 +4,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
     internal static class DataTypesConverter
     {
-        internal static string? MapToSqlDataType(string dataType)
+        internal static string? MapToSqlDataType(string? dataType)
         {
             string? sqlDataType;
 
@@ -88,6 +88,29 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             }
 
             return sqlDataType;
+        }
+
+        /// <summary>
+        /// Normalizes SQL Server data types retrieved from INFORMATION_SCHEMA.COLUMNS.
+        /// SQL Server returns abbreviated types (e.g., "varbinary" instead of "varbinary(max)"),
+        /// so this method normalizes them to their full equivalents.
+        /// </summary>
+        internal static string? NormalizeSqlDataType(string? sqlDataType)
+        {
+            if (string.IsNullOrEmpty(sqlDataType))  
+            {
+                return sqlDataType;
+            }
+
+            var normalizedType = sqlDataType.ToUpperInvariant();
+
+            return normalizedType switch
+            {
+                "VARBINARY" => SqlDataTypes.VarBinaryMax,
+                "DECIMAL" => SqlDataTypes.Decimal,
+                "NVARCHAR" => SqlDataTypes.NVarcharMax,
+                _ => sqlDataType
+            };
         }
     }
 }

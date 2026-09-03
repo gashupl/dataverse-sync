@@ -185,12 +185,12 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         }
 
         [Fact]
-        public void MergeColumns_CombinesBothLists_WhenNoDuplicatesExist()
+        public void MergeColumnsToBeRemoved_CombinesBothLists_WhenNoDuplicatesExist()
         {
             var columnsTable1 = new List<Column> { new Column("Name", "NVARCHAR(MAX)") };
             var columnsTable2 = new List<Column> { new Column("Amount", "MONEY") };
 
-            var result = TableSchemaComparer.MergeColumns(columnsTable1, columnsTable2);
+            var result = TableSchemaComparer.MergeColumnsToBeRemoved(columnsTable1, columnsTable2);
 
             Assert.Equal(2, result.Count);
             Assert.Contains(result, c => c.Name == "Name");
@@ -198,26 +198,216 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         }
 
         [Fact]
-        public void MergeColumns_ExcludesDuplicates_WhenColumnNamesMatchCaseInsensitively()
+        public void MergeColumnsToBeRemoved_ExcludesDuplicates_WhenColumnNamesMatchCaseInsensitively()
         {
             var columnsTable1 = new List<Column> { new Column("Name", "NVARCHAR(MAX)") };
             var columnsTable2 = new List<Column> { new Column("name", "NVARCHAR(MAX)") };
 
-            var result = TableSchemaComparer.MergeColumns(columnsTable1, columnsTable2);
+            var result = TableSchemaComparer.MergeColumnsToBeRemoved(columnsTable1, columnsTable2);
 
             Assert.Single(result);
         }
 
         [Fact]
-        public void MergeColumns_ReturnsFirstList_WhenSecondListIsEmpty()
+        public void MergeColumnsToBeRemoved_ReturnsFirstList_WhenSecondListIsEmpty()
         {
             var columnsTable1 = new List<Column> { new Column("Name", "NVARCHAR(MAX)") };
             var columnsTable2 = new List<Column>();
 
-            var result = TableSchemaComparer.MergeColumns(columnsTable1, columnsTable2);
+            var result = TableSchemaComparer.MergeColumnsToBeRemoved(columnsTable1, columnsTable2);
 
             var mergedColumn = Assert.Single(result);
             Assert.Equal("Name", mergedColumn.Name);
         }
+
+        [Fact]
+        public void MergeColumnsToBeAdded_CombinesBothLists_WhenNoDuplicatesExist()
+        {
+            var columnsTable1 = new List<Column> { new Column("Name", "NVARCHAR(MAX)") };
+            var columnsTable2 = new List<Column> { new Column("Amount", "MONEY") };
+
+            var result = TableSchemaComparer.MergeColumnsToBeAdded(columnsTable1, columnsTable2);
+
+            Assert.Equal(2, result.Count);
+            Assert.Contains(result, c => c.Name == "Name");
+            Assert.Contains(result, c => c.Name == "Amount");
+        }
+
+        [Fact]
+        public void MergeColumnsToBeAdded_ExcludesDuplicates_WhenColumnNamesMatchCaseInsensitively()
+        {
+            var columnsTable1 = new List<Column> { new Column("Name", "NVARCHAR(MAX)") };
+            var columnsTable2 = new List<Column> { new Column("name", "NVARCHAR(100)") };
+
+            var result = TableSchemaComparer.MergeColumnsToBeAdded(columnsTable1, columnsTable2);
+
+            Assert.Single(result);
+            Assert.Equal("Name", result[0].Name);
+        }
+
+        [Fact]
+        public void MergeColumnsToBeAdded_ReturnsFirstList_WhenSecondListIsEmpty()
+        {
+            var columnsTable1 = new List<Column> { new Column("Name", "NVARCHAR(MAX)") };
+            var columnsTable2 = new List<Column>();
+
+            var result = TableSchemaComparer.MergeColumnsToBeAdded(columnsTable1, columnsTable2);
+
+            var mergedColumn = Assert.Single(result);
+            Assert.Equal("Name", mergedColumn.Name);
+        }
+
+        [Fact]
+        public void MergeColumnsToBeAdded_ReturnsSecondList_WhenFirstListIsEmpty()
+        {
+            var columnsTable1 = new List<Column>();
+            var columnsTable2 = new List<Column> { new Column("Amount", "MONEY") };
+
+            var result = TableSchemaComparer.MergeColumnsToBeAdded(columnsTable1, columnsTable2);
+
+            var mergedColumn = Assert.Single(result);
+            Assert.Equal("Amount", mergedColumn.Name);
+        }
+
+        [Fact]
+        public void MergeColumnsToBeAdded_NormalizesDataType_ForColumnsFromSecondList()
+        {
+            var columnsTable1 = new List<Column>();
+            var columnsTable2 = new List<Column> { new Column("Status", DataverseDataTypes.Status) };
+
+            var result = TableSchemaComparer.MergeColumnsToBeAdded(columnsTable1, columnsTable2);
+
+            var mergedColumn = Assert.Single(result);
+            Assert.Equal("Status", mergedColumn.Name);
+            Assert.Equal("INT", mergedColumn.DataType);
+        }
+
+        [Fact]
+        public void MergeColumnsToBeAdded_CombinesMultipleColumns_WithoutDuplicates()
+        {
+            var columnsTable1 = new List<Column>
+            {
+                new Column("Id", "INT"),
+                new Column("Name", "NVARCHAR(MAX)"),
+                new Column("Email", "NVARCHAR(255)")
+            };
+            var columnsTable2 = new List<Column>
+            {
+                new Column("Email", "NVARCHAR(255)"),
+                new Column("Amount", "MONEY"),
+                new Column("IsActive", "BIT")
+            };
+
+            var result = TableSchemaComparer.MergeColumnsToBeAdded(columnsTable1, columnsTable2);
+
+            Assert.Equal(5, result.Count);
+            Assert.Contains(result, c => c.Name == "Id");
+            Assert.Contains(result, c => c.Name == "Name");
+            Assert.Contains(result, c => c.Name == "Email");
+            Assert.Contains(result, c => c.Name == "Amount");
+            Assert.Contains(result, c => c.Name == "IsActive");
+        }
+
+        [Fact]
+        public void MergeColumnsToBeAdded_HandlesMixedCaseNames_CaseInsensitively()
+        {
+            var columnsTable1 = new List<Column> { new Column("ProductName", "NVARCHAR(MAX)") };
+            var columnsTable2 = new List<Column>
+            {
+                new Column("productname", "NVARCHAR(100)"),
+                new Column("PRODUCTID", "INT")
+            };
+
+            var result = TableSchemaComparer.MergeColumnsToBeAdded(columnsTable1, columnsTable2);
+
+            Assert.Equal(2, result.Count);
+            Assert.Single(result.Where(c => c.Name!.Equals("ProductName", StringComparison.OrdinalIgnoreCase)));
+            Assert.Single(result.Where(c => c.Name!.Equals("PRODUCTID", StringComparison.OrdinalIgnoreCase)));
+        }
+
+        [Fact]
+        public void MergeColumnsToBeAdded_PresservesColumnProperties_AndNormalizesDataType()
+        {
+            var columnsTable1 = new List<Column>();
+            var columnsTable2 = new List<Column>
+            {
+                new Column("Id", DataverseDataTypes.Uniqueidentifier, isPrimaryKey: true, isIdentity: true, isNullable: false),
+                new Column("Name", DataverseDataTypes.String, isPrimaryKey: false, isIdentity: false, isNullable: true)
+            };
+
+            var result = TableSchemaComparer.MergeColumnsToBeAdded(columnsTable1, columnsTable2);
+
+            Assert.Equal(2, result.Count);
+
+            var idColumn = result.FirstOrDefault(c => c.Name == "Id");
+            Assert.NotNull(idColumn);
+            Assert.Equal("UNIQUEIDENTIFIER", idColumn.DataType);
+            Assert.True(idColumn.IsPrimaryKey);
+            Assert.True(idColumn.IsIdentity);
+            Assert.False(idColumn.IsNullable);
+
+            var nameColumn = result.FirstOrDefault(c => c.Name == "Name");
+            Assert.NotNull(nameColumn);
+            Assert.Equal("NVARCHAR(MAX)", nameColumn.DataType);
+            Assert.False(nameColumn.IsPrimaryKey);
+            Assert.False(nameColumn.IsIdentity);
+            Assert.True(nameColumn.IsNullable);
+        }
+
+        [Fact]
+        public void MergeColumnsToBeAdded_ReturnsAllColumns_WhenBothListsHaveSameSize()
+        {
+            var columnsTable1 = new List<Column>
+            {
+                new Column("Column1", "INT"),
+                new Column("Column2", "NVARCHAR(MAX)")
+            };
+            var columnsTable2 = new List<Column>
+            {
+                new Column("Column3", "bit"),
+                new Column("Column4", "money")
+            };
+
+            var result = TableSchemaComparer.MergeColumnsToBeAdded(columnsTable1, columnsTable2);
+
+            Assert.Equal(4, result.Count);
+            Assert.Equal(new[] { "Column1", "Column2", "Column3", "Column4" },
+                result.Select(c => c.Name).ToList());
+        }
+
+        [Fact]
+        public void MergeColumnsToBeAdded_ReturnsEmptyList_WhenBothListsAreEmpty()
+        {
+            var columnsTable1 = new List<Column>();
+            var columnsTable2 = new List<Column>();
+
+            var result = TableSchemaComparer.MergeColumnsToBeAdded(columnsTable1, columnsTable2);
+
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void MergeColumnsToBeAdded_NormalizesMultipleDataTypes_FromSecondList()
+        {
+            var columnsTable1 = new List<Column>();
+            var columnsTable2 = new List<Column>
+            {
+                new Column("StringCol", DataverseDataTypes.String),
+                new Column("IntCol", DataverseDataTypes.Integer),
+                new Column("BoolCol", DataverseDataTypes.Boolean),
+                new Column("MoneyCol", DataverseDataTypes.Money),
+                new Column("DateCol", DataverseDataTypes.DateTime)
+            };
+
+            var result = TableSchemaComparer.MergeColumnsToBeAdded(columnsTable1, columnsTable2);
+
+            Assert.Equal(5, result.Count);
+            Assert.Equal("NVARCHAR(MAX)", result.First(c => c.Name == "StringCol").DataType);
+            Assert.Equal("INT", result.First(c => c.Name == "IntCol").DataType);
+            Assert.Equal("BIT", result.First(c => c.Name == "BoolCol").DataType);
+            Assert.Equal("MONEY", result.First(c => c.Name == "MoneyCol").DataType);
+            Assert.Equal("DATETIME", result.First(c => c.Name == "DateCol").DataType);
+        }
+
     }
 }

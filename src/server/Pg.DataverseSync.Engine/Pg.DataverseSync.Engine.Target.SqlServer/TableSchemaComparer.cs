@@ -15,7 +15,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
         {
             return sourceTable.Columns
                 .Where(c => targetTable.Columns.All(tc => !StringComparer.OrdinalIgnoreCase.Equals(tc.Name, c.Name)))
-                .Select(c => new Column(c.Name, DataTypesConverter.MapToSqlDataType(c.DataType!), c.IsPrimaryKey, c.IsNullable, c.IsIdentity))
+                .Select(c => new Column(c.Name, DataTypesConverter.MapToSqlDataType(c.DataType!), c.IsPrimaryKey, c.IsIdentity, c.IsNullable))
                 .ToList();
         }
 
@@ -38,15 +38,31 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             );
         }
 
-        internal static List<Column> MergeColumns(List<Column> columnsTable1, List<Column> columnsTable2)
+        //TODO: When changing type from NVARCHAR to INT - Column definition contains source type name
+        //and it should be a destination type
+        internal static List<Column> MergeColumnsToBeRemoved(List<Column> columnsTable1, List<Column> columnsTable2)
         {
             var mergedColumns = new List<Column>(columnsTable1);
-            var columnToAdd = columnsTable2
+            var columnsToAdd = columnsTable2
                 .Where(column => !mergedColumns
                     .Any(c => c.Name != null && c.Name.Equals(column.Name, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
 
-            mergedColumns.AddRange(columnToAdd);
+            mergedColumns.AddRange(columnsToAdd);
+            return mergedColumns;
+        }
+
+        internal static List<Column> MergeColumnsToBeAdded(List<Column> columnsTable1, List<Column> columnsTable2)
+        {
+            var mergedColumns = new List<Column>(columnsTable1);
+            columnsTable2.ForEach(c => c.DataType = DataTypesConverter.MapToSqlDataType(c.DataType));
+
+            var columnsToAdd = columnsTable2
+                .Where(column => !mergedColumns
+                    .Any(c => c.Name != null && c.Name.Equals(column.Name, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+
+            mergedColumns.AddRange(columnsToAdd);
             return mergedColumns;
         }
 
