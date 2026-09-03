@@ -9,14 +9,14 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         {
             // Arrange
             var table = new Table("Customers", "Customers", false);
-            table.Columns.Add(new Column("Id", "INT", isPrimaryKey: false, isNullable: false));
-            table.Columns.Add(new Column("Name", "NVARCHAR(100)", isNullable: true));
+            table.Columns.Add(new Column("Id", "IntegerType", isPrimaryKey: false, isNullable: false));
+            table.Columns.Add(new Column("Name", "StringType", isNullable: true));
 
             // Act
             var result = CreateTableQueryGenerator.Generate(table);
 
             // Assert
-            Assert.Equal("CREATE TABLE Customers (Id INT NOT NULL, Name NVARCHAR(100))", result);
+            Assert.Equal("CREATE TABLE Customers (Id INT NOT NULL, Name NVARCHAR(MAX))", result);
         }
 
         [Fact]
@@ -24,14 +24,14 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         {
             // Arrange
             var table = new Table("Products", "Products", false);
-            table.Columns.Add(new Column("ProductId", "INT", isPrimaryKey: true, isNullable: false));
-            table.Columns.Add(new Column("ProductName", "NVARCHAR(200)", isNullable: false));
+            table.Columns.Add(new Column("ProductId", "IntegerType", isPrimaryKey: true, isNullable: false));
+            table.Columns.Add(new Column("ProductName", "StringType", isNullable: false));
 
             // Act
             var result = CreateTableQueryGenerator.Generate(table);
 
             // Assert
-            Assert.Equal("CREATE TABLE Products (ProductId INT NOT NULL, ProductName NVARCHAR(200) NOT NULL, PRIMARY KEY (ProductId))", result);
+            Assert.Equal("CREATE TABLE Products (ProductId INT NOT NULL, ProductName NVARCHAR(MAX) NOT NULL, PRIMARY KEY (ProductId))", result);
         }
 
         [Fact]
@@ -39,14 +39,14 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         {
             // Arrange
             var table = new Table("Orders", "Orders", false);
-            table.Columns.Add(new Column("OrderId", "INT", isPrimaryKey: true, isIdentity: true, isNullable: false));
-            table.Columns.Add(new Column("OrderDate", "DATETIME2", isNullable: false));
+            table.Columns.Add(new Column("OrderId", "IntegerType", isPrimaryKey: true, isIdentity: true, isNullable: false));
+            table.Columns.Add(new Column("OrderDate", "DateTimeType", isNullable: false));
 
             // Act
             var result = CreateTableQueryGenerator.Generate(table);
 
             // Assert
-            Assert.Equal("CREATE TABLE Orders (OrderId INT IDENTITY(1,1) NOT NULL, OrderDate DATETIME2 NOT NULL, PRIMARY KEY (OrderId))", result);
+            Assert.Equal("CREATE TABLE Orders (OrderId INT IDENTITY(1,1) NOT NULL, OrderDate DATETIME NOT NULL, PRIMARY KEY (OrderId))", result);
         }
 
         [Fact]
@@ -54,13 +54,13 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         {
             // Arrange
             var table = new Table("Settings", "Settings", false);
-            table.Columns.Add(new Column("SettingKey", "NVARCHAR(50)", isPrimaryKey: true, isNullable: false));
+            table.Columns.Add(new Column("SettingKey", "StringType", isPrimaryKey: true, isNullable: false));
 
             // Act
             var result = CreateTableQueryGenerator.Generate(table);
 
             // Assert
-            Assert.Equal("CREATE TABLE Settings (SettingKey NVARCHAR(50) NOT NULL, PRIMARY KEY (SettingKey))", result);
+            Assert.Equal("CREATE TABLE Settings (SettingKey NVARCHAR(MAX) NOT NULL, PRIMARY KEY (SettingKey))", result);
         }
 
         [Fact]
@@ -68,12 +68,12 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         {
             // Arrange
             var table = new Table("Employees", "Employees", false);
-            table.Columns.Add(new Column("EmployeeId", "UNIQUEIDENTIFIER", isPrimaryKey: true, isNullable: false));
-            table.Columns.Add(new Column("FirstName", "NVARCHAR(50)", isNullable: false));
-            table.Columns.Add(new Column("LastName", "NVARCHAR(50)", isNullable: false));
-            table.Columns.Add(new Column("Email", "NVARCHAR(100)", isNullable: true));
-            table.Columns.Add(new Column("HireDate", "DATETIME2", isNullable: false));
-            table.Columns.Add(new Column("Salary", "DECIMAL(18,2)", isNullable: true));
+            table.Columns.Add(new Column("EmployeeId", "UniqueidentifierType", isPrimaryKey: true, isNullable: false));
+            table.Columns.Add(new Column("FirstName", "StringType", isNullable: false));
+            table.Columns.Add(new Column("LastName", "StringType", isNullable: false));
+            table.Columns.Add(new Column("Email", "StringType", isNullable: true));
+            table.Columns.Add(new Column("HireDate", "DateTimeType", isNullable: false));
+            table.Columns.Add(new Column("Salary", "DecimalType", isNullable: true));
 
             // Act
             var result = CreateTableQueryGenerator.Generate(table);
@@ -81,11 +81,11 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
             // Assert
             var expected = "CREATE TABLE Employees (" +
                 "EmployeeId UNIQUEIDENTIFIER NOT NULL, " +
-                "FirstName NVARCHAR(50) NOT NULL, " +
-                "LastName NVARCHAR(50) NOT NULL, " +
-                "Email NVARCHAR(100), " +
-                "HireDate DATETIME2 NOT NULL, " +
-                "Salary DECIMAL(18,2), " +
+                "FirstName NVARCHAR(MAX) NOT NULL, " +
+                "LastName NVARCHAR(MAX) NOT NULL, " +
+                "Email NVARCHAR(MAX), " +
+                "HireDate DATETIME NOT NULL, " +
+                "Salary DECIMAL(38,0), " +
                 "PRIMARY KEY (EmployeeId))";
             Assert.Equal(expected, result);
         }
@@ -95,15 +95,15 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         {
             // Arrange
             var table = new Table("Logs", "Logs", false);
-            table.Columns.Add(new Column("LogId", "INT", isPrimaryKey: true, isNullable: false));
-            table.Columns.Add(new Column("Message", "NVARCHAR(MAX)", isNullable: true));
-            table.Columns.Add(new Column("Timestamp", "DATETIME2", isNullable: true));
+            table.Columns.Add(new Column("LogId", "IntegerType", isPrimaryKey: true, isNullable: false));
+            table.Columns.Add(new Column("Message", "StringType", isNullable: true));
+            table.Columns.Add(new Column("Timestamp", "DateTimeType", isNullable: true));
 
             // Act
             var result = CreateTableQueryGenerator.Generate(table);
 
             // Assert
-            Assert.Equal("CREATE TABLE Logs (LogId INT NOT NULL, Message NVARCHAR(MAX), Timestamp DATETIME2, PRIMARY KEY (LogId))", result);
+            Assert.Equal("CREATE TABLE Logs (LogId INT NOT NULL, Message NVARCHAR(MAX), Timestamp DATETIME, PRIMARY KEY (LogId))", result);
         }
 
         [Fact]
@@ -111,15 +111,15 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         {
             // Arrange
             var table = new Table("Configurations", "Configurations", false);
-            table.Columns.Add(new Column("ConfigId", "INT", isPrimaryKey: true, isNullable: false));
-            table.Columns.Add(new Column("ConfigKey", "NVARCHAR(100)", isNullable: false));
-            table.Columns.Add(new Column("ConfigValue", "NVARCHAR(500)", isNullable: false));
+            table.Columns.Add(new Column("ConfigId", "IntegerType", isPrimaryKey: true, isNullable: false));
+            table.Columns.Add(new Column("ConfigKey", "StringType", isNullable: false));
+            table.Columns.Add(new Column("ConfigValue", "StringType", isNullable: false));
 
             // Act
             var result = CreateTableQueryGenerator.Generate(table);
 
             // Assert
-            Assert.Equal("CREATE TABLE Configurations (ConfigId INT NOT NULL, ConfigKey NVARCHAR(100) NOT NULL, ConfigValue NVARCHAR(500) NOT NULL, PRIMARY KEY (ConfigId))", result);
+            Assert.Equal("CREATE TABLE Configurations (ConfigId INT NOT NULL, ConfigKey NVARCHAR(MAX) NOT NULL, ConfigValue NVARCHAR(MAX) NOT NULL, PRIMARY KEY (ConfigId))", result);
         }
 
         [Fact]
@@ -127,15 +127,15 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         {
             // Arrange
             var table = new Table("DataTypes", "DataTypes", false);
-            table.Columns.Add(new Column("Id", "INT", isPrimaryKey: true, isNullable: false));
-            table.Columns.Add(new Column("StringCol", "NVARCHAR(MAX)", isNullable: true));
-            table.Columns.Add(new Column("IntCol", "INT", isNullable: true));
-            table.Columns.Add(new Column("BigIntCol", "BIGINT", isNullable: true));
-            table.Columns.Add(new Column("DecimalCol", "DECIMAL(18,2)", isNullable: true));
-            table.Columns.Add(new Column("FloatCol", "FLOAT", isNullable: true));
-            table.Columns.Add(new Column("BitCol", "BIT", isNullable: true));
-            table.Columns.Add(new Column("DateTimeCol", "DATETIME2", isNullable: true));
-            table.Columns.Add(new Column("UniqueIdCol", "UNIQUEIDENTIFIER", isNullable: true));
+            table.Columns.Add(new Column("Id", "IntegerType", isPrimaryKey: true, isNullable: false));
+            table.Columns.Add(new Column("StringCol", "StringType", isNullable: true));
+            table.Columns.Add(new Column("IntCol", "IntegerType", isNullable: true));
+            table.Columns.Add(new Column("BigIntCol", "BigIntType", isNullable: true));
+            table.Columns.Add(new Column("DecimalCol", "DecimalType", isNullable: true));
+            table.Columns.Add(new Column("FloatCol", "DoubleType", isNullable: true));
+            table.Columns.Add(new Column("BitCol", "BooleanType", isNullable: true));
+            table.Columns.Add(new Column("DateTimeCol", "DateTimeType", isNullable: true));
+            table.Columns.Add(new Column("UniqueIdCol", "UniqueidentifierType", isNullable: true));
 
             // Act
             var result = CreateTableQueryGenerator.Generate(table);
@@ -146,10 +146,10 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
                 "StringCol NVARCHAR(MAX), " +
                 "IntCol INT, " +
                 "BigIntCol BIGINT, " +
-                "DecimalCol DECIMAL(18,2), " +
+                "DecimalCol DECIMAL(38,0), " +
                 "FloatCol FLOAT, " +
                 "BitCol BIT, " +
-                "DateTimeCol DATETIME2, " +
+                "DateTimeCol DATETIME, " +
                 "UniqueIdCol UNIQUEIDENTIFIER, " +
                 "PRIMARY KEY (Id))";
             Assert.Equal(expected, result);
@@ -160,14 +160,14 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         {
             // Arrange
             var table = new Table("Accounts", "Accounts", false);
-            table.Columns.Add(new Column("AccountId", "UNIQUEIDENTIFIER", isPrimaryKey: true, isNullable: false));
-            table.Columns.Add(new Column("AccountName", "NVARCHAR(100)", isNullable: false));
+            table.Columns.Add(new Column("AccountId", "UniqueidentifierType", isPrimaryKey: true, isNullable: false));
+            table.Columns.Add(new Column("AccountName", "StringType", isNullable: false));
 
             // Act
             var result = CreateTableQueryGenerator.Generate(table);
 
             // Assert
-            Assert.Equal("CREATE TABLE Accounts (AccountId UNIQUEIDENTIFIER NOT NULL, AccountName NVARCHAR(100) NOT NULL, PRIMARY KEY (AccountId))", result);
+            Assert.Equal("CREATE TABLE Accounts (AccountId UNIQUEIDENTIFIER NOT NULL, AccountName NVARCHAR(MAX) NOT NULL, PRIMARY KEY (AccountId))", result);
         }
 
         [Fact]
@@ -175,15 +175,15 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         {
             // Arrange
             var table = new Table("Categories", "Categories", false);
-            table.Columns.Add(new Column("CategoryId", "INT", isPrimaryKey: true, isIdentity: true, isNullable: false));
-            table.Columns.Add(new Column("CategoryName", "NVARCHAR(100)", isNullable: false));
-            table.Columns.Add(new Column("Description", "NVARCHAR(MAX)", isNullable: true));
+            table.Columns.Add(new Column("CategoryId", "IntegerType", isPrimaryKey: true, isIdentity: true, isNullable: false));
+            table.Columns.Add(new Column("CategoryName", "StringType", isNullable: false));
+            table.Columns.Add(new Column("Description", "StringType", isNullable: true));
 
             // Act
             var result = CreateTableQueryGenerator.Generate(table);
 
             // Assert
-            Assert.Equal("CREATE TABLE Categories (CategoryId INT IDENTITY(1,1) NOT NULL, CategoryName NVARCHAR(100) NOT NULL, Description NVARCHAR(MAX), PRIMARY KEY (CategoryId))", result);
+            Assert.Equal("CREATE TABLE Categories (CategoryId INT IDENTITY(1,1) NOT NULL, CategoryName NVARCHAR(MAX) NOT NULL, Description NVARCHAR(MAX), PRIMARY KEY (CategoryId))", result);
         }
 
         [Fact]
@@ -191,7 +191,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         {
             // Arrange
             var table = new Table("dbo.MyTable", "My Table", false);
-            table.Columns.Add(new Column("Id", "INT", isPrimaryKey: true, isNullable: false));
+            table.Columns.Add(new Column("Id", "IntegerType", isPrimaryKey: true, isNullable: false));
 
             // Act
             var result = CreateTableQueryGenerator.Generate(table);
@@ -205,14 +205,14 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer.Tests
         {
             // Arrange
             var table = new Table("TestTable", "Test Table", false);
-            table.Columns.Add(new Column("Column_1", "INT", isPrimaryKey: true, isNullable: false));
-            table.Columns.Add(new Column("Column Name 2", "NVARCHAR(50)", isNullable: true));
+            table.Columns.Add(new Column("Column_1", "IntegerType", isPrimaryKey: true, isNullable: false));
+            table.Columns.Add(new Column("Column Name 2", "StringType", isNullable: true));
 
             // Act
             var result = CreateTableQueryGenerator.Generate(table);
 
             // Assert
-            Assert.Equal("CREATE TABLE TestTable (Column_1 INT NOT NULL, Column Name 2 NVARCHAR(50), PRIMARY KEY (Column_1))", result);
+            Assert.Equal("CREATE TABLE TestTable (Column_1 INT NOT NULL, Column Name 2 NVARCHAR(MAX), PRIMARY KEY (Column_1))", result);
         }
     }
 }

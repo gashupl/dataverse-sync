@@ -4,25 +4,21 @@ using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Core.Model;
-using Pg.DataverseSync.Engine.Application.Source;
+using Pg.DataverseSync.Engine.Application.Data;
 using System.ServiceModel;
 
 namespace Pg.DataverseSync.Engine.Source
 {
-    public class MetadataReader : IMetadataReader
+    public class MetadataRepository : DataRepositoryBase, IMetadataRepository
     {
-        private readonly IOrganizationService _service;
-        private readonly ILogger<MetadataReader> _logger;
-
-        public MetadataReader(IOrganizationService service, ILogger<MetadataReader> logger)
+        public MetadataRepository(IOrganizationService service, ILogger<MetadataRepository> logger) 
+            : base(service, logger)
         {
-            _service = service; 
-            _logger = logger;
         }
 
         public List<Table>? GetTables()
         {
-            _logger.LogInformation("Retrieving table metadata from Dataverse...");
+            LogIfEnabled(LogLevel.Information, "Retrieving table metadata from Dataverse...");
 
             try
             {
@@ -32,7 +28,7 @@ namespace Pg.DataverseSync.Engine.Source
                     RetrieveAsIfPublished = true
                 };
 
-                var response = (RetrieveAllEntitiesResponse)_service.Execute(request);
+                var response = (RetrieveAllEntitiesResponse)service.Execute(request);
                 var tables = new List<Table>();
 
                 foreach (var entityMetadata in response.EntityMetadata)
@@ -44,33 +40,32 @@ namespace Pg.DataverseSync.Engine.Source
                     tables.Add(new Table(logicalName, displayName, isActivity));
                 }
 
-                _logger.LogInformation("Retrieved {Count} tables from Dataverse.", tables.Count);
+                LogIfEnabled(LogLevel.Information, "Retrieved {TableCount} tables from Dataverse.", tables.Count);
                 return tables;
             }
             catch (FaultException<OrganizationServiceFault> ex)
             {
-                var msg = $"Dataverse service fault while retrieving tables. " +
-                    $"Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}"; 
-                _logger.LogError(ex, msg);
+                var msg = $"Dataverse service fault while retrieving tables. Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}"; 
+                LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex); 
             }
             catch (TimeoutException ex)
             {
                 var msg = "Timeout while retrieving tables from Dataverse. Consider increasing the timeout settings.";
-                _logger.LogError(ex, msg);
+                LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }
             catch (Exception ex)
             {
                 var msg = "An unexpected error occurred while retrieving tables from Dataverse.";
-                _logger.LogError(ex, msg);
+                LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }
         }
 
         public List<Column> GetColumns(string tableName)
         {
-            _logger.LogInformation("Retrieving columns metadata from Dataverse table {tableName}...", tableName);
+            LogIfEnabled(LogLevel.Information, "Retrieving columns metadata from Dataverse table {TableName}...", tableName);
 
             try
             {
@@ -81,7 +76,7 @@ namespace Pg.DataverseSync.Engine.Source
                     RetrieveAsIfPublished = true
                 };
 
-                var response = (RetrieveEntityResponse)_service.Execute(request);
+                var response = (RetrieveEntityResponse)service.Execute(request);
                 var columns = new List<Column>();
 
                 foreach (var attributeMetadata in response.EntityMetadata.Attributes)
@@ -97,23 +92,22 @@ namespace Pg.DataverseSync.Engine.Source
             }
             catch (FaultException<OrganizationServiceFault> ex)
             {
-                var msg = $"Dataverse service fault while retrieving columns metadata from  Dataverse table {tableName}. " +
-                    $"Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}";
-                _logger.LogError(ex, msg);
+                var msg = $"Dataverse service fault while retrieving columns metadata from Dataverse table {tableName}. Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}";
+                LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }
             catch (TimeoutException ex)
             {
                 var msg = 
                     $"Timeout while retrieving columns metadata from Dataverse table {tableName}. Consider increasing the timeout settings.";
-                _logger.LogError(ex, msg);
+                LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }
             catch (Exception ex)
             {
                 var msg = 
                     $"An unexpected error occurred while retrieving columns metadata from Dataverse table {tableName}";
-                _logger.LogError(ex, msg);
+                LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }
 

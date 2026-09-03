@@ -5,16 +5,17 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
     internal class CreateTableQueryGenerator
     {
-        //TODO: Use mapping to map dataverse data types to sql server data types
         internal static string Generate(Table table)
         {
             StringBuilder query = new StringBuilder();
             query.Append($"CREATE TABLE {table.Name} (");
 
-            for (int i = 0; i < table.Columns.Count; i++)
+            var validColumns = table.Columns.Where(c => c != null).ToList();
+            for (int i = 0; i < validColumns.Count; i++)
             {
-                Column column = table.Columns[i];
-                query.Append($"{column.Name} {column.DataType}");
+                Column column = validColumns[i];
+                var dataType = DataTypesConverter.MapToSqlDataType(column.DataType!);
+                query.Append($"{column.Name} {dataType}");
 
                 if (column.IsIdentity)
                 {
@@ -26,14 +27,14 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                     query.Append(" NOT NULL");
                 }
 
-                if (i < table.Columns.Count - 1)
+                if (i < validColumns.Count - 1)
                 {
                     query.Append(", ");
                 }
             }
 
             //Add primary key constraint
-            Column? primaryKeyColumn = table.Columns.Find(c => c.IsPrimaryKey);
+            Column? primaryKeyColumn = table.Columns.Find(c => c != null && c.IsPrimaryKey);
             if (primaryKeyColumn != null)
             {
                 query.Append($", PRIMARY KEY ({primaryKeyColumn.Name})");

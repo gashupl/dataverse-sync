@@ -1,34 +1,62 @@
 ﻿using Microsoft.Extensions.Logging;
-using Pg.DataverseSync.Engine.Application.Source;
+using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Core.Model;
+using Pg.DataverseSync.Engine.Core.Schema;
 
 namespace Pg.DataverseSync.Engine.Application
 {
-    public class SourceMetadataService : ISourceMetadataService
+    public class SourceMetadataService : LoggingServiceBase<SourceMetadataService>, ISourceMetadataService
     {
-        private readonly IMetadataReader _metadataReader;
-        private readonly ILogger _logger;
-        public SourceMetadataService(IMetadataReader metadataReader, ILogger<SourceMetadataService> logger)
+        private readonly IMetadataRepository _metadataRepo;
+        private readonly IDataRepository _dataRepository; 
+
+        public SourceMetadataService(IMetadataRepository metadataRepo, 
+            IDataRepository dataRepository, ILogger<SourceMetadataService> logger)
+            : base(logger)
         {
-            _metadataReader = metadataReader;
-            _logger = logger;
+            _metadataRepo = metadataRepo;   
+            _dataRepository = dataRepository;
         }
 
-        public List<Table>? GetTables()
+        public List<string> GetSynchronizedTableNames()
         {
-            _logger.LogInformation("Getting tables from source metadata service...");
+            var names = _dataRepository
+                .GetActiveSyncTables().Select(t => t.Attributes[SyncTable.Columns.Name] as string)
+                .Where(n => n != null);
+
+            return names.ToList()!; 
+        }
+
+        public List<Table>? GetTables(List<string> tableNames)
+        {
+            LogIfEnabled(LogLevel.Information, "Getting tables from source metadata service...");
             try
             {
-                var tables = _metadataReader.GetTables();
-                _logger.LogInformation("Successfully retrieved {Count} table.", tables?.Count);
-                return tables; 
+                var allTables = _metadataRepo.GetTables();
+                if(allTables == null || allTables.Count == 0)
+                {
+                    LogIfEnabled(LogLevel.Warning, "No tables found in source metadata service.");
+                    return null; 
+                }
+                else
+                {
+                    var tables = allTables.Where(t => tableNames.Contains(t.Name)); 
+                    foreach (var table in tables)
+                    {
+                        table.Columns = _metadataRepo.GetColumns(table.Name);
+                        LogIfEnabled(LogLevel.Information, "Successfully retrieved {ColumnCount} columns for table {TableName}.", table.Columns.Count, table.Name);
+                    }
+                    LogIfEnabled(LogLevel.Information, "Successfully retrieved {TableCount} table.", tables.Count());
+                    return tables.ToList();
+                }
+                
 
             }
             catch(ReadMetadataException ex)
             {
                 var message = "An error occurred while reading metadata for tables.";
-                _logger.LogError(ex, message);
+                LogIfEnabled(LogLevel.Error, ex, message);
                 throw new ApplicationServiceException(message, ex);
             }
         }

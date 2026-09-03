@@ -1,8 +1,8 @@
 ﻿using Pg.DataverseSync.Engine.Core.Model;
 
-namespace Pg.DataverseSync.Engine.Application.Source
+namespace Pg.DataverseSync.Engine.Application.Data
 {
-    public interface IMetadataReader
+    public interface IMetadataRepository
     {
         List<Table>? GetTables();
 

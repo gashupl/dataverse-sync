@@ -2,13 +2,13 @@
 {
     public class Column
     {
-        public string Name { get; }
-        public string? DataType { get; }
-        public bool IsPrimaryKey { get; }
-        public bool IsIdentity { get; }
-        public bool IsNullable { get; }
+        public string? Name { get; set; }
+        public string? DataType { get; set; }
+        public bool IsPrimaryKey { get; set; }
+        public bool IsIdentity { get; set; }
+        public bool IsNullable { get; set; }
 
-        public Column(string name, string? dataType, bool isPrimaryKey = false, bool isIdentity = false, bool isNullable = true)
+        public Column(string? name, string? dataType, bool isPrimaryKey = false, bool isIdentity = false, bool isNullable = true)
         {
             Name = name;
             DataType = dataType;

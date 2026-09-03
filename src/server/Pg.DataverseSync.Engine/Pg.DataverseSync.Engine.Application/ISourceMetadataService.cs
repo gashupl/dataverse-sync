@@ -4,6 +4,8 @@ namespace Pg.DataverseSync.Engine.Application
 {
     public interface ISourceMetadataService
     {
-        List<Table>? GetTables();
+        List<string> GetSynchronizedTableNames();
+
+        List<Table>? GetTables(List<string> tableNames);
     }
 }

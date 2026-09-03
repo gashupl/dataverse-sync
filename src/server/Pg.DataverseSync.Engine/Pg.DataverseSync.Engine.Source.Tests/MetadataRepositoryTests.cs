@@ -9,14 +9,14 @@ using System.ServiceModel;
 
 namespace Pg.DataverseSync.Engine.Source.Tests
 {
-    public class MetadataReaderTests
+    public class MetadataRepositoryTests
     {
         [Fact]
         public void GetTables_SuccessfullExecute_ReturnListOfTables()
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<MetadataReader>>();
+            var mockLogger = Substitute.For<ILogger<MetadataRepository>>();
 
             var entityMetadata1 = new EntityMetadata
             {
@@ -42,10 +42,10 @@ namespace Pg.DataverseSync.Engine.Source.Tests
 
             mockService.Execute(Arg.Any<RetrieveAllEntitiesRequest>()).Returns(response);
 
-            var metadataReader = new MetadataReader(mockService, mockLogger);
+            var metadataRepo = new MetadataRepository(mockService, mockLogger);
 
             // Act
-            var result = metadataReader.GetTables();
+            var result = metadataRepo.GetTables();
 
             // Assert
             Assert.NotNull(result);
@@ -65,17 +65,17 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<MetadataReader>>();
+            var mockLogger = Substitute.For<ILogger<MetadataRepository>>();
             var faultException = new FaultException<OrganizationServiceFault>(new OrganizationServiceFault
             {
                 ErrorCode = -2147220969,
                 Message = "An error occurred while processing the request."
             });
             mockService.Execute(Arg.Any<RetrieveAllEntitiesRequest>()).Throws(faultException);
-            var metadataReader = new MetadataReader(mockService, mockLogger);
+            var metadataRepo = new MetadataRepository(mockService, mockLogger);
 
             // Act & Assert
-            var exception = Assert.Throws<ReadMetadataException>(() => metadataReader.GetTables());
+            var exception = Assert.Throws<ReadMetadataException>(() => metadataRepo.GetTables());
             Assert.Contains("Dataverse service fault while retrieving tables", exception.Message);
             Assert.IsType<FaultException<OrganizationServiceFault>>(exception.InnerException);
         }
@@ -85,12 +85,12 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<MetadataReader>>();
+            var mockLogger = Substitute.For<ILogger<MetadataRepository>>();
             mockService.Execute(Arg.Any<RetrieveAllEntitiesRequest>()).Throws(new TimeoutException("The operation has timed out."));
-            var metadataReader = new MetadataReader(mockService, mockLogger);
+            var metadataRepo = new MetadataRepository(mockService, mockLogger);
 
             // Act & Assert
-            var exception = Assert.Throws<ReadMetadataException>(() => metadataReader.GetTables());
+            var exception = Assert.Throws<ReadMetadataException>(() => metadataRepo.GetTables());
             Assert.Contains("Timeout while retrieving tables from Dataverse", exception.Message);
             Assert.IsType<TimeoutException>(exception.InnerException);
         }
@@ -100,12 +100,12 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<MetadataReader>>();
+            var mockLogger = Substitute.For<ILogger<MetadataRepository>>();
             mockService.Execute(Arg.Any<RetrieveAllEntitiesRequest>()).Throws(new Exception("Unexpected error"));
-            var metadataReader = new MetadataReader(mockService, mockLogger);
+            var metadataRepo = new MetadataRepository(mockService, mockLogger);
 
             // Act & Assert
-            var exception = Assert.Throws<ReadMetadataException>(() => metadataReader.GetTables());
+            var exception = Assert.Throws<ReadMetadataException>(() => metadataRepo.GetTables());
             Assert.Contains("An unexpected error occurred while retrieving tables from Dataverse", exception.Message);
             Assert.IsType<Exception>(exception.InnerException);
         }
@@ -115,7 +115,7 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<MetadataReader>>();
+            var mockLogger = Substitute.For<ILogger<MetadataRepository>>();
 
             var attribute1 = new StringAttributeMetadata
             {
@@ -146,10 +146,10 @@ namespace Pg.DataverseSync.Engine.Source.Tests
 
             mockService.Execute(Arg.Any<RetrieveEntityRequest>()).Returns(response);
 
-            var metadataReader = new MetadataReader(mockService, mockLogger);
+            var metadataRepo = new MetadataRepository(mockService, mockLogger);
 
             // Act
-            var result = metadataReader.GetColumns("account");
+            var result = metadataRepo.GetColumns("account");
 
             // Assert
             Assert.NotNull(result);
@@ -171,17 +171,17 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<MetadataReader>>();
+            var mockLogger = Substitute.For<ILogger<MetadataRepository>>();
             var faultException = new FaultException<OrganizationServiceFault>(new OrganizationServiceFault
             {
                 ErrorCode = -2147220969,
                 Message = "An error occurred while processing the request."
             });
             mockService.Execute(Arg.Any<RetrieveEntityRequest>()).Throws(faultException);
-            var metadataReader = new MetadataReader(mockService, mockLogger);
+            var metadataRepo = new MetadataRepository(mockService, mockLogger);
 
             // Act & Assert
-            var exception = Assert.Throws<ReadMetadataException>(() => metadataReader.GetColumns("account"));
+            var exception = Assert.Throws<ReadMetadataException>(() => metadataRepo.GetColumns("account"));
             Assert.IsType<FaultException<OrganizationServiceFault>>(exception.InnerException);
         }
 
@@ -190,12 +190,12 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<MetadataReader>>();
+            var mockLogger = Substitute.For<ILogger<MetadataRepository>>();
             mockService.Execute(Arg.Any<RetrieveEntityRequest>()).Throws(new TimeoutException("The operation has timed out."));
-            var metadataReader = new MetadataReader(mockService, mockLogger);
+            var metadataRepo = new MetadataRepository(mockService, mockLogger);
 
             // Act & Assert
-            var exception = Assert.Throws<ReadMetadataException>(() => metadataReader.GetColumns("account"));
+            var exception = Assert.Throws<ReadMetadataException>(() => metadataRepo.GetColumns("account"));
             Assert.IsType<TimeoutException>(exception.InnerException);
         }
 
@@ -204,12 +204,12 @@ namespace Pg.DataverseSync.Engine.Source.Tests
         {
             // Arrange
             var mockService = Substitute.For<IOrganizationService>();
-            var mockLogger = Substitute.For<ILogger<MetadataReader>>();
+            var mockLogger = Substitute.For<ILogger<MetadataRepository>>();
             mockService.Execute(Arg.Any<RetrieveEntityRequest>()).Throws(new Exception("Unexpected error"));
-            var metadataReader = new MetadataReader(mockService, mockLogger);
+            var metadataRepo = new MetadataRepository(mockService, mockLogger);
 
             // Act & Assert
-            var exception = Assert.Throws<ReadMetadataException>(() => metadataReader.GetColumns("account"));
+            var exception = Assert.Throws<ReadMetadataException>(() => metadataRepo.GetColumns("account"));
             Assert.IsType<Exception>(exception.InnerException);
         }
     }

@@ -9,7 +9,7 @@ using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Engine.Application;
 using Pg.DataverseSync.Engine.Application.ExecutionContext;
 using Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers;
-using Pg.DataverseSync.Engine.Application.Source;
+using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Source;
 using Pg.DataverseSync.Engine.Target;
 using Pg.DataverseSync.Engine.Target.SqlServer;
@@ -54,8 +54,11 @@ internal static class Program
             return serviceClient;
         });
 
-        builder.Services.AddScoped<IMetadataReader, MetadataReader>();
+        builder.Services.AddScoped<IDataRepository, DataRepository>();
+        builder.Services.AddScoped<IMetadataRepository, MetadataRepository>();
         builder.Services.AddScoped<ISourceMetadataService, SourceMetadataService>();
+        builder.Services.AddScoped<ISyncMetadataService, SyncMetadataService>();
+        builder.Services.AddScoped<ITargetSchemaService, TargetSchemaService>();
 
         // Register execution context handlers
         builder.Services.AddScoped<IExecutionContextHandler, CreateExecutionContextHandler>();
@@ -67,21 +70,20 @@ internal static class Program
 
         //TODO: Reference to target data structure service should be injected based on configuration
         //(e.g. SQL Server, Synapse, etc.) in the future
-        builder.Services.AddScoped<IDatabaseSchemaRepository>(sp =>
+        builder.Services.AddScoped<ITargetSchemaRepository>(sp =>
         {
             var configuration = sp.GetRequiredService<IConfiguration>();
-            var connectionString = configuration["SqlServerConnectionString"];
+            var connectionString = configuration["TargetDatabaseConnectionString"];
 
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new InvalidOperationException("SqlServerConnectionString is not configured.");
+                throw new InvalidOperationException("TargetDatabaseConnectionString is not configured.");
             }
 
             var logger = sp.GetRequiredService<ILogger<DatabaseSchemaRepository>>();
 
             return new DatabaseSchemaRepository(connectionString, logger);
         });
-        builder.Services.AddScoped<ITargetDataStructureService, TargetDataStructureService>();
 
         builder.Build().Run();
     }

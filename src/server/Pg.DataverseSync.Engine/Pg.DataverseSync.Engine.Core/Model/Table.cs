@@ -9,7 +9,7 @@
 
         public bool IsActivity { get; }
 
-        public List<Column> Columns { get; }
+        public List<Column> Columns { get; set; }
 
         public Table(string name, string displayName, bool isActivity)
         {            

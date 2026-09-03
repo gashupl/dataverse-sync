@@ -5,7 +5,8 @@
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "ServiceBusConnectionString": "Endpoint=sb://localhost:5672/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentStorage=true",
     "DataverseConnectionString": "AuthType=ClientSecret;Url=https://your-environment.crm.dynamics.com;ClientId=your-client-id;ClientSecret=your-client-secret",
-    "TargetDatabaseConnectionString": "Server=.;Database=YourDatabase;Integrated Security=true;"
+    "TargetDatabaseConnectionString": "Server=.;Database=YourDatabase;Integrated Security=true;",
+    "SchemaSyncSchedule": "0 0 * * * *"
   },
   "Host": {
     "CORS": "*",
