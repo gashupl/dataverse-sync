@@ -9,7 +9,7 @@ param(
 )
 
 # Set variables based on environment
-$ResourceGroupName = "rg-dvsync-$Environment"
+$ResourceGroupName = "rg-$Environment-pgaszewski"
 $Location = "West Europe"  # Changed to support Flex Consumption
 
 # Set script location and template paths
