@@ -51,7 +51,7 @@ jobs:
     uses: ./.github/workflows/azure-infrastructure-release-template.yml
     secrets: inherit  # Pass all secrets to reusable workflow
     with:
-      environment: 'test'
+      environment: 'dev'
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
   deploy-azure-code:
@@ -60,5 +60,5 @@ jobs:
     uses: ./.github/workflows/azure-code-release-template.yml
     secrets: inherit  # Pass all secrets to reusable workflow
     with:
-      environment: 'test'
+      environment: 'dev'
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
