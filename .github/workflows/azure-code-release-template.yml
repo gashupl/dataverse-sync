@@ -49,7 +49,7 @@ jobs:
         run: |
           # Deploy Azure Functions using Azure CLI zip deployment
           $functionAppName = "func-dvsync-engine-${{ inputs.environment }}"
-          $resourceGroup = "rg-dvsync-${{ inputs.environment }}"
+          $resourceGroup = "rg-${{ inputs.environment }}-pgaszewski"
           
           Write-Host "Deploying Azure Functions to: $functionAppName"
           Write-Host "Resource Group: $resourceGroup"
