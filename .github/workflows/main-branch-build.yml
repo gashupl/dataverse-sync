@@ -55,8 +55,9 @@ jobs:
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
   deploy-azure-code:
-    if: ${{ inputs.release-azure-code }}
-    needs: build
+    # Requires build success; if deploy-azure-infrastructure didn't run it's ignored, otherwise it must have succeeded
+    if: ${{ !cancelled() && needs.build.result == 'success' && inputs.release-azure-code && (needs.deploy-azure-infrastructure.result == 'success' || needs.deploy-azure-infrastructure.result == 'skipped') }}
+    needs: [build, deploy-azure-infrastructure]
     uses: ./.github/workflows/azure-code-release-template.yml
     secrets: inherit  # Pass all secrets to reusable workflow
     with:
