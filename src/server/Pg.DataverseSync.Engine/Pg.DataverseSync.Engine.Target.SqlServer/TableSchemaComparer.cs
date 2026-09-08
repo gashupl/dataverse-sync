@@ -38,8 +38,6 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             );
         }
 
-        //TODO: When changing type from NVARCHAR to INT - Column definition contains source type name
-        //and it should be a destination type
         internal static List<Column> MergeColumnsToBeRemoved(List<Column> columnsTable1, List<Column> columnsTable2)
         {
             var mergedColumns = new List<Column>(columnsTable1);
