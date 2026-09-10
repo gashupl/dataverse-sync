@@ -21,6 +21,11 @@
           "entitySetName": "Environment",
           "logicalName": "environment_39a902ba",
           "isHidden": false
+        },
+        "serviceendpoints": {
+          "entitySetName": "serviceendpoints",
+          "logicalName": "serviceendpoint",
+          "isHidden": false
         }
       },
       "environmentVariableName": ""

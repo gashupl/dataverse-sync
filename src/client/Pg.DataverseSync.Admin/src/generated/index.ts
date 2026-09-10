@@ -7,7 +7,9 @@
 export * as CommonModels from './models/CommonModels';
 export * as Pg_gettablesModel from './models/Pg_gettablesModel';
 export * as Pg_synctablesModel from './models/Pg_synctablesModel';
+export * as ServiceendpointsModel from './models/ServiceendpointsModel';
 
 // Services
 export * from './services/Pg_gettablesService';
 export * from './services/Pg_synctablesService';
+export * from './services/ServiceendpointsService';

@@ -29,5 +29,12 @@ export const dataSourcesInfo = {
     "primaryKey": "pg_synctableid",
     "dataSourceType": "Dataverse",
     "apis": {}
+  },
+  "serviceendpoints": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "serviceendpointid",
+    "dataSourceType": "Dataverse",
+    "apis": {}
   }
 };
