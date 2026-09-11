@@ -2,6 +2,7 @@ import './App.css'
 import { useTables } from './hooks/useTables'
 import { useSaveTables } from './hooks/useSaveTables'
 import { TableList } from './components/TableList'
+import { ServiceEndpointDetails } from './components/ServiceEndpointDetails'
 
 function App() {
   const { tables, loading, error, refresh } = useTables();
@@ -15,6 +16,7 @@ function App() {
   return (
     <>
       <div>
+        <ServiceEndpointDetails />
         <TableList
           tables={tables}
           loading={loading}
