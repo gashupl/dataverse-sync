@@ -5,6 +5,20 @@
  */
 
 export const dataSourcesInfo = {
+  "environmentvariabledefinitions": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "environmentvariabledefinitionid",
+    "dataSourceType": "Dataverse",
+    "apis": {}
+  },
+  "environmentvariablevalues": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "environmentvariablevalueid",
+    "dataSourceType": "Dataverse",
+    "apis": {}
+  },
   "pg_gettables": {
     "tableId": "",
     "version": "",
