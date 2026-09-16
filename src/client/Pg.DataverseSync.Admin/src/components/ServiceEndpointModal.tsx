@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { ServiceendpointsService } from '../generated/services/ServiceendpointsService';
 import { EnvironmentvariabledefinitionsService } from '../generated/services/EnvironmentvariabledefinitionsService';
 import { EnvironmentvariablevaluesService } from '../generated/services/EnvironmentvariablevaluesService';
@@ -86,90 +86,108 @@ export function ServiceEndpointModal({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = async (e: React.FormEvent) => {
+  const updateExistingEndpoint = async (id: string): Promise<boolean> => {
+    const updateData: Partial<Omit<ServiceendpointsBase, 'serviceendpointid'>> = {
+      name: formData.name,
+      namespaceaddress: formData.namespaceAddress,
+      path: formData.queueName,
+      saskeyname: formData.sasKeyName,
+    };
+
+    if (formData.sasKey.trim() !== '') {
+      updateData.saskey = formData.sasKey;
+    }
+
+    const updateResult = await ServiceendpointsService.update(id, updateData);
+
+    if (!updateResult.success) {
+      console.log(updateResult.error?.message);
+      return false;
+    }
+
+    return true;
+  };
+
+  const syncEndpointEnvironmentVariable = async (createdId: string) => {
+    const definitionResult = await EnvironmentvariabledefinitionsService.getAll({
+      select: ['environmentvariabledefinitionid'],
+      filter: "schemaname eq 'pg_dataversesyncendpointid'",
+    });
+
+    const definition = definitionResult.data?.[0];
+
+    if (!definition) {
+      return;
+    }
+
+    const valueResult = await EnvironmentvariablevaluesService.getAll({
+      select: ['environmentvariablevalueid'],
+      filter: `_environmentvariabledefinitionid_value eq ${definition.environmentvariabledefinitionid}`,
+    });
+
+    const existingValue = valueResult.data?.[0];
+
+    if (existingValue) {
+      await EnvironmentvariablevaluesService.update(existingValue.environmentvariablevalueid, {
+        value: createdId,
+      });
+    }
+    else {
+      await EnvironmentvariablevaluesService.create({
+        value: createdId,
+        'EnvironmentVariableDefinitionId@odata.bind': `/environmentvariabledefinitions(${definition.environmentvariabledefinitionid})`,
+      } as unknown as Omit<EnvironmentvariablevaluesBase, 'environmentvariablevalueid'>);
+    }
+  };
+
+  const createNewEndpoint = async (): Promise<boolean> => {
+    const newEndpoint: Omit<ServiceendpointsBase, 'serviceendpointid' | 'iscustomizable'> = {
+      name: formData.name,
+      namespaceaddress: formData.namespaceAddress,
+      path: formData.queueName,
+      saskeyname: formData.sasKeyName,
+      saskey: formData.sasKey,
+      contract: 6, // Queue (Persistent)
+      messageformat: 2, // JSON
+      authtype: 2, // SASKey
+      userclaim: 2, // UserID
+      connectionmode: 1, // Normal
+      namespaceformat: 2, // Namespace Address
+      solutionnamespace: '',
+    };
+
+    const createResult = await ServiceendpointsService.create(
+      newEndpoint as unknown as Omit<ServiceendpointsBase, 'serviceendpointid'>
+    );
+
+    if (!createResult.success) {
+      console.log(createResult.error?.message);
+      return false;
+    }
+
+    const createdId = createResult.data?.serviceendpointid;
+
+    if (createdId) {
+      await syncEndpointEnvironmentVariable(createdId);
+    }
+
+    return true;
+  };
+
+  const handleSave = async (e: FormEvent) => {
     e.preventDefault();
 
     setSaving(true);
     setError(null);
 
     try {
-      if (endpointId) {
-        const updateData: Partial<Omit<ServiceendpointsBase, 'serviceendpointid'>> = {
-          name: formData.name,
-          namespaceaddress: formData.namespaceAddress,
-          path: formData.queueName,
-          saskeyname: formData.sasKeyName,
-        };
+      const success = endpointId
+        ? await updateExistingEndpoint(endpointId)
+        : await createNewEndpoint();
 
-        if (formData.sasKey.trim() !== '') {
-          updateData.saskey = formData.sasKey;
-        }
-
-        const updateResult = await ServiceendpointsService.update(endpointId, updateData);
-
-        if (!updateResult.success) {
-          console.log(updateResult.error?.message);
-          setError('Failed to save service endpoint');
-          return;
-        }
-      }
-      else {
-        const newEndpoint: Omit<ServiceendpointsBase, 'serviceendpointid' | 'iscustomizable'> = {
-          name: formData.name,
-          namespaceaddress: formData.namespaceAddress,
-          path: formData.queueName,
-          saskeyname: formData.sasKeyName,
-          saskey: formData.sasKey,
-          contract: 6, // Queue (Persistent)
-          messageformat: 2, // JSON
-          authtype: 2, // SASKey
-          userclaim: 2, // UserID
-          connectionmode: 1, // Normal
-          namespaceformat: 2, // Namespace Address
-          solutionnamespace: '',
-        };
-
-        const createResult = await ServiceendpointsService.create(
-          newEndpoint as unknown as Omit<ServiceendpointsBase, 'serviceendpointid'>
-        );
-
-        if (!createResult.success) {
-          console.log(createResult.error?.message);
-          setError('Failed to save service endpoint');
-          return;
-        }
-
-        const createdId = createResult.data?.serviceendpointid;
-
-        if (createdId) {
-          const definitionResult = await EnvironmentvariabledefinitionsService.getAll({
-            select: ['environmentvariabledefinitionid'],
-            filter: "schemaname eq 'pg_dataversesyncendpointid'",
-          });
-
-          const definition = definitionResult.data?.[0];
-
-          if (definition) {
-            const valueResult = await EnvironmentvariablevaluesService.getAll({
-              select: ['environmentvariablevalueid'],
-              filter: `_environmentvariabledefinitionid_value eq ${definition.environmentvariabledefinitionid}`,
-            });
-
-            const existingValue = valueResult.data?.[0];
-
-            if (existingValue) {
-              await EnvironmentvariablevaluesService.update(existingValue.environmentvariablevalueid, {
-                value: createdId,
-              });
-            }
-            else {
-              await EnvironmentvariablevaluesService.create({
-                value: createdId,
-                'EnvironmentVariableDefinitionId@odata.bind': `/environmentvariabledefinitions(${definition.environmentvariabledefinitionid})`,
-              } as unknown as Omit<EnvironmentvariablevaluesBase, 'environmentvariablevalueid'>);
-            }
-          }
-        }
+      if (!success) {
+        setError('Failed to save service endpoint');
+        return;
       }
 
       onSaved();
