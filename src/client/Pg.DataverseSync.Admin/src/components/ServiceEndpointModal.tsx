@@ -39,10 +39,12 @@ export function ServiceEndpointModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const hasEndpointId = Boolean(endpointId && endpointId.trim() !== '');
+
   useEffect(() => {
     let ignore = false;
 
-    if (!isOpen || !endpointId) {
+    if (!isOpen || !hasEndpointId || !endpointId) {
       return;
     }
 
@@ -181,7 +183,7 @@ export function ServiceEndpointModal({
     setError(null);
 
     try {
-      const success = endpointId
+      const success = hasEndpointId && endpointId
         ? await updateExistingEndpoint(endpointId)
         : await createNewEndpoint();
 
@@ -208,7 +210,7 @@ export function ServiceEndpointModal({
   return (
     <div className="service-endpoint-modal-overlay">
       <div className="service-endpoint-modal">
-        <h3>{endpointId ? 'Edit Service Endpoint' : 'New Service Endpoint'}</h3>
+        <h3>{hasEndpointId ? 'Edit Service Endpoint' : 'New Service Endpoint'}</h3>
 
         {loading && <div className="service-endpoint-loading">Loading endpoint details...</div>}
         {error && <div className="service-endpoint-error">Error: {error}</div>}
@@ -264,16 +266,18 @@ export function ServiceEndpointModal({
               <input
                 id="endpoint-saskey"
                 type="password"
-                required={!endpointId}
+                required={!hasEndpointId}
                 value={formData.sasKey}
                 onChange={(e) => handleChange('sasKey', e.target.value)}
               />
             </div>
 
             <div className="service-endpoint-modal-actions">
-              <button type="button" onClick={onClose} disabled={saving}>
-                Cancel
-              </button>
+              {hasEndpointId && (
+                <button type="button" onClick={onClose} disabled={saving}>
+                  Cancel
+                </button>
+              )}
               <button type="submit" disabled={saving}>
                 {saving ? 'Saving...' : 'Save'}
               </button>
