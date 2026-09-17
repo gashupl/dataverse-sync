@@ -13,9 +13,14 @@ export function ServiceEndpointDetails() {
     }
   }, [loading, value]);
 
-  const label = loading
-    ? 'Loading service endpoint details...'
-    : (value ? '' : 'No Service Endpoint configured.');
+  let label = '';
+
+  if (loading) {
+    label = 'Loading service endpoint details...';
+  }
+  else if (!value) {
+    label = 'No Service Endpoint configured.';
+  }
 
   const handleOpenModal = () => {
     setIsModalOpen(true);

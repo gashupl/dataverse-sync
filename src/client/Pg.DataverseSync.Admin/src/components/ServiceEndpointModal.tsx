@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from 'react';
+import { useState, useEffect, type SubmitEvent } from 'react';
 import { ServiceendpointsService } from '../generated/services/ServiceendpointsService';
 import { EnvironmentvariabledefinitionsService } from '../generated/services/EnvironmentvariabledefinitionsService';
 import { EnvironmentvariablevaluesService } from '../generated/services/EnvironmentvariablevaluesService';
@@ -176,7 +176,7 @@ export function ServiceEndpointModal({
     return true;
   };
 
-  const handleSave = async (e: FormEvent) => {
+  const handleSave = async (e: SubmitEvent) => {
     e.preventDefault();
 
     setSaving(true);
