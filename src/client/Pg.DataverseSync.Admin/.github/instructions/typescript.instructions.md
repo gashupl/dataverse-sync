@@ -38,3 +38,6 @@ try {
 
 ## Logical separation with empty lines
 Use a single empty line to visually separate logically distinct sections within a function or block. For example, separate variable declarations from the logic that uses them, separate distinct steps in a multi-step operation, and separate the return statement from the preceding logic.
+
+## Avoid deprecated APIs
+Do not use deprecated APIs (e.g. the global `React.FormEvent` namespace access instead of importing the `FormEvent` type). Prefer the current, non-deprecated equivalent. If a deprecated API appears to be the only viable option, ask the user for confirmation before using it.

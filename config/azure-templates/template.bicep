@@ -7,6 +7,9 @@ param location string
 @description('The name of the Function App')
 param functionAppName string
 
+@description('The name of the Service Bus')
+param serviceBusName string
+
 @description('The .NET version for the runtime stack')
 @allowed([
   '8'
@@ -21,6 +24,7 @@ param environmentSuffix string
 
 // Variables for resource names following Azure naming conventions
 var fullFunctionAppName = '${functionAppName}-${environmentSuffix}'
+var fullServiceBusName = '${serviceBusName}-${environmentSuffix}'
 var storageAccountName = 'st${replace(fullFunctionAppName, '-', '')}${environmentSuffix}'
 var appInsightsName = 'appi-${fullFunctionAppName}'
 var appServicePlanName = 'asp-${fullFunctionAppName}'
@@ -155,6 +159,34 @@ resource storageRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-
   }
 }
 
+// Service Bus Namespace
+resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2022-10-01-preview' = {
+  name: fullServiceBusName
+  location: location
+  sku: {
+    name: 'Basic'
+    tier: 'Basic'
+  }
+}
+
+// Service Bus Queue
+resource serviceBusQueue 'Microsoft.ServiceBus/namespaces/queues@2022-10-01-preview' = {
+  parent: serviceBusNamespace
+  name: 'dv-sync-queue'
+}
+
+// Service Bus Queue Authorization Rule
+resource serviceBusQueueAuthRule 'Microsoft.ServiceBus/namespaces/queues/authorizationRules@2022-10-01-preview' = {
+  parent: serviceBusQueue
+  name: 'SendListenAccessPolicy'
+  properties: {
+    rights: [
+      'Send'
+      'Listen'
+    ]
+  }
+}
+
 // Outputs for reference in other templates or scripts
 @description('The resource ID of the Function App')
 output functionAppId string = functionApp.id
@@ -176,3 +208,13 @@ output storageAccountId string = storageAccount.id
 
 @description('The name of the Storage Account')
 output storageAccountName string = storageAccount.name
+
+@description('The resource ID of the Service Bus Namespace')
+output serviceBusNamespaceId string = serviceBusNamespace.id
+
+@description('The name of the Service Bus Namespace')
+output serviceBusNamespaceName string = serviceBusNamespace.name
+
+@description('The name of the Service Bus Queue')
+output serviceBusQueueName string = serviceBusQueue.name
+

@@ -1,0 +1,788 @@
+{
+  "name": "serviceendpoint",
+  "title": "Service Endpoints",
+  "schema": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "x-ms-dataverse-entity": true,
+      "x-ms-dataverse-entityset": "serviceendpoints",
+      "x-ms-dataverse-primary-id": "serviceendpointid",
+      "x-ms-dataverse-primary-name": "name",
+      "properties": {
+        "authtype": {
+          "type": "string",
+          "title": "Specifies mode of authentication with SB",
+          "x-ms-dataverse-attribute": "authtype",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "AuthType",
+          "enum": [
+            "Not Specified",
+            "Access Key",
+            "Managed Identity",
+            "ACS",
+            "SAS Key",
+            "SAS Token",
+            "Webhook Key",
+            "Http Header",
+            "Http Query String",
+            "Connection String"
+          ],
+          "x-ms-enum-values": [
+            0,
+            8,
+            9,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "d59a590d-9677-44af-b4b5-5f41bc3fbb3a",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Authentication type for Service Bus",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "authtypename": {
+          "type": "string",
+          "title": "authtypename",
+          "x-ms-dataverse-attribute": "authtypename",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "AuthTypeName",
+          "x-ms-read-only": true
+        },
+        "authvalue": {
+          "type": "string",
+          "title": "Authentication Value",
+          "x-ms-dataverse-attribute": "authvalue",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "AuthValue",
+          "maxLength": 2048
+        },
+        "componentstate": {
+          "type": "string",
+          "title": "Component State",
+          "x-ms-dataverse-attribute": "componentstate",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "ComponentState",
+          "x-ms-read-only": true,
+          "required": true,
+          "enum": [
+            "Published",
+            "Unpublished",
+            "Deleted",
+            "Deleted Unpublished"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "faece09f-cefc-11de-8150-00155da18b00",
+          "x-ms-isGlobal": true,
+          "x-ms-optionsetdisplayname": "Component State",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "connectionmode": {
+          "type": "string",
+          "title": "Connection Mode",
+          "x-ms-dataverse-attribute": "connectionmode",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "ConnectionMode",
+          "required": true,
+          "enum": [
+            "Normal",
+            "Federated"
+          ],
+          "x-ms-enum-values": [
+            1,
+            2
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "3a22f98f-404d-47a2-beb1-9c41ed11dfe6",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Connection mode",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "connectionmodename": {
+          "type": "string",
+          "title": "connectionmodename",
+          "x-ms-dataverse-attribute": "connectionmodename",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "ConnectionModeName",
+          "x-ms-read-only": true
+        },
+        "contract": {
+          "type": "string",
+          "title": "Contract",
+          "x-ms-dataverse-attribute": "contract",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "Contract",
+          "required": true,
+          "enum": [
+            "OneWay",
+            "Queue",
+            "Rest",
+            "TwoWay",
+            "Topic",
+            "Queue (Persistent)",
+            "Event Hub",
+            "Webhook",
+            "Event Grid",
+            "Managed Data Lake",
+            "Container Storage"
+          ],
+          "x-ms-enum-values": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "Color": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "b6e0eb5c-0aaa-4e9d-804b-f02d987a78cd",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Contract",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "contractname": {
+          "type": "string",
+          "title": "contractname",
+          "x-ms-dataverse-attribute": "contractname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "ContractName",
+          "x-ms-read-only": true
+        },
+        "createdby": {
+          "type": "string",
+          "title": "Created By",
+          "x-ms-dataverse-attribute": "createdby",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "CreatedBy",
+          "x-ms-read-only": true
+        },
+        "createdon": {
+          "type": "string",
+          "title": "Created On",
+          "x-ms-dataverse-attribute": "createdon",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "CreatedOn",
+          "x-ms-read-only": true
+        },
+        "createdonbehalfby": {
+          "type": "string",
+          "title": "Created By (Delegate)",
+          "x-ms-dataverse-attribute": "createdonbehalfby",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "CreatedOnBehalfBy",
+          "x-ms-read-only": true
+        },
+        "createdonbehalfbyname": {
+          "type": "string",
+          "title": "createdonbehalfbyname",
+          "x-ms-dataverse-attribute": "createdonbehalfbyname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "CreatedOnBehalfByName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "createdonbehalfbyyominame": {
+          "type": "string",
+          "title": "createdonbehalfbyyominame",
+          "x-ms-dataverse-attribute": "createdonbehalfbyyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "CreatedOnBehalfByYomiName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "x-ms-dataverse-attribute": "description",
+          "x-ms-dataverse-type": "MemoType",
+          "x-ms-schema-name": "Description",
+          "maxLength": 2000
+        },
+        "introducedversion": {
+          "type": "string",
+          "title": "Introduced Version",
+          "x-ms-dataverse-attribute": "introducedversion",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "IntroducedVersion",
+          "maxLength": 48
+        },
+        "isauthvalueset": {
+          "type": "string",
+          "title": "isauthvalueset",
+          "x-ms-dataverse-attribute": "isauthvalueset",
+          "x-ms-dataverse-type": "BooleanType",
+          "x-ms-schema-name": "IsAuthValueSet",
+          "x-ms-read-only": true,
+          "enum": [
+            "No",
+            "Yes"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "308a9725-d926-4620-8af4-0a8839cb12c3",
+          "x-ms-isGlobal": true,
+          "x-ms-optionsetdisplayname": "Is Encrypted Attribute Value Set",
+          "x-ms-optionSetType": "Boolean"
+        },
+        "iscustomizable": {
+          "type": "string",
+          "title": "Customizable",
+          "x-ms-dataverse-attribute": "iscustomizable",
+          "x-ms-dataverse-type": "ManagedPropertyType",
+          "x-ms-schema-name": "IsCustomizable",
+          "required": true
+        },
+        "ismanaged": {
+          "type": "string",
+          "title": "State",
+          "x-ms-dataverse-attribute": "ismanaged",
+          "x-ms-dataverse-type": "BooleanType",
+          "x-ms-schema-name": "IsManaged",
+          "x-ms-read-only": true,
+          "required": true,
+          "enum": [
+            "Unmanaged",
+            "Managed"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "9d04e035-5408-4c1d-a5aa-20445a02f691",
+          "x-ms-isGlobal": true,
+          "x-ms-optionsetdisplayname": "Is Component Managed",
+          "x-ms-optionSetType": "Boolean"
+        },
+        "ismanagedname": {
+          "type": "string",
+          "title": "ismanagedname",
+          "x-ms-dataverse-attribute": "ismanagedname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "IsManagedName",
+          "x-ms-read-only": true
+        },
+        "issaskeyset": {
+          "type": "string",
+          "title": "issaskeyset",
+          "x-ms-dataverse-attribute": "issaskeyset",
+          "x-ms-dataverse-type": "BooleanType",
+          "x-ms-schema-name": "IsSASKeySet",
+          "x-ms-read-only": true,
+          "enum": [
+            "No",
+            "Yes"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "308a9725-d926-4620-8af4-0a8839cb12c3",
+          "x-ms-isGlobal": true,
+          "x-ms-optionsetdisplayname": "Is Encrypted Attribute Value Set",
+          "x-ms-optionSetType": "Boolean"
+        },
+        "issastokenset": {
+          "type": "string",
+          "title": "issastokenset",
+          "x-ms-dataverse-attribute": "issastokenset",
+          "x-ms-dataverse-type": "BooleanType",
+          "x-ms-schema-name": "IsSASTokenSet",
+          "x-ms-read-only": true,
+          "enum": [
+            "No",
+            "Yes"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "308a9725-d926-4620-8af4-0a8839cb12c3",
+          "x-ms-isGlobal": true,
+          "x-ms-optionsetdisplayname": "Is Encrypted Attribute Value Set",
+          "x-ms-optionSetType": "Boolean"
+        },
+        "keyvaultreferenceid": {
+          "type": "string",
+          "title": "KeyVaultReferenceId",
+          "x-ms-dataverse-attribute": "keyvaultreferenceid",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "KeyVaultReferenceId"
+        },
+        "keyvaultreferenceidname": {
+          "type": "string",
+          "title": "keyvaultreferenceidname",
+          "x-ms-dataverse-attribute": "keyvaultreferenceidname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "keyvaultreferenceidName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "managedidentityid": {
+          "type": "string",
+          "title": "ManagedIdentityId",
+          "x-ms-dataverse-attribute": "managedidentityid",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "ManagedIdentityId"
+        },
+        "managedidentityidname": {
+          "type": "string",
+          "title": "managedidentityidname",
+          "x-ms-dataverse-attribute": "managedidentityidname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "managedidentityidName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "messagecharset": {
+          "type": "string",
+          "title": "Specifies the character encoding to be used for messages sent to a service endpoint",
+          "x-ms-dataverse-attribute": "messagecharset",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "MessageCharset",
+          "enum": [
+            "Default",
+            "UTF8",
+            "Windows1252"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1,
+            2
+          ],
+          "Color": [
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "cd36d83f-233e-ee11-bdf4-000d3a2b9595",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Character encoding used for messages sent to a service endpoint",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "messagecharsetname": {
+          "type": "string",
+          "title": "messagecharsetname",
+          "x-ms-dataverse-attribute": "messagecharsetname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "messagecharsetName",
+          "x-ms-read-only": true
+        },
+        "messageformat": {
+          "type": "string",
+          "title": "Content type of the message",
+          "x-ms-dataverse-attribute": "messageformat",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "MessageFormat",
+          "enum": [
+            "Binary XML",
+            "Json",
+            "Text XML"
+          ],
+          "x-ms-enum-values": [
+            1,
+            2,
+            3
+          ],
+          "Color": [
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "2d433f97-37e5-41be-bc60-6c14127874f3",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Message Format",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "messageformatname": {
+          "type": "string",
+          "title": "messageformatname",
+          "x-ms-dataverse-attribute": "messageformatname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "MessageFormatName",
+          "x-ms-read-only": true
+        },
+        "modifiedby": {
+          "type": "string",
+          "title": "Modified By",
+          "x-ms-dataverse-attribute": "modifiedby",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "ModifiedBy",
+          "x-ms-read-only": true
+        },
+        "modifiedon": {
+          "type": "string",
+          "title": "Modified On",
+          "x-ms-dataverse-attribute": "modifiedon",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "ModifiedOn",
+          "x-ms-read-only": true
+        },
+        "modifiedonbehalfby": {
+          "type": "string",
+          "title": "Modified By (Delegate)",
+          "x-ms-dataverse-attribute": "modifiedonbehalfby",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "ModifiedOnBehalfBy",
+          "x-ms-read-only": true
+        },
+        "modifiedonbehalfbyname": {
+          "type": "string",
+          "title": "modifiedonbehalfbyname",
+          "x-ms-dataverse-attribute": "modifiedonbehalfbyname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ModifiedOnBehalfByName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "modifiedonbehalfbyyominame": {
+          "type": "string",
+          "title": "modifiedonbehalfbyyominame",
+          "x-ms-dataverse-attribute": "modifiedonbehalfbyyominame",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "ModifiedOnBehalfByYomiName",
+          "x-ms-read-only": true,
+          "maxLength": 100
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "x-ms-dataverse-attribute": "name",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "Name",
+          "x-ms-dataverse-primary-name": true,
+          "required": true,
+          "maxLength": 256
+        },
+        "namespaceaddress": {
+          "type": "string",
+          "title": "Namespace Address",
+          "x-ms-dataverse-attribute": "namespaceaddress",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "NamespaceAddress",
+          "maxLength": 255
+        },
+        "namespaceformat": {
+          "type": "string",
+          "title": "Format of Service Bus Namespace",
+          "x-ms-dataverse-attribute": "namespaceformat",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "NamespaceFormat",
+          "enum": [
+            "Namespace Name",
+            "Namespace Address"
+          ],
+          "x-ms-enum-values": [
+            1,
+            2
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "ba4a8b2c-1a56-471b-b468-726a6ca41cbd",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Format for Service Bus Namespace",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "namespaceformatname": {
+          "type": "string",
+          "title": "namespaceformatname",
+          "x-ms-dataverse-attribute": "namespaceformatname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "NamespaceFormatName",
+          "x-ms-read-only": true
+        },
+        "organizationid": {
+          "type": "string",
+          "title": "organizationid",
+          "x-ms-dataverse-attribute": "organizationid",
+          "x-ms-dataverse-type": "LookupType",
+          "x-ms-schema-name": "OrganizationId",
+          "x-ms-read-only": true,
+          "required": true
+        },
+        "overwritetime": {
+          "type": "string",
+          "title": "Record Overwrite Time",
+          "x-ms-dataverse-attribute": "overwritetime",
+          "x-ms-dataverse-type": "DateTimeType",
+          "x-ms-schema-name": "OverwriteTime",
+          "x-ms-read-only": true,
+          "required": true
+        },
+        "path": {
+          "type": "string",
+          "title": "Path",
+          "x-ms-dataverse-attribute": "path",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "Path",
+          "required": true,
+          "maxLength": 160
+        },
+        "runtimeintegrationproperties": {
+          "type": "string",
+          "title": "Runtime Integration Properties",
+          "x-ms-dataverse-attribute": "runtimeintegrationproperties",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "RuntimeIntegrationProperties",
+          "maxLength": 512
+        },
+        "saskey": {
+          "type": "string",
+          "title": "Shared Access Key",
+          "x-ms-dataverse-attribute": "saskey",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "SASKey",
+          "maxLength": 256
+        },
+        "saskeyname": {
+          "type": "string",
+          "title": "Shared Access Key Name",
+          "x-ms-dataverse-attribute": "saskeyname",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "SASKeyName",
+          "maxLength": 256
+        },
+        "sastoken": {
+          "type": "string",
+          "title": "Shared Access Token",
+          "x-ms-dataverse-attribute": "sastoken",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "SASToken",
+          "maxLength": 256
+        },
+        "schematype": {
+          "type": "string",
+          "title": "Specifies schema type for event grid events",
+          "x-ms-dataverse-attribute": "schematype",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "SchemaType",
+          "enum": [
+            "Event Grid",
+            "Cloud Events"
+          ],
+          "x-ms-enum-values": [
+            1,
+            2
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "7e36d83f-233e-ee11-bdf4-000d3a2b9595",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Schema type for Event Grid",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "schematypename": {
+          "type": "string",
+          "title": "schematypename",
+          "x-ms-dataverse-attribute": "schematypename",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "schematypeName",
+          "x-ms-read-only": true
+        },
+        "serviceendpointid": {
+          "type": "string",
+          "title": "serviceendpointid",
+          "x-ms-dataverse-attribute": "serviceendpointid",
+          "x-ms-dataverse-type": "UniqueidentifierType",
+          "x-ms-schema-name": "ServiceEndpointId",
+          "x-ms-dataverse-primary-id": true,
+          "required": true,
+          "x-ms-keyType": "primary"
+        },
+        "serviceendpointidunique": {
+          "type": "string",
+          "title": "serviceendpointidunique",
+          "x-ms-dataverse-attribute": "serviceendpointidunique",
+          "x-ms-dataverse-type": "UniqueidentifierType",
+          "x-ms-schema-name": "ServiceEndpointIdUnique",
+          "x-ms-read-only": true,
+          "required": true
+        },
+        "solutionid": {
+          "type": "string",
+          "title": "Solution",
+          "x-ms-dataverse-attribute": "solutionid",
+          "x-ms-dataverse-type": "UniqueidentifierType",
+          "x-ms-schema-name": "SolutionId",
+          "x-ms-read-only": true,
+          "required": true
+        },
+        "solutionnamespace": {
+          "type": "string",
+          "title": "Service Namespace",
+          "x-ms-dataverse-attribute": "solutionnamespace",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "SolutionNamespace",
+          "required": true,
+          "maxLength": 160
+        },
+        "supportingsolutionid": {
+          "type": "string",
+          "title": "Solution",
+          "x-ms-dataverse-attribute": "supportingsolutionid",
+          "x-ms-dataverse-type": "UniqueidentifierType",
+          "x-ms-schema-name": "SupportingSolutionId",
+          "x-ms-read-only": true
+        },
+        "url": {
+          "type": "string",
+          "title": "Url Address",
+          "x-ms-dataverse-attribute": "url",
+          "x-ms-dataverse-type": "StringType",
+          "x-ms-schema-name": "Url",
+          "maxLength": 2000
+        },
+        "usekeyvaultconfiguration": {
+          "type": "string",
+          "title": "Use Auth Information in KeyVault",
+          "x-ms-dataverse-attribute": "usekeyvaultconfiguration",
+          "x-ms-dataverse-type": "BooleanType",
+          "x-ms-schema-name": "UseKeyVaultConfiguration",
+          "enum": [
+            "No",
+            "Yes"
+          ],
+          "x-ms-enum-values": [
+            0,
+            1
+          ],
+          "Color": [
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "c4d7972e-1e3e-ee11-bdf4-000d3a2b9595",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "Use Auth Information from KeyVault",
+          "x-ms-optionSetType": "Boolean"
+        },
+        "usekeyvaultconfigurationname": {
+          "type": "string",
+          "title": "usekeyvaultconfigurationname",
+          "x-ms-dataverse-attribute": "usekeyvaultconfigurationname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "usekeyvaultconfigurationName",
+          "x-ms-read-only": true
+        },
+        "userclaim": {
+          "type": "string",
+          "title": "User Claim",
+          "x-ms-dataverse-attribute": "userclaim",
+          "x-ms-dataverse-type": "PicklistType",
+          "x-ms-schema-name": "UserClaim",
+          "required": true,
+          "enum": [
+            "None",
+            "UserId",
+            "UserInfo"
+          ],
+          "x-ms-enum-values": [
+            1,
+            2,
+            3
+          ],
+          "Color": [
+            null,
+            null,
+            null
+          ],
+          "x-ms-optionsetmetadataid": "f5b0ce81-7d3e-4e69-a689-d500c295626f",
+          "x-ms-isGlobal": false,
+          "x-ms-optionsetdisplayname": "User claim",
+          "x-ms-optionSetType": "Picklist"
+        },
+        "userclaimname": {
+          "type": "string",
+          "title": "userclaimname",
+          "x-ms-dataverse-attribute": "userclaimname",
+          "x-ms-dataverse-type": "VirtualType",
+          "x-ms-schema-name": "UserClaimName",
+          "x-ms-read-only": true
+        }
+      },
+      "required": [
+        "componentstate",
+        "connectionmode",
+        "contract",
+        "iscustomizable",
+        "ismanaged",
+        "name",
+        "organizationid",
+        "overwritetime",
+        "path",
+        "serviceendpointid",
+        "serviceendpointidunique",
+        "solutionid",
+        "solutionnamespace",
+        "userclaim"
+      ]
+    }
+  }
+}
