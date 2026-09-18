@@ -2,11 +2,10 @@
 {
     public interface ITargetDataRepository
     {
+        public TargetRecordModificationResult InsertRecord(TargetRecord record);
 
-        public TargetRecordModificationResult InsertRecord(string tableName, TargetRecord record);
+        public TargetRecordModificationResult UpdateRecord(TargetRecord record);
 
-        public TargetRecordModificationResult UpdateRecord(string tableName, TargetRecord record, TargetRecord primaryKeyRecord);
-
-        public TargetRecordModificationResult DeleteRecord(string tableName, TargetRecord primaryKeyRecord);
+        public TargetRecordModificationResult DeleteRecord(TargetRecord record);
     }
 }
