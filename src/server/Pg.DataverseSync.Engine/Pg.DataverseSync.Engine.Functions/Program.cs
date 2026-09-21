@@ -58,6 +58,7 @@ internal static class Program
         builder.Services.AddScoped<IMetadataRepository, MetadataRepository>();
         builder.Services.AddScoped<ISourceMetadataService, SourceMetadataService>();
         builder.Services.AddScoped<ISyncMetadataService, SyncMetadataService>();
+        builder.Services.AddScoped<ITargetDataRepository, TargetDataRepository>();
         builder.Services.AddScoped<ITargetSchemaService, TargetSchemaService>();
 
         // Register execution context handlers
