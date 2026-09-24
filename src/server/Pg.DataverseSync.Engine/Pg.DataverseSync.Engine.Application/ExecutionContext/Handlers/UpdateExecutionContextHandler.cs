@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
+using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Core.ContextConstraints;
 using Pg.DataverseSync.Engine.Core.Exceptions;
+using Pg.DataverseSync.Engine.Target;
 
 namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
 {
@@ -12,8 +14,14 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
     {
         public string MessageName => MessageNames.Update;
 
-        public UpdateExecutionContextHandler(ILogger<UpdateExecutionContextHandler> logger) : base(logger)
+        private readonly ITargetDataRepository _targetDataRepository;
+        private readonly ITargetRecordFactory _targetRecordFactory;
+
+        public UpdateExecutionContextHandler(ITargetDataRepository targetDataRepository,
+            ITargetRecordFactory targetRecordFactory, ILogger<UpdateExecutionContextHandler> logger) : base(logger)
         {
+            _targetDataRepository = targetDataRepository;
+            _targetRecordFactory = targetRecordFactory;
         }
 
         public async Task HandleAsync(RemoteExecutionContext context, CancellationToken cancellationToken = default)
@@ -38,7 +46,23 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
                     entity.LogicalName,
                     entity.Id);
 
-                // TODO: Add business logic for handling Update message
+                var targetRecord = _targetRecordFactory.CreateForUpdate(entity);
+                var result = _targetDataRepository.UpdateRecord(targetRecord);
+
+                if (!result.Success)
+                {
+                    LogIfEnabled(LogLevel.Error,
+                        "Update record failed for entity LogicalName={LogicalName}, Id={Id}. Error: {ErrorMessage}",
+                        entity.LogicalName,
+                        entity.Id,
+                        result.Message!);
+                    throw new InvalidOperationException($"Failed to update record for entity '{entity.LogicalName}' with id '{entity.Id}': {result.Message}");
+                }
+
+                LogIfEnabled(LogLevel.Information,
+                    "Record successfully updated for entity LogicalName={LogicalName}, Id={Id}",
+                    entity.LogicalName,
+                    entity.Id);
 
                 await Task.CompletedTask;
             }

@@ -58,7 +58,6 @@ internal static class Program
         builder.Services.AddScoped<IMetadataRepository, MetadataRepository>();
         builder.Services.AddScoped<ISourceMetadataService, SourceMetadataService>();
         builder.Services.AddScoped<ISyncMetadataService, SyncMetadataService>();
-        builder.Services.AddScoped<ITargetDataRepository, TargetDataRepository>();
         builder.Services.AddScoped<ITargetSchemaService, TargetSchemaService>();
 
         // Register execution context handlers
@@ -69,23 +68,40 @@ internal static class Program
         // Register execution context router
         builder.Services.AddScoped<IExecutionContextRouter, ExecutionContextRouter>();
 
+        //Register required factories 
+        builder.Services.AddScoped<ITargetRecordFactory, TargetRecordFactory>();
+
         //TODO: Reference to target data structure service should be injected based on configuration
         //(e.g. SQL Server, Synapse, etc.) in the future
         builder.Services.AddScoped<ITargetSchemaRepository>(sp =>
         {
-            var configuration = sp.GetRequiredService<IConfiguration>();
-            var connectionString = configuration["TargetDatabaseConnectionString"];
-
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new InvalidOperationException("TargetDatabaseConnectionString is not configured.");
-            }
+            var connectionString = GetTargetDatabaseConnectionString(sp);
 
             var logger = sp.GetRequiredService<ILogger<DatabaseSchemaRepository>>();
 
             return new DatabaseSchemaRepository(connectionString, logger);
         });
 
+        builder.Services.AddScoped<ITargetDataRepository>(sp =>
+        {
+            var connectionString = GetTargetDatabaseConnectionString(sp);
+
+            var logger = sp.GetRequiredService<ILogger<TargetDataRepository>>();
+
+            return new TargetDataRepository(connectionString, logger);
+        });
+
         builder.Build().Run();
+    }
+
+    private static string GetTargetDatabaseConnectionString(IServiceProvider serviceProvider)
+    {
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var connectionString = configuration["TargetDatabaseConnectionString"];
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new InvalidOperationException("TargetDatabaseConnectionString is not configured.");
+        }
+        return connectionString;
     }
 }

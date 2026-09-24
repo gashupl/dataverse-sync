@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
+using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Core.ContextConstraints;
 using Pg.DataverseSync.Engine.Core.Exceptions;
+using Pg.DataverseSync.Engine.Target;
 
 namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
 {
@@ -12,8 +14,14 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
     {
         public string MessageName => MessageNames.Delete;
 
-        public DeleteExecutionContextHandler(ILogger<DeleteExecutionContextHandler> logger) : base(logger)
+        private readonly ITargetDataRepository _targetDataRepository;
+        private readonly ITargetRecordFactory _targetRecordFactory;
+
+        public DeleteExecutionContextHandler(ITargetDataRepository targetDataRepository,
+            ITargetRecordFactory targetRecordFactory, ILogger<DeleteExecutionContextHandler> logger) : base(logger)
         {
+            _targetDataRepository = targetDataRepository;
+            _targetRecordFactory = targetRecordFactory; 
         }
 
         public async Task HandleAsync(RemoteExecutionContext context, CancellationToken cancellationToken = default)
@@ -38,7 +46,23 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
                     entityRef.LogicalName,
                     entityRef.Id);
 
-                // TODO: Add business logic for handling Delete message
+                var targetRecord = _targetRecordFactory.CreateForDelete(entityRef);
+                var result = _targetDataRepository.DeleteRecord(targetRecord);
+
+                if (!result.Success)
+                {
+                    LogIfEnabled(LogLevel.Error,
+                        "Delete record failed for entity LogicalName={LogicalName}, Id={Id}. Error: {ErrorMessage}",
+                        entityRef.LogicalName,
+                        entityRef.Id,
+                        result.Message!);
+                    throw new InvalidOperationException($"Failed to delete record for entity '{entityRef.LogicalName}' with id '{entityRef.Id}': {result.Message}");
+                }
+
+                LogIfEnabled(LogLevel.Information,
+                    "Record successfully deleted for entity LogicalName={LogicalName}, Id={Id}",
+                    entityRef.LogicalName,
+                    entityRef.Id);
 
                 await Task.CompletedTask;
             }
