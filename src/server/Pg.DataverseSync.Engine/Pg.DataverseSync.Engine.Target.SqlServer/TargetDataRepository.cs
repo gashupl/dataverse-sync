@@ -30,9 +30,23 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                     connection.Open();
                     LogIfEnabled(LogLevel.Information, "Connection to target database established successfully.");
 
-                    var columnNames = string.Join(", ", record.Columns.Select(c => $"[{c.ColumnName}]"));
-                    var parameterNames = string.Join(", ", record.Columns.Select((c, i) => $"@Param{i}"));
-                    var query = $"INSERT INTO [{record.TableName}] ({columnNames}) VALUES ({parameterNames})";
+                    var escapedTableName = EscapeSqlIdentifier(record.TableName);
+                    var columnNamesList = new StringBuilder();
+                    var parameterNamesList = new StringBuilder();
+
+                    for (int i = 0; i < record.Columns.Count; i++)
+                    {
+                        if (i > 0)
+                        {
+                            columnNamesList.Append(", ");
+                            parameterNamesList.Append(", ");
+                        }
+
+                        columnNamesList.Append(EscapeSqlIdentifier(record.Columns[i].ColumnName));
+                        parameterNamesList.Append($"@Param{i}");
+                    }
+
+                    var query = $"INSERT INTO {escapedTableName} ({columnNamesList}) VALUES ({parameterNamesList})";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -44,7 +58,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                         LogIfEnabled(LogLevel.Information, "Executing query to insert record: {Query}", query);
                         command.ExecuteNonQuery();
                         LogIfEnabled(LogLevel.Information, "Record inserted successfully into table '{TableName}'.", record.TableName);
-                        
+
                         return new TargetRecordModificationResult { Success = true };
                     }
                 }
@@ -75,26 +89,37 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                     connection.Open();
                     LogIfEnabled(LogLevel.Information, "Connection to target database established successfully.");
 
-                    var setClause = string.Join(", ", record.Columns
-                        .Where(c => !c.IsPrimaryKey)
-                        .Select((c, i) => $"[{c.ColumnName}] = @UpdateParam{i}"));
+                    var nonPrimaryKeyColumns = record.Columns.Where(c => !c.IsPrimaryKey).ToList();
 
-                    if (string.IsNullOrEmpty(setClause))
+                    if (nonPrimaryKeyColumns.Count == 0)
                     {
                         var message = $"No columns to update in table '{record.TableName}'. Only primary key column exists.";
                         LogIfEnabled(LogLevel.Warning, message);
                         return new TargetRecordModificationResult { Success = true, Message = message };
                     }
 
-                    var query = $"UPDATE [{record.TableName}] SET {setClause} WHERE [{primaryKeyColumn.ColumnName}] = @PrimaryKeyParam";
+                    var escapedTableName = EscapeSqlIdentifier(record.TableName);
+                    var escapedPrimaryKeyColumnName = EscapeSqlIdentifier(primaryKeyColumn.ColumnName);
+                    var setClauseBuilder = new StringBuilder();
+
+                    for (int i = 0; i < nonPrimaryKeyColumns.Count; i++)
+                    {
+                        if (i > 0)
+                        {
+                            setClauseBuilder.Append(", ");
+                        }
+
+                        var escapedColumnName = EscapeSqlIdentifier(nonPrimaryKeyColumns[i].ColumnName);
+                        setClauseBuilder.Append($"{escapedColumnName} = @UpdateParam{i}");
+                    }
+
+                    var query = $"UPDATE {escapedTableName} SET {setClauseBuilder} WHERE {escapedPrimaryKeyColumnName} = @PrimaryKeyParam";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        int paramIndex = 0;
-                        foreach (var column in record.Columns.Where(c => !c.IsPrimaryKey))
+                        for (int i = 0; i < nonPrimaryKeyColumns.Count; i++)
                         {
-                            command.Parameters.AddWithValue($"@UpdateParam{paramIndex}", column.Value ?? DBNull.Value);
-                            paramIndex++;
+                            command.Parameters.AddWithValue($"@UpdateParam{i}", nonPrimaryKeyColumns[i].Value ?? DBNull.Value);
                         }
 
                         command.Parameters.AddWithValue("@PrimaryKeyParam", primaryKeyColumn.Value ?? DBNull.Value);
@@ -132,7 +157,9 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                     connection.Open();
                     LogIfEnabled(LogLevel.Information, "Connection to target database established successfully.");
 
-                    var query = $"DELETE FROM [{record.TableName}] WHERE [{primaryKeyColumn.ColumnName}] = @PrimaryKeyParam";
+                    var escapedTableName = EscapeSqlIdentifier(record.TableName);
+                    var escapedPrimaryKeyColumnName = EscapeSqlIdentifier(primaryKeyColumn.ColumnName);
+                    var query = $"DELETE FROM {escapedTableName} WHERE {escapedPrimaryKeyColumnName} = @PrimaryKeyParam";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -141,7 +168,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                         LogIfEnabled(LogLevel.Information, "Executing query to delete record: {Query}", query);
                         command.ExecuteNonQuery();
                         LogIfEnabled(LogLevel.Information, "Record deleted successfully from table '{TableName}'.", record.TableName);
-                        
+
                         return new TargetRecordModificationResult { Success = true };
                     }
                 }
@@ -151,6 +178,42 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                     return new TargetRecordModificationResult { Success = false, Message = ex.Message };
                 }
             }
+        }
+
+        /// <summary>
+        /// Escapes a SQL identifier (table name or column name) for safe use in SQL queries.
+        /// </summary>
+        private static string EscapeSqlIdentifier(string identifier)
+        {
+            if (string.IsNullOrEmpty(identifier))
+            {
+                throw new ArgumentException("Identifier cannot be null or empty.", nameof(identifier));
+            }
+
+            if (!IsValidSqlIdentifier(identifier))
+            {
+                throw new ArgumentException($"Invalid SQL identifier: '{identifier}'. Identifiers must contain only alphanumeric characters, underscores, and start with a letter or underscore.", nameof(identifier));
+            }
+
+            return $"[{identifier}]";
+        }
+
+        /// <summary>
+        /// Validates that a SQL identifier contains only safe characters.
+        /// </summary>
+        private static bool IsValidSqlIdentifier(string identifier)
+        {
+            if (string.IsNullOrEmpty(identifier) || identifier.Length > 128)
+            {
+                return false;
+            }
+
+            if (!char.IsLetter(identifier[0]) && identifier[0] != '_')
+            {
+                return false;
+            }
+
+            return identifier.All(c => char.IsLetterOrDigit(c) || c == '_');
         }
     }
 }

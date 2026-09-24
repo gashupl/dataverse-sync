@@ -75,7 +75,7 @@
             string columnName = "Description";
 
             // Act
-            targetRecord.AddColumn(columnName, null);
+            targetRecord.AddColumn(columnName, null!);
 
             // Assert
             Assert.Single(targetRecord.Columns);

@@ -98,7 +98,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             Assert.Equal("account", result.TableName);
             Assert.Equal(2, result.Columns.Count);
 
-            var primaryKeyColumn = Assert.Single(result.Columns.Where(c => c.IsPrimaryKey));
+            var primaryKeyColumn = Assert.Single(result.Columns, c => c.IsPrimaryKey);
             Assert.Equal("accountid", primaryKeyColumn.ColumnName);
             Assert.Equal(entityId, primaryKeyColumn.Value);
             Assert.Contains(result.Columns, c => c.ColumnName == "name" && Equals(c.Value, "Contoso") && c.IsPrimaryKey == false);
@@ -120,7 +120,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var result = factory.CreateForUpdate(entity);
 
             // Assert
-            var primaryKeyColumn = Assert.Single(result.Columns.Where(c => c.IsPrimaryKey));
+            var primaryKeyColumn = Assert.Single(result.Columns, c => c.IsPrimaryKey);
             Assert.Equal("AccountId", primaryKeyColumn.ColumnName);
             Assert.Equal(entityId, primaryKeyColumn.Value);
         }
