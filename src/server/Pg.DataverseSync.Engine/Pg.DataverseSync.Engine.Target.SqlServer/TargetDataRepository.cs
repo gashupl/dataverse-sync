@@ -46,7 +46,9 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                         parameterNamesList.Append($"@Param{i}");
                     }
 
+#pragma warning disable S2077 // Identifiers are escaped with EscapeSqlIdentifier, values are parameterized
                     var query = $"INSERT INTO {escapedTableName} ({columnNamesList}) VALUES ({parameterNamesList})";
+#pragma warning restore S2077
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -113,7 +115,9 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                         setClauseBuilder.Append($"{escapedColumnName} = @UpdateParam{i}");
                     }
 
+#pragma warning disable S2077 // Identifiers are escaped with EscapeSqlIdentifier, values are parameterized
                     var query = $"UPDATE {escapedTableName} SET {setClauseBuilder} WHERE {escapedPrimaryKeyColumnName} = @PrimaryKeyParam";
+#pragma warning restore S2077
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -159,7 +163,9 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 
                     var escapedTableName = EscapeSqlIdentifier(record.TableName);
                     var escapedPrimaryKeyColumnName = EscapeSqlIdentifier(primaryKeyColumn.ColumnName);
+#pragma warning disable S2077 // Identifiers are escaped with EscapeSqlIdentifier, values are parameterized
                     var query = $"DELETE FROM {escapedTableName} WHERE {escapedPrimaryKeyColumnName} = @PrimaryKeyParam";
+#pragma warning restore S2077
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {

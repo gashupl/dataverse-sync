@@ -10,19 +10,14 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
     /// <summary>
     /// Handles 'Create' execution context messages.
     /// </summary>
-    public class CreateExecutionContextHandler : LoggingServiceBase<CreateExecutionContextHandler>, IExecutionContextHandler
+    public class CreateExecutionContextHandler : ExecutionContextHandlerBase<CreateExecutionContextHandler>, IExecutionContextHandler
     {
-        private readonly ITargetDataRepository _targetDataRepository;
-
         public string MessageName => MessageNames.Create;
-        
-        private readonly ITargetRecordFactory _targetRecordFactory;
 
         public CreateExecutionContextHandler(ITargetDataRepository targetDataRepository, 
-            ITargetRecordFactory targetRecordFactory, ILogger<CreateExecutionContextHandler> logger) : base(logger)
+            ITargetRecordFactory targetRecordFactory, ILogger<CreateExecutionContextHandler> logger) 
+            : base(targetDataRepository, targetRecordFactory, logger)
         {
-            _targetDataRepository = targetDataRepository;
-            _targetRecordFactory = targetRecordFactory;
         }
   
         public async Task HandleAsync(RemoteExecutionContext context, CancellationToken cancellationToken = default)
@@ -47,23 +42,10 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
                     entity.LogicalName,
                     entity.Id);
 
-                var targetRecord = _targetRecordFactory.CreateForInsert(entity); 
-                var result = _targetDataRepository.InsertRecord(targetRecord);
+                var targetRecord = targetRecordFactory.CreateForInsert(entity); 
+                var result = targetDataRepository.InsertRecord(targetRecord);
 
-                if (!result.Success)
-                {
-                    LogIfEnabled(LogLevel.Error,
-                        "Insert record failed for entity LogicalName={LogicalName}, Id={Id}. Error: {ErrorMessage}",
-                        entity.LogicalName,
-                        entity.Id,
-                        result.Message!);
-                    throw new InvalidOperationException($"Failed to insert record for entity '{entity.LogicalName}' with id '{entity.Id}': {result.Message}");
-                }
-
-                LogIfEnabled(LogLevel.Information,
-                    "Record successfully inserted for entity LogicalName={LogicalName}, Id={Id}",
-                    entity.LogicalName,
-                    entity.Id);
+                HandleExecutionResult(result, entity.ToEntityReference(), MessageName);
 
                 await Task.CompletedTask;
             }

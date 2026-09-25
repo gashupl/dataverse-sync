@@ -10,18 +10,14 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
     /// <summary>
     /// Handles 'Update' execution context messages.
     /// </summary>
-    public class UpdateExecutionContextHandler : LoggingServiceBase<UpdateExecutionContextHandler>, IExecutionContextHandler
+    public class UpdateExecutionContextHandler : ExecutionContextHandlerBase<UpdateExecutionContextHandler>, IExecutionContextHandler
     {
         public string MessageName => MessageNames.Update;
 
-        private readonly ITargetDataRepository _targetDataRepository;
-        private readonly ITargetRecordFactory _targetRecordFactory;
-
         public UpdateExecutionContextHandler(ITargetDataRepository targetDataRepository,
-            ITargetRecordFactory targetRecordFactory, ILogger<UpdateExecutionContextHandler> logger) : base(logger)
+            ITargetRecordFactory targetRecordFactory, ILogger<UpdateExecutionContextHandler> logger) 
+            : base(targetDataRepository, targetRecordFactory, logger)
         {
-            _targetDataRepository = targetDataRepository;
-            _targetRecordFactory = targetRecordFactory;
         }
 
         public async Task HandleAsync(RemoteExecutionContext context, CancellationToken cancellationToken = default)
@@ -46,23 +42,10 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
                     entity.LogicalName,
                     entity.Id);
 
-                var targetRecord = _targetRecordFactory.CreateForUpdate(entity);
-                var result = _targetDataRepository.UpdateRecord(targetRecord);
+                var targetRecord = targetRecordFactory.CreateForUpdate(entity);
+                var result = targetDataRepository.UpdateRecord(targetRecord);
 
-                if (!result.Success)
-                {
-                    LogIfEnabled(LogLevel.Error,
-                        "Update record failed for entity LogicalName={LogicalName}, Id={Id}. Error: {ErrorMessage}",
-                        entity.LogicalName,
-                        entity.Id,
-                        result.Message!);
-                    throw new InvalidOperationException($"Failed to update record for entity '{entity.LogicalName}' with id '{entity.Id}': {result.Message}");
-                }
-
-                LogIfEnabled(LogLevel.Information,
-                    "Record successfully updated for entity LogicalName={LogicalName}, Id={Id}",
-                    entity.LogicalName,
-                    entity.Id);
+                HandleExecutionResult(result, entity.ToEntityReference(), MessageName);
 
                 await Task.CompletedTask;
             }

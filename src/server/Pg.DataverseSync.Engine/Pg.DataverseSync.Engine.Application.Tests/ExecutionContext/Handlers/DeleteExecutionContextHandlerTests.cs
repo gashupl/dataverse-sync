@@ -112,7 +112,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests.ExecutionContext.Handlers
             Assert.Equal(entityReference.Id, exception.Id);
             Assert.NotNull(exception.InnerException);
             Assert.IsType<InvalidOperationException>(exception.InnerException);
-            Assert.Contains($"Failed to delete record for entity '{entityReference.LogicalName}' with id '{entityReference.Id}'", exception.InnerException!.Message);
+            Assert.Contains($"Failed to Delete record for entity '{entityReference.LogicalName}' with id '{entityReference.Id}'", exception.InnerException!.Message);
             Assert.Contains(errorMessage, exception.InnerException!.Message);
         }
     }

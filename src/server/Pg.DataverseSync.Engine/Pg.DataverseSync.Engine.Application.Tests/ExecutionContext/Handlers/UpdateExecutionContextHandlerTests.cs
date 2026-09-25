@@ -112,7 +112,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests.ExecutionContext.Handlers
             Assert.Equal(entity.Id, exception.Id);
             Assert.NotNull(exception.InnerException);
             Assert.IsType<InvalidOperationException>(exception.InnerException);
-            Assert.Contains($"Failed to update record for entity '{entity.LogicalName}' with id '{entity.Id}'", exception.InnerException!.Message);
+            Assert.Contains($"Failed to Update record for entity '{entity.LogicalName}' with id '{entity.Id}'", exception.InnerException!.Message);
             Assert.Contains(errorMessage, exception.InnerException!.Message);
         }
     }
