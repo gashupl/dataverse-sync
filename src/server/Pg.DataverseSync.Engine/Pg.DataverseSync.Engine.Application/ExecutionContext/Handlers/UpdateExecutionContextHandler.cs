@@ -1,18 +1,22 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
+using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Core.ContextConstraints;
 using Pg.DataverseSync.Engine.Core.Exceptions;
+using Pg.DataverseSync.Engine.Target;
 
 namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
 {
     /// <summary>
     /// Handles 'Update' execution context messages.
     /// </summary>
-    public class UpdateExecutionContextHandler : LoggingServiceBase<UpdateExecutionContextHandler>, IExecutionContextHandler
+    public class UpdateExecutionContextHandler : ExecutionContextHandlerBase<UpdateExecutionContextHandler>, IExecutionContextHandler
     {
         public string MessageName => MessageNames.Update;
 
-        public UpdateExecutionContextHandler(ILogger<UpdateExecutionContextHandler> logger) : base(logger)
+        public UpdateExecutionContextHandler(ITargetDataRepository targetDataRepository,
+            ITargetRecordFactory targetRecordFactory, ILogger<UpdateExecutionContextHandler> logger) 
+            : base(targetDataRepository, targetRecordFactory, logger)
         {
         }
 
@@ -38,7 +42,10 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
                     entity.LogicalName,
                     entity.Id);
 
-                // TODO: Add business logic for handling Update message
+                var targetRecord = targetRecordFactory.CreateForUpdate(entity);
+                var result = targetDataRepository.UpdateRecord(targetRecord);
+
+                HandleExecutionResult(result, entity.ToEntityReference(), MessageName);
 
                 await Task.CompletedTask;
             }
