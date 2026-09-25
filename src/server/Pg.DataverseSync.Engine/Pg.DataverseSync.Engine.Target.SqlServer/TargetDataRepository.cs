@@ -43,18 +43,16 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                         }
 
                         columnNamesList.Append(EscapeSqlIdentifier(record.Columns[i].ColumnName));
-                        parameterNamesList.Append($"@Param{i}");
+                        parameterNamesList.Append($"@Param{i}"); // NOSONAR - Parameter name placeholder
                     }
 
-#pragma warning disable S2077 // Identifiers are escaped with EscapeSqlIdentifier, values are parameterized
-                    var query = $"INSERT INTO {escapedTableName} ({columnNamesList}) VALUES ({parameterNamesList})";
-#pragma warning restore S2077
+                    var query = $"INSERT INTO {escapedTableName} ({columnNamesList}) VALUES ({parameterNamesList})"; // NOSONAR - Identifiers are escaped, values are parameterized
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         for (int i = 0; i < record.Columns.Count; i++)
                         {
-                            command.Parameters.AddWithValue($"@Param{i}", record.Columns[i].Value ?? DBNull.Value);
+                            command.Parameters.AddWithValue($"@Param{i}", record.Columns[i].Value ?? DBNull.Value); // NOSONAR - Parameter name placeholder
                         }
 
                         LogIfEnabled(LogLevel.Information, "Executing query to insert record: {Query}", query);
@@ -112,18 +110,16 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                         }
 
                         var escapedColumnName = EscapeSqlIdentifier(nonPrimaryKeyColumns[i].ColumnName);
-                        setClauseBuilder.Append($"{escapedColumnName} = @UpdateParam{i}");
+                        setClauseBuilder.Append($"{escapedColumnName} = @UpdateParam{i}"); // NOSONAR - Identifiers are escaped, values are parameterized
                     }
 
-#pragma warning disable S2077 // Identifiers are escaped with EscapeSqlIdentifier, values are parameterized
-                    var query = $"UPDATE {escapedTableName} SET {setClauseBuilder} WHERE {escapedPrimaryKeyColumnName} = @PrimaryKeyParam";
-#pragma warning restore S2077
+                    var query = $"UPDATE {escapedTableName} SET {setClauseBuilder} WHERE {escapedPrimaryKeyColumnName} = @PrimaryKeyParam"; // NOSONAR - Identifiers are escaped, values are parameterized
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         for (int i = 0; i < nonPrimaryKeyColumns.Count; i++)
                         {
-                            command.Parameters.AddWithValue($"@UpdateParam{i}", nonPrimaryKeyColumns[i].Value ?? DBNull.Value);
+                            command.Parameters.AddWithValue($"@UpdateParam{i}", nonPrimaryKeyColumns[i].Value ?? DBNull.Value); // NOSONAR - Parameter name placeholder
                         }
 
                         command.Parameters.AddWithValue("@PrimaryKeyParam", primaryKeyColumn.Value ?? DBNull.Value);
@@ -163,9 +159,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
 
                     var escapedTableName = EscapeSqlIdentifier(record.TableName);
                     var escapedPrimaryKeyColumnName = EscapeSqlIdentifier(primaryKeyColumn.ColumnName);
-#pragma warning disable S2077 // Identifiers are escaped with EscapeSqlIdentifier, values are parameterized
-                    var query = $"DELETE FROM {escapedTableName} WHERE {escapedPrimaryKeyColumnName} = @PrimaryKeyParam";
-#pragma warning restore S2077
+                    var query = $"DELETE FROM {escapedTableName} WHERE {escapedPrimaryKeyColumnName} = @PrimaryKeyParam"; // NOSONAR - Identifiers are escaped, values are parameterized
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -201,7 +195,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 throw new ArgumentException($"Invalid SQL identifier: '{identifier}'. Identifiers must contain only alphanumeric characters, underscores, and start with a letter or underscore.", nameof(identifier));
             }
 
-            return $"[{identifier}]";
+            return $"[{identifier}]"; // NOSONAR - Safe identifier escaping
         }
 
         /// <summary>

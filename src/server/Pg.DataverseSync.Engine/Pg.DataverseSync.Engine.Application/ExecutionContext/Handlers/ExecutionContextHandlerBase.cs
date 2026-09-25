@@ -10,7 +10,7 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
         protected readonly ITargetDataRepository targetDataRepository;
         protected readonly ITargetRecordFactory targetRecordFactory;
 
-        public ExecutionContextHandlerBase(ITargetDataRepository targetDataRepository,
+        protected ExecutionContextHandlerBase(ITargetDataRepository targetDataRepository,
             ITargetRecordFactory targetRecordFactory, ILogger<T> logger) : base(logger)
         {
             this.targetDataRepository = targetDataRepository;
