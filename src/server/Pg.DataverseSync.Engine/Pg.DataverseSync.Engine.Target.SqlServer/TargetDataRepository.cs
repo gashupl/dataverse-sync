@@ -134,7 +134,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             SqlConnection connection,
             TargetRecord record,
             TargetColumn primaryKeyColumn,
-            IReadOnlyList<TargetColumn> nonPrimaryKeyColumns)
+            List<TargetColumn> nonPrimaryKeyColumns)
         {
             var escapedTableName = EscapeSqlIdentifier(record.TableName);
             var escapedPrimaryKeyColumnName = EscapeSqlIdentifier(primaryKeyColumn.ColumnName);
