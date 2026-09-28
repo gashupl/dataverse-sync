@@ -1,21 +1,25 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
+using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Core.ContextConstraints;
 using Pg.DataverseSync.Engine.Core.Exceptions;
+using Pg.DataverseSync.Engine.Target;
 
 namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
 {
     /// <summary>
     /// Handles 'Create' execution context messages.
     /// </summary>
-    public class CreateExecutionContextHandler : LoggingServiceBase<CreateExecutionContextHandler>, IExecutionContextHandler
+    public class CreateExecutionContextHandler : ExecutionContextHandlerBase<CreateExecutionContextHandler>, IExecutionContextHandler
     {
         public string MessageName => MessageNames.Create;
 
-        public CreateExecutionContextHandler(ILogger<CreateExecutionContextHandler> logger) : base(logger)
+        public CreateExecutionContextHandler(ITargetDataRepository targetDataRepository, 
+            ITargetRecordFactory targetRecordFactory, ILogger<CreateExecutionContextHandler> logger) 
+            : base(targetDataRepository, targetRecordFactory, logger)
         {
         }
-
+  
         public async Task HandleAsync(RemoteExecutionContext context, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(context);
@@ -38,7 +42,10 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
                     entity.LogicalName,
                     entity.Id);
 
-                // TODO: Add business logic for handling Create message
+                var targetRecord = targetRecordFactory.CreateForInsert(entity); 
+                var result = targetDataRepository.InsertRecord(targetRecord);
+
+                HandleExecutionResult(result, entity.ToEntityReference(), MessageName);
 
                 await Task.CompletedTask;
             }

@@ -1,18 +1,22 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
+using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Core.ContextConstraints;
 using Pg.DataverseSync.Engine.Core.Exceptions;
+using Pg.DataverseSync.Engine.Target;
 
 namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
 {
     /// <summary>
     /// Handles 'Delete' execution context messages.
     /// </summary>
-    public class DeleteExecutionContextHandler : LoggingServiceBase<DeleteExecutionContextHandler>, IExecutionContextHandler
+    public class DeleteExecutionContextHandler : ExecutionContextHandlerBase<DeleteExecutionContextHandler>, IExecutionContextHandler
     {
         public string MessageName => MessageNames.Delete;
 
-        public DeleteExecutionContextHandler(ILogger<DeleteExecutionContextHandler> logger) : base(logger)
+        public DeleteExecutionContextHandler(ITargetDataRepository targetDataRepository,
+            ITargetRecordFactory targetRecordFactory, ILogger<DeleteExecutionContextHandler> logger) 
+            : base(targetDataRepository, targetRecordFactory, logger)
         {
         }
 
@@ -38,7 +42,10 @@ namespace Pg.DataverseSync.Engine.Application.ExecutionContext.Handlers
                     entityRef.LogicalName,
                     entityRef.Id);
 
-                // TODO: Add business logic for handling Delete message
+                var targetRecord = targetRecordFactory.CreateForDelete(entityRef);
+                var result = targetDataRepository.DeleteRecord(targetRecord);
+
+                HandleExecutionResult(result, entityRef, MessageName);
 
                 await Task.CompletedTask;
             }

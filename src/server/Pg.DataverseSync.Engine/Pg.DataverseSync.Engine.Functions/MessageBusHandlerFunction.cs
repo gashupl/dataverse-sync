@@ -64,6 +64,9 @@ public class MessageBusHandlerFunction : LoggingServiceBase<MessageBusHandlerFun
                     ex.LogicalName);
 
             // Move to dead-letter queue
+
+            //TODO: Find the best way of handling invalid messages. For now, we will move them to the dead-letter queue with a reason.
+            //There should be some way of alerting administrator and report showing invalid messages. 
             var deadLetterOptions = new Dictionary<string, object>
             {
                 { "UserProperties", new Dictionary<string, object> { { "Reason", "HandlerProcessingError" } } }
