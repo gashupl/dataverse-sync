@@ -85,6 +85,28 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             Assert.Contains(result.Columns, c => c.ColumnName == "samplemultiselect" && Equals(c.Value, "3,7"));
         }
 
+        [Theory]
+        [InlineData("/Date(1735689600000)/")]
+        [InlineData("\\/Date(1735689600000)\\/")]
+        [InlineData("2025-01-01T00:00:00Z")]
+        public void CreateForInsert_SerializedDateTimeValue_ConvertsToDateTime(string serializedDateTime)
+        {
+            // Arrange
+            var factory = new TargetRecordFactory();
+            var entity = new Entity("contact")
+            {
+                ["createdon"] = serializedDateTime,
+            };
+
+            // Act
+            var result = factory.CreateForInsert(entity);
+
+            // Assert
+            var createdOnColumn = Assert.Single(result.Columns, c => c.ColumnName == "createdon");
+            Assert.IsType<DateTime>(createdOnColumn.Value);
+            Assert.Equal(new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), (DateTime)createdOnColumn.Value);
+        }
+
         [Fact]
         public void CreateForUpdate_NullEntity_ThrowsArgumentNullException()
         {
@@ -197,6 +219,28 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             Assert.Contains(result.Columns, c => c.ColumnName == "accountid" && Equals(c.Value, accountId) && c.IsPrimaryKey);
             Assert.Contains(result.Columns, c => c.ColumnName == "ownerid" && Equals(c.Value, ownerId) && c.IsPrimaryKey == false);
             Assert.Contains(result.Columns, c => c.ColumnName == "customertypecode" && Equals(c.Value, 1) && c.IsPrimaryKey == false);
+        }
+
+        [Fact]
+        public void CreateForUpdate_DateTimeOffsetValue_ConvertsToUtcDateTime()
+        {
+            // Arrange
+            var factory = new TargetRecordFactory();
+            var accountId = Guid.NewGuid();
+            var modifiedOn = new DateTimeOffset(2025, 1, 1, 1, 30, 0, TimeSpan.FromHours(1));
+            var entity = new Entity("account")
+            {
+                ["accountid"] = accountId,
+                ["modifiedon"] = modifiedOn,
+            };
+
+            // Act
+            var result = factory.CreateForUpdate(entity);
+
+            // Assert
+            var modifiedOnColumn = Assert.Single(result.Columns, c => c.ColumnName == "modifiedon");
+            Assert.IsType<DateTime>(modifiedOnColumn.Value);
+            Assert.Equal(new DateTime(2025, 1, 1, 0, 30, 0, DateTimeKind.Utc), (DateTime)modifiedOnColumn.Value);
         }
 
         [Fact]
