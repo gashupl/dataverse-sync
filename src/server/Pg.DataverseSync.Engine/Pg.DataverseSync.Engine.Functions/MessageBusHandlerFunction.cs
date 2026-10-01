@@ -51,7 +51,7 @@ public class MessageBusHandlerFunction : LoggingServiceBase<MessageBusHandlerFun
             // Move to dead-letter queue
             var deadLetterOptions = new Dictionary<string, object>
             {
-                { "UserProperties", new Dictionary<string, object> { { "Reason", "UnsupportedMessageType" } } }
+                { "Reason", "UnsupportedMessageType" }
             };
             await messageActions.DeadLetterMessageAsync(message, deadLetterOptions);
         }
@@ -69,7 +69,7 @@ public class MessageBusHandlerFunction : LoggingServiceBase<MessageBusHandlerFun
             //There should be some way of alerting administrator and report showing invalid messages. 
             var deadLetterOptions = new Dictionary<string, object>
             {
-                { "UserProperties", new Dictionary<string, object> { { "Reason", "HandlerProcessingError" } } }
+                { "Reason", "HandlerProcessingError" }
             };
 
             await messageActions.DeadLetterMessageAsync(message, deadLetterOptions);

@@ -126,10 +126,14 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             {
                 LogicalName = "accountid"
             };
+            typeof(AttributeMetadata)
+                .GetProperty("IsPrimaryId")!
+                .SetValue(attribute2, true);
 
             var entityMetadata = new EntityMetadata
             {
-                LogicalName = "account"
+                LogicalName = "account",
+                IsActivity = false
             };
 
             typeof(EntityMetadata)
@@ -160,10 +164,161 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             Assert.True(result[0].IsNullable);
             Assert.Equal("accountid", result[1].Name);
             Assert.Equal("UniqueidentifierType", result[1].DataType);
-            Assert.False(result[1].IsPrimaryKey);
+            Assert.True(result[1].IsPrimaryKey);
             Assert.True(result[1].IsNullable);
 
             mockService.Received(1).Execute(Arg.Any<RetrieveEntityRequest>());
+        }
+
+        [Fact]
+        public void GetColumns_PrimaryKeyDetectionForNonActivityTable_LowercaseTableNameComparison()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<MetadataRepository>>();
+
+            var primaryKeyAttribute = new UniqueIdentifierAttributeMetadata
+            {
+                LogicalName = "contactid"
+            };
+            typeof(AttributeMetadata)
+                .GetProperty("IsPrimaryId")!
+                .SetValue(primaryKeyAttribute, true);
+
+            var entityMetadata = new EntityMetadata
+            {
+                LogicalName = "contact",
+                IsActivity = false
+            };
+
+            typeof(EntityMetadata)
+                .GetProperty("Attributes")!
+                .SetValue(entityMetadata, new AttributeMetadata[] { primaryKeyAttribute });
+
+            var response = new RetrieveEntityResponse
+            {
+                Results = new ParameterCollection
+                {
+                    ["EntityMetadata"] = entityMetadata
+                }
+            };
+
+            mockService.Execute(Arg.Any<RetrieveEntityRequest>()).Returns(response);
+
+            var metadataRepo = new MetadataRepository(mockService, mockLogger);
+
+            // Act
+            var result = metadataRepo.GetColumns("contact");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Single(result);
+            Assert.Equal("contactid", result[0].Name);
+            Assert.True(result[0].IsPrimaryKey);
+        }
+
+        [Fact]
+        public void GetColumns_PrimaryKeyDetectionForActivityTable_UsesActivityIdColumnName()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<MetadataRepository>>();
+
+            var primaryKeyAttribute = new UniqueIdentifierAttributeMetadata
+            {
+                LogicalName = "activityid"
+            };
+            typeof(AttributeMetadata)
+                .GetProperty("IsPrimaryId")!
+                .SetValue(primaryKeyAttribute, true);
+
+            var entityMetadata = new EntityMetadata
+            {
+                LogicalName = "activity",
+                IsActivity = true
+            };
+
+            typeof(EntityMetadata)
+                .GetProperty("Attributes")!
+                .SetValue(entityMetadata, new AttributeMetadata[] { primaryKeyAttribute });
+
+            var response = new RetrieveEntityResponse
+            {
+                Results = new ParameterCollection
+                {
+                    ["EntityMetadata"] = entityMetadata
+                }
+            };
+
+            mockService.Execute(Arg.Any<RetrieveEntityRequest>()).Returns(response);
+
+            var metadataRepo = new MetadataRepository(mockService, mockLogger);
+
+            // Act
+            var result = metadataRepo.GetColumns("activity");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Single(result);
+            Assert.Equal("activityid", result[0].Name);
+            Assert.True(result[0].IsPrimaryKey);
+        }
+
+        [Fact]
+        public void GetColumns_PrimaryKeyDetectionForActivityTable_IgnoresTableNamePattern()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<MetadataRepository>>();
+
+            var primaryKeyAttribute = new UniqueIdentifierAttributeMetadata
+            {
+                LogicalName = "activityid"
+            };
+            typeof(AttributeMetadata)
+                .GetProperty("IsPrimaryId")!
+                .SetValue(primaryKeyAttribute, true);
+
+            var otherAttribute = new UniqueIdentifierAttributeMetadata
+            {
+                LogicalName = "phonecallid"
+            };
+            typeof(AttributeMetadata)
+                .GetProperty("IsPrimaryId")!
+                .SetValue(otherAttribute, false);
+
+            var entityMetadata = new EntityMetadata
+            {
+                LogicalName = "phonecall",
+                IsActivity = true
+            };
+
+            typeof(EntityMetadata)
+                .GetProperty("Attributes")!
+                .SetValue(entityMetadata, new AttributeMetadata[] { primaryKeyAttribute, otherAttribute });
+
+            var response = new RetrieveEntityResponse
+            {
+                Results = new ParameterCollection
+                {
+                    ["EntityMetadata"] = entityMetadata
+                }
+            };
+
+            mockService.Execute(Arg.Any<RetrieveEntityRequest>()).Returns(response);
+
+            var metadataRepo = new MetadataRepository(mockService, mockLogger);
+
+            // Act
+            var result = metadataRepo.GetColumns("phonecall");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+            Assert.True(result[0].IsPrimaryKey);
+            Assert.Equal("activityid", result[0].Name);
+            Assert.False(result[1].IsPrimaryKey);
+            Assert.Equal("phonecallid", result[1].Name);
         }
 
         [Fact]

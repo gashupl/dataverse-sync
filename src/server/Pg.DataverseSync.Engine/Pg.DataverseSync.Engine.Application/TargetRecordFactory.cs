@@ -15,7 +15,7 @@ namespace Pg.DataverseSync.Engine.Application
 
             foreach (var attribute in entity.Attributes)
             {
-                record.AddColumn(attribute.Key, attribute.Value);
+                record.AddColumn(attribute.Key, DataverseValueConverter.Convert(attribute.Value));
             }
 
             return record;
@@ -30,8 +30,8 @@ namespace Pg.DataverseSync.Engine.Application
 
             foreach (var attribute in entity.Attributes)
             {
-                bool isPrimaryKey = attribute.Key.Equals($"{tableName}id", StringComparison.OrdinalIgnoreCase); 
-                record.AddColumn(attribute.Key, attribute.Value, isPrimaryKey);
+                bool isPrimaryKey = attribute.Key.Equals($"{tableName}id", StringComparison.OrdinalIgnoreCase);
+                record.AddColumn(attribute.Key, DataverseValueConverter.Convert(attribute.Value), isPrimaryKey);
             }
 
             return record;
