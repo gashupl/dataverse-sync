@@ -11,7 +11,9 @@ namespace Pg.DataverseSync.Engine.Source
 {
     public class MetadataRepository : DataRepositoryBase, IMetadataRepository
     {
-        public MetadataRepository(IOrganizationService service, ILogger<MetadataRepository> logger) 
+        private const string _activityIdColumnName = "activityid";
+
+        public MetadataRepository(IOrganizationService service, ILogger<MetadataRepository> logger)
             : base(service, logger)
         {
         }
@@ -45,9 +47,9 @@ namespace Pg.DataverseSync.Engine.Source
             }
             catch (FaultException<OrganizationServiceFault> ex)
             {
-                var msg = $"Dataverse service fault while retrieving tables. Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}"; 
+                var msg = $"Dataverse service fault while retrieving tables. Error code: {ex.Detail.ErrorCode}, Message: {ex.Detail.Message}";
                 LogIfEnabled(LogLevel.Error, ex, msg);
-                throw new ReadMetadataException(msg, ex); 
+                throw new ReadMetadataException(msg, ex);
             }
             catch (TimeoutException ex)
             {
@@ -81,8 +83,9 @@ namespace Pg.DataverseSync.Engine.Source
 
                 foreach (var attributeMetadata in response.EntityMetadata.Attributes)
                 {
+
                     string name = attributeMetadata.LogicalName;
-                    bool isPrimaryKey = attributeMetadata.IsPrimaryId.GetValueOrDefault(false);
+                    bool isPrimaryKey = IsPrimaryKey(attributeMetadata, tableName, response.EntityMetadata.IsActivity.GetValueOrDefault(false));
                     string? dataType = attributeMetadata.AttributeTypeName?.Value;
 
                     columns.Add(new Column(name, dataType, isPrimaryKey, isNullable: true));
@@ -98,20 +101,31 @@ namespace Pg.DataverseSync.Engine.Source
             }
             catch (TimeoutException ex)
             {
-                var msg = 
+                var msg =
                     $"Timeout while retrieving columns metadata from Dataverse table {tableName}. Consider increasing the timeout settings.";
                 LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }
             catch (Exception ex)
             {
-                var msg = 
+                var msg =
                     $"An unexpected error occurred while retrieving columns metadata from Dataverse table {tableName}";
                 LogIfEnabled(LogLevel.Error, ex, msg);
                 throw new ReadMetadataException(msg, ex);
             }
+        }
 
-           
+        private bool IsPrimaryKey(AttributeMetadata attributeMetadata, string tableName, bool isActivity)
+        {
+            bool isPrimaryKey = attributeMetadata.IsPrimaryId.GetValueOrDefault(false);
+            if (isActivity)
+            {
+                return isPrimaryKey && attributeMetadata.LogicalName == _activityIdColumnName;
+            }
+            else
+            {
+                return isPrimaryKey && attributeMetadata.LogicalName == $"{tableName.ToLower()}id";
+            }
         }
     }
 }
