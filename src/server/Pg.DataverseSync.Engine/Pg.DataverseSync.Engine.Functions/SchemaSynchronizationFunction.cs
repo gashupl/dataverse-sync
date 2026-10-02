@@ -8,15 +8,19 @@ namespace Pg.DataverseSync.Engine.Functions;
 public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchronizationFunction>
 {
     private readonly ISyncMetadataService _syncMetadataService;
+    private readonly IDataLoadService _dataLoadService;
 
     public SchemaSynchronizationFunction(
         ISyncMetadataService syncMetadataService,
+        IDataLoadService dataLoadService,
         ILogger<SchemaSynchronizationFunction> logger) : base(logger)
     {
         ArgumentNullException.ThrowIfNull(syncMetadataService);
+        ArgumentNullException.ThrowIfNull(dataLoadService);
         ArgumentNullException.ThrowIfNull(logger);
 
         _syncMetadataService = syncMetadataService;
+        _dataLoadService = dataLoadService;
     }
 
     [Function(nameof(SchemaSynchronizationFunction))]
@@ -31,7 +35,7 @@ public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchroniz
 
         var result = _syncMetadataService.Execute();
 
-        if (result?.TablesSyncResult == null) 
+        if (result?.TablesSyncResult == null)
         {
             LogIfEnabled(LogLevel.Error, "Schema synchronization failed. Result is null.");
             return;
@@ -43,14 +47,11 @@ public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchroniz
         foreach (var table in succeeded)
         {
             LogIfEnabled(LogLevel.Information, "Table {TableName} synchronized successfully.", table.TableName);
-            
-            if(table.OperationCode == TableSyncOperationCode.Create)
-            {
-                LogIfEnabled(LogLevel.Information, "Table {TableName} was created in the target database. " +
-                    "Performing initial data load...", table.TableName);
-                //TODO: Implement initial data load logic here
-            }
 
+            if (table.OperationCode == TableSyncOperationCode.Create)
+            {
+                ProcessInitialDataLoad(table.TableName);
+            }
         }
 
         foreach (var table in failed)
@@ -62,5 +63,28 @@ public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchroniz
         LogIfEnabled(LogLevel.Information,
             "Schema synchronization completed. Succeeded: {SucceededCount}, Failed: {FailedCount}.",
             succeeded.Count, failed.Count);
+    }
+
+    private void ProcessInitialDataLoad(string tableName)
+    {
+        LogIfEnabled(LogLevel.Information,
+            "Table {TableName} was created in the target database. Performing initial data load...",
+            tableName);
+
+        var results = _dataLoadService.LoadInitialData(tableName);
+        var successfulRecordsCount = results.Count(r => r.Success);
+        var failedRecords = results.Where(r => !r.Success).ToList();
+        var failedRecordsCount = failedRecords.Count(); 
+
+        LogIfEnabled(LogLevel.Information,
+            "Table {TableName} initial data load completed. Successful records: {SuccessfulRecordCount}, Failed records: {FailedRecordCount}.",
+            tableName,
+            successfulRecordsCount,
+            failedRecordsCount);
+
+        foreach (var item in failedRecords.Where(r => !String.IsNullOrEmpty(r.Message)))
+        {
+            LogIfEnabled(LogLevel.Error, item?.Message!); 
+        }
     }
 }
