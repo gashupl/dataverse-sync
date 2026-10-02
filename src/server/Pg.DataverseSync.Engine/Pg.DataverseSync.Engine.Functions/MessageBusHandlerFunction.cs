@@ -11,15 +11,19 @@ namespace Pg.DataverseSync.Engine.Functions;
 public class MessageBusHandlerFunction : LoggingServiceBase<MessageBusHandlerFunction>
 {
     private readonly IExecutionContextRouter _executionContextRouter;
+    private readonly IDataLoadService _dataLoadService;
 
     public MessageBusHandlerFunction(
-        IExecutionContextRouter executionContextRouter, 
+        IExecutionContextRouter executionContextRouter,
+        IDataLoadService dataLoadService, 
         ILogger<MessageBusHandlerFunction> logger) : base(logger)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(executionContextRouter);
+                ArgumentNullException.ThrowIfNull(dataLoadService);
 
         _executionContextRouter = executionContextRouter;
+        _dataLoadService = dataLoadService; 
     }
 
 

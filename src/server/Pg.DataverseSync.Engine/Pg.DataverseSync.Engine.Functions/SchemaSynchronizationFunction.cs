@@ -1,6 +1,7 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Pg.DataverseSync.Engine.Application;
+using Pg.DataverseSync.Engine.Core.Schema;
 
 namespace Pg.DataverseSync.Engine.Functions;
 
@@ -42,6 +43,14 @@ public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchroniz
         foreach (var table in succeeded)
         {
             LogIfEnabled(LogLevel.Information, "Table {TableName} synchronized successfully.", table.TableName);
+            
+            if(table.OperationCode == TableSyncOperationCode.Create)
+            {
+                LogIfEnabled(LogLevel.Information, "Table {TableName} was created in the target database. " +
+                    "Performing initial data load...", table.TableName);
+                //TODO: Implement initial data load logic here
+            }
+
         }
 
         foreach (var table in failed)
