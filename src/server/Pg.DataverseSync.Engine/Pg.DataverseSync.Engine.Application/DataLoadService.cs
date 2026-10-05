@@ -133,7 +133,7 @@ namespace Pg.DataverseSync.Engine.Application
                 LogIfEnabled(LogLevel.Warning,
                     "Initial data load insert failed for table '{TableName}': {Message}",
                     tableName,
-                    result.Message);
+                    result?.Message!);
             }
         }
     }

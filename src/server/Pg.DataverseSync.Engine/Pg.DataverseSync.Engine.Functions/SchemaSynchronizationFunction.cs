@@ -74,7 +74,7 @@ public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchroniz
         var results = _dataLoadService.LoadInitialData(tableName);
         var successfulRecordsCount = results.Count(r => r.Success);
         var failedRecords = results.Where(r => !r.Success).ToList();
-        var failedRecordsCount = failedRecords.Count(); 
+        var failedRecordsCount = failedRecords.Count; 
 
         LogIfEnabled(LogLevel.Information,
             "Table {TableName} initial data load completed. Successful records: {SuccessfulRecordCount}, Failed records: {FailedRecordCount}.",

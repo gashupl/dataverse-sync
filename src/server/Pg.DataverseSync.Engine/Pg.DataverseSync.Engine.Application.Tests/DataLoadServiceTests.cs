@@ -11,6 +11,9 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 {
     public class DataLoadServiceTests
     {
+        private static readonly string[] AccountNames = { "account" };
+        private static readonly string[] AccountColumns = { "accountid", "name" };
+
         [Fact]
         public void LoadInitialData_ValidTable_LoadsAllRecordsAndReturnsResults()
         {
@@ -41,7 +44,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var targetRecord1 = new TargetRecord("account");
             var targetRecord2 = new TargetRecord("account");
 
-            sourceMetadataService.GetTables(Arg.Is<List<string>>(names => names.SequenceEqual(new[] { "account" })))
+            sourceMetadataService.GetTables(Arg.Is<List<string>>(names => names.SequenceEqual(AccountNames)))
                 .Returns(new List<Table> { table });
             dataRepository.GetRecords("account", Arg.Any<List<string>>(), null)
                 .Returns(new List<Entity> { sourceRecord1, sourceRecord2 });
@@ -70,7 +73,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             dataRepository.Received(1).GetRecords(
                 "account",
-                Arg.Is<List<string>>(columns => columns.SequenceEqual(new[] { "accountid", "name" })),
+                Arg.Is<List<string>>(columns => columns.SequenceEqual(AccountColumns)),
                 null);
             targetDataRepository.Received(1).InsertRecord(targetRecord1);
             targetDataRepository.Received(1).InsertRecord(targetRecord2);
@@ -106,7 +109,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var targetRecord1 = new TargetRecord("account");
             var targetRecord2 = new TargetRecord("account");
 
-            sourceMetadataService.GetTables(Arg.Any<List<string>>())
+            sourceMetadataService.GetTables(Arg.Is<List<string>>(names => names.SequenceEqual(AccountNames)))
                 .Returns(new List<Table> { table });
             dataRepository.GetRecords("account", Arg.Any<List<string>>(), null)
                 .Returns(new List<Entity> { sourceRecord1, sourceRecord2 });
