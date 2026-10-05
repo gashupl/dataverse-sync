@@ -87,8 +87,10 @@ namespace Pg.DataverseSync.Engine.Source
                     string name = attributeMetadata.LogicalName;
                     bool isPrimaryKey = IsPrimaryKey(attributeMetadata, tableName, response.EntityMetadata.IsActivity.GetValueOrDefault(false));
                     string? dataType = attributeMetadata.AttributeTypeName?.Value;
-
-                    columns.Add(new Column(name, dataType, isPrimaryKey, isNullable: true));
+                    if (attributeMetadata.IsValidForRead == true)
+                    {
+                        columns.Add(new Column(name, dataType, isPrimaryKey, isNullable: true));
+                    }
                 }
 
                 return columns;

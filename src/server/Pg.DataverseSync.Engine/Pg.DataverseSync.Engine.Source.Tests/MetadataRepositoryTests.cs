@@ -121,11 +121,17 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             {
                 LogicalName = "name"
             };
+            typeof(AttributeMetadata)
+                .GetProperty("IsValidForRead")!
+                .SetValue(attribute1, true);
 
             var attribute2 = new UniqueIdentifierAttributeMetadata
             {
                 LogicalName = "accountid"
             };
+            typeof(AttributeMetadata)
+                .GetProperty("IsValidForRead")!
+                .SetValue(attribute2, true);
             typeof(AttributeMetadata)
                 .GetProperty("IsPrimaryId")!
                 .SetValue(attribute2, true);
@@ -182,6 +188,9 @@ namespace Pg.DataverseSync.Engine.Source.Tests
                 LogicalName = "contactid"
             };
             typeof(AttributeMetadata)
+                .GetProperty("IsValidForRead")!
+                .SetValue(primaryKeyAttribute, true);
+            typeof(AttributeMetadata)
                 .GetProperty("IsPrimaryId")!
                 .SetValue(primaryKeyAttribute, true);
 
@@ -228,6 +237,9 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             {
                 LogicalName = "activityid"
             };
+            typeof(AttributeMetadata)
+                .GetProperty("IsValidForRead")!
+                .SetValue(primaryKeyAttribute, true);
             typeof(AttributeMetadata)
                 .GetProperty("IsPrimaryId")!
                 .SetValue(primaryKeyAttribute, true);
@@ -276,6 +288,9 @@ namespace Pg.DataverseSync.Engine.Source.Tests
                 LogicalName = "activityid"
             };
             typeof(AttributeMetadata)
+                .GetProperty("IsValidForRead")!
+                .SetValue(primaryKeyAttribute, true);
+            typeof(AttributeMetadata)
                 .GetProperty("IsPrimaryId")!
                 .SetValue(primaryKeyAttribute, true);
 
@@ -283,6 +298,9 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             {
                 LogicalName = "phonecallid"
             };
+            typeof(AttributeMetadata)
+                .GetProperty("IsValidForRead")!
+                .SetValue(otherAttribute, true);
             typeof(AttributeMetadata)
                 .GetProperty("IsPrimaryId")!
                 .SetValue(otherAttribute, false);
