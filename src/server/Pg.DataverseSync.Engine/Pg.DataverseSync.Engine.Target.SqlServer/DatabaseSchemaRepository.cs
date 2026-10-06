@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Pg.DataverseSync.Engine.Application;
 using Pg.DataverseSync.Engine.Core.Model;
+using Pg.DataverseSync.Engine.Core.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -38,13 +39,20 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                         LogIfEnabled(LogLevel.Information, "Executing query to create table: {Query}", query);
                         command.ExecuteNonQuery();
                         _logger.LogInformation("Table created successfully.");
-                        return new TargetSchemaModificationResult { Success = SchemaModificationResult.Success };
+                        return new TargetSchemaModificationResult { 
+                                Success = SchemaModificationResult.Success, 
+                                OperationCode = TableSyncOperationCode.Create 
+                            };
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "An error occurred: {ErrorMessage}", ex.Message);
-                    return new TargetSchemaModificationResult { Success = SchemaModificationResult.Failure, Message = ex.Message };
+                    return new TargetSchemaModificationResult { 
+                        Success = SchemaModificationResult.Failure,
+                        OperationCode = TableSyncOperationCode.Create,
+                        Message = ex.Message 
+                    };
                 }
             }
         }
@@ -124,7 +132,10 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             if (failedOperations == 0)
             {
                 LogIfEnabled(LogLevel.Information, "Table '{TargetTableName}' updated successfully.", targetTable.Name);
-                return new TargetSchemaModificationResult { Success = SchemaModificationResult.Success };
+                return new TargetSchemaModificationResult { 
+                    Success = SchemaModificationResult.Success,
+                    OperationCode = TableSyncOperationCode.Update
+                 };
             }
 
             if (failedOperations == totalOperations)
@@ -132,6 +143,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 return new TargetSchemaModificationResult
                 {
                     Success = SchemaModificationResult.Failure,
+                    OperationCode = TableSyncOperationCode.Update,
                     Message = string.Join(Environment.NewLine, errors)
                 };
             }
@@ -139,6 +151,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             return new TargetSchemaModificationResult
             {
                 Success = SchemaModificationResult.PartialSuccess,
+                OperationCode = TableSyncOperationCode.Update, 
                 Message = string.Join(Environment.NewLine, errors)
             };
         }

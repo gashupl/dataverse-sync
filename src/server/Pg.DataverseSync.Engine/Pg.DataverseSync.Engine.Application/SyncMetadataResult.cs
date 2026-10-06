@@ -1,4 +1,6 @@
-﻿namespace Pg.DataverseSync.Engine.Application
+﻿using Pg.DataverseSync.Engine.Core.Schema;
+
+namespace Pg.DataverseSync.Engine.Application
 {
     public class SyncMetadataResult
     {
@@ -11,10 +13,13 @@
         public bool IsSynchronized { get; set; }
         public string ErrorMessage { get; set; }
 
-        public TableSyncResult(string tableName, bool isSynchronized, string? errorMessage = null)
+        public TableSyncOperationCode OperationCode { get; set; }
+
+        public TableSyncResult(string tableName, bool isSynchronized, TableSyncOperationCode operationCode = TableSyncOperationCode.None, string? errorMessage = null)
         {
             TableName = tableName;
             IsSynchronized = isSynchronized;
+            OperationCode = operationCode;
             ErrorMessage = errorMessage!;
         }
     }

@@ -13,7 +13,7 @@ public class MessageBusHandlerFunction : LoggingServiceBase<MessageBusHandlerFun
     private readonly IExecutionContextRouter _executionContextRouter;
 
     public MessageBusHandlerFunction(
-        IExecutionContextRouter executionContextRouter, 
+        IExecutionContextRouter executionContextRouter,
         ILogger<MessageBusHandlerFunction> logger) : base(logger)
     {
         ArgumentNullException.ThrowIfNull(logger);

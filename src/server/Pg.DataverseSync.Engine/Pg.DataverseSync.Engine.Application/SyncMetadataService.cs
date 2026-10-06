@@ -3,6 +3,7 @@ using Pg.DataverseSync.Engine.Core.Model;
 using Pg.DataverseSync.Engine.Application.Synchronization;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Target;
+using Pg.DataverseSync.Engine.Core.Schema;
 
 namespace Pg.DataverseSync.Engine.Application
 {
@@ -45,14 +46,14 @@ namespace Pg.DataverseSync.Engine.Application
                 {
                     if (!sourceTableMap.TryGetValue(synchronizedTableName, out var sourceTable))
                     {
-                        result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false,
+                        result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false, TableSyncOperationCode.None, 
                             "Table is missing in source metadata."));
                         continue;
                     }
 
                     if (!context.TargetTableExists.ContainsKey(synchronizedTableName))
                     {
-                        result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false,
+                        result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false, TableSyncOperationCode.None,
                             "Target table existence could not be determined."));
                         continue;
                     }
@@ -60,19 +61,21 @@ namespace Pg.DataverseSync.Engine.Application
                     try
                     {
                         var modificationResult = _targetSchemaService.UpsertTargetTable(sourceTable);
+
                         if (modificationResult.Success != SchemaModificationResult.Success)
                         {
-                            result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false, modificationResult.Message));
+                            result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false, 
+                                TableSyncOperationCode.None, modificationResult.Message));
                             continue;
                         }
 
-                        result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, true));
+                        result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, true, modificationResult.OperationCode));
                     }
                     catch (Exception ex)
                     {
                         LogIfEnabled(LogLevel.Error, ex,
                             "Synchronization failed for table {TableName}.", synchronizedTableName);
-                        result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false, ex.Message));
+                        result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false, TableSyncOperationCode.None, ex.Message));
                     }
                 }
 
