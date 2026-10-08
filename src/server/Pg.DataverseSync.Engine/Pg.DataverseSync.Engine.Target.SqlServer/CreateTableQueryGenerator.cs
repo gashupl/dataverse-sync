@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Pg.DataverseSync.Engine.Target.SqlServer
 {
-    internal class CreateTableQueryGenerator
+    internal static class CreateTableQueryGenerator
     {
         internal static string Generate(Table table)
         {
@@ -40,7 +40,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 query.Append($", PRIMARY KEY ({primaryKeyColumn.Name})");
             }
 
-            query.Append(")");
+            query.Append(')');
 
             return query.ToString();
         }
