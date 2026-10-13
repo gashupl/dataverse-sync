@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ImportExportXml version="9.2.26053.146" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26053.146" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26053.00146">
+<ImportExportXml version="9.2.26092.157" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26092.157" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26092.00157">
   <SolutionManifest>
     <UniqueName>DataverseSync</UniqueName>
     <LocalizedNames>
@@ -80,24 +80,40 @@
       </Addresses>
     </Publisher>
     <RootComponents>
+      <RootComponent type="1" schemaName="pg_synchronizationdetails" behavior="0" />
       <RootComponent type="1" schemaName="pg_synctable" behavior="0" />
+      <RootComponent type="300" schemaName="pg_dataversesyncadminmodern_eda1d" behavior="0" />
       <RootComponent type="61" schemaName="pg_/img/table.svg" behavior="0" />
       <RootComponent type="62" schemaName="pg_DataverseSyncAdministration" behavior="0" />
       <RootComponent type="66" schemaName="pg_Pg.DataverseSync.Controls.TableSelector" behavior="0" />
       <RootComponent type="80" schemaName="pg_DataverseSyncAdministration" behavior="0" />
+      <RootComponent type="9" schemaName="pg_targetrepositoryset" behavior="0" />
       <RootComponent type="92" id="{02bfe3eb-d363-f111-a826-002248882207}" behavior="0" />
       <RootComponent type="92" id="{1f8c50d6-abc6-f011-8544-7ced8d8d25d7}" behavior="0" />
+      <RootComponent type="92" id="{32ce7d49-0179-f111-ab0e-70a8a55f2a97}" behavior="0" />
       <RootComponent type="92" id="{a6c39757-d463-f111-a826-002248882207}" behavior="0" />
       <RootComponent type="92" id="{f0d095df-d363-f111-a826-002248882207}" behavior="0" />
     </RootComponents>
     <MissingDependencies>
       <MissingDependency>
-        <Required type="61" schemaName="msdyn_/Images/AppModule_Default_Icon.png" displayName="msdyn_/Images/AppModule_Default_Icon.png" solution="AppModuleWebResources (2.5)" />
-        <Dependent type="80" schemaName="pg_DataverseSyncAdministration" displayName="Dataverse Sync Administration" />
+        <Required type="1" schemaName="environmentvariabledefinition" displayName="Environment Variable Definition" solution="EnvironmentVariables (1.0.2406.4)">
+          <package appName="EnvironmentVariables" version="1.0.2406.4">EnvironmentVariablesSolutionAnchor (1.0.2406.4)</package>
+        </Required>
+        <Dependent type="300" schemaName="pg_dataversesyncadminmodern_eda1d" displayName="DataverseSync Admin (Modern)" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="SettingDefinition" displayName="AppChannel" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.17)" id.uniquename="AppChannel">
-          <package appName="PowerAppsAppFramework Package" version="1.0.0.25">PowerAppsAppFramework_Anchor (1.0.0.25)</package>
+        <Required type="1" schemaName="environmentvariablevalue" displayName="Environment Variable Value" solution="EnvironmentVariables (1.0.2406.4)">
+          <package appName="EnvironmentVariables" version="1.0.2406.4">EnvironmentVariablesSolutionAnchor (1.0.2406.4)</package>
+        </Required>
+        <Dependent type="300" schemaName="pg_dataversesyncadminmodern_eda1d" displayName="DataverseSync Admin (Modern)" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="61" schemaName="msdyn_/Images/AppModule_Default_Icon.png" displayName="msdyn_/Images/AppModule_Default_Icon.png" solution="AppModuleWebResources (2.5)" />
+        <Dependent type="80" schemaName="pg_DataverseSyncAdministration" displayName="DataverseSync Administration" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="SettingDefinition" displayName="AppChannel" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.20)" id.uniquename="AppChannel">
+          <package appName="PowerAppsAppFramework Package" version="1.0.0.26">PowerAppsAppFramework_Anchor (1.0.0.26)</package>
         </Required>
         <Dependent type="AppSetting" displayName="parentappmoduleid.uniquename=pg_DataverseSyncAdministration,settingdefinitionid.uniquename=AppChannel" id.parentappmoduleid.uniquename="pg_DataverseSyncAdministration" id.settingdefinitionid.uniquename="AppChannel" />
       </MissingDependency>

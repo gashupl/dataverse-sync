@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{26325a1d-0170-44ce-b9d2-d015b97f935b}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form headerdensity="HighWithControls">
+      <tabs>
+        <tab verticallayout="true" id="{449d71b3-7c07-4277-a099-aeb9d7bb8ed7}" IsUserDefined="1">
+          <labels>
+            <label description="General" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showlabel="false" showbar="false" IsUserDefined="0" id="{737fe815-3398-4908-a48d-ec4bff90012c}">
+                  <labels>
+                    <label description="General" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{facd9e29-71f2-443d-94ab-a984e23e0ac1}" locklevel="0" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Synchronized Table" languagecode="1033" />
+                        </labels>
+                        <control id="pg_synctableid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="pg_synctableid" disabled="true" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{b7844551-5480-407b-a341-67d0fc25d8e0}" locklevel="0" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Target Repository" languagecode="1033" />
+                        </labels>
+                        <control id="pg_targetrepository" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="pg_targetrepository" disabled="true" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{505cbbfe-b0f6-4209-921a-9ece520d50ee}" locklevel="0" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Last Synchronization Date" languagecode="1033" />
+                        </labels>
+                        <control id="pg_lastsynchronizationdate" classid="{5B773807-9FB2-42DB-97C3-7A91EFF8ADFF}" datafieldname="pg_lastsynchronizationdate" disabled="true" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{fc6360a0-5cff-4bb2-a439-e5fc65189089}">
+                        <labels>
+                          <label description="Checksum" languagecode="1033" />
+                        </labels>
+                        <control id="pg_checksum" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="pg_checksum" disabled="true" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+      <header id="{a5f4fa34-9568-4915-b9c4-ebc8a4c0265b}" celllabelposition="Top" columns="111" labelwidth="115" celllabelalignment="Left">
+        <rows>
+          <row>
+            <cell id="{6768fef8-c0da-451e-8a4d-a8935a9d977a}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{0739ba78-f484-47cd-ab0c-11eb6aa79127}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{ae3adb25-f3f9-491d-9dd4-7031a41d26b9}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+          </row>
+        </rows>
+      </header>
+      <footer id="{dad7bc0c-ebc0-46ab-9d63-6a6456d564ba}" celllabelposition="Top" columns="111" labelwidth="115" celllabelalignment="Left">
+        <rows>
+          <row>
+            <cell id="{212f3388-2e12-4137-8f54-af9ffad65274}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{bfc836c6-8e81-46ff-a919-86c299e58e7e}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+            <cell id="{2151449c-1be8-4a32-b394-34425c5540cd}" showlabel="false">
+              <labels>
+                <label description="" languagecode="1033" />
+              </labels>
+            </cell>
+          </row>
+        </rows>
+      </footer>
+      <DisplayConditions Order="0" FallbackForm="true">
+        <Everyone />
+      </DisplayConditions>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Information" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="A form for this entity." languagecode="1033" />
+    </Descriptions>
+  </systemform>
+</forms>
