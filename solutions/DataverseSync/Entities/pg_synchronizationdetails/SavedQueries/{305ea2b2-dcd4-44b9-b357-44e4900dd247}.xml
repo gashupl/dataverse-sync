@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{305ea2b2-dcd4-44b9-b357-44e4900dd247}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="pg_checksum" select="1" icon="1" preview="1">
+        <row name="result" id="pg_synchronizationdetailsid">
+          <cell name="pg_synctableid" width="152" />
+          <cell name="pg_targetrepository" width="141" />
+          <cell name="pg_lastsynchronizationdate" width="190" />
+          <cell name="pg_checksum" width="300" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="pg_synchronizationdetails">
+          <attribute name="pg_synchronizationdetailsid" />
+          <attribute name="pg_checksum" />
+          <order attribute="pg_checksum" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+          </filter>
+          <attribute name="pg_synctableid" />
+          <attribute name="pg_targetrepository" />
+          <attribute name="pg_lastsynchronizationdate" />
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Active Synchronization Details" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>
