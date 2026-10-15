@@ -2,6 +2,7 @@
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Pg.DataverseSync.Engine.Application.Data;
+using Pg.DataverseSync.Engine.Core.Model;
 using Pg.DataverseSync.Engine.Core.Schema;
 
 namespace Pg.DataverseSync.Engine.Source
@@ -18,10 +19,10 @@ namespace Pg.DataverseSync.Engine.Source
             LogIfEnabled(LogLevel.Information, "GetActiveSyncTables method executed");
 
             var filter = new FilterExpression(LogicalOperator.And);
-            filter.AddCondition(SyncTable.Columns.StateCode, 
-                ConditionOperator.Equal, SyncTable.StateCodes.Active);
+            filter.AddCondition(pg_synctable.Fields.StateCode, 
+                ConditionOperator.Equal, pg_synctable_statecode.Active);
 
-            var syncTables = this.GetRecords(SyncTable.EntityName, new List<string> { SyncTable.Columns.Name },
+            var syncTables = this.GetRecords(pg_synctable.EntityLogicalName, new List<string> { pg_synctable.Fields.pg_name },
                 filter);
 
             LogIfEnabled(LogLevel.Information, "GetActiveSyncTables method completed");

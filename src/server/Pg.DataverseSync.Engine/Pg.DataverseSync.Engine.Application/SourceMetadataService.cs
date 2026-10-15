@@ -21,8 +21,9 @@ namespace Pg.DataverseSync.Engine.Application
 
         public List<string> GetSynchronizedTableNames()
         {
+            
             var names = _dataRepository
-                .GetActiveSyncTables().Select(t => t.Attributes[SyncTable.Columns.Name] as string)
+                .GetActiveSyncTables().Select(t => t.Attributes[pg_synctable.Fields.pg_name] as string)
                 .Where(n => n != null);
 
             return names.ToList()!; 
