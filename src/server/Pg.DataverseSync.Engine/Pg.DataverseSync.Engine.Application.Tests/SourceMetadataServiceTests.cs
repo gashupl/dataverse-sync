@@ -131,11 +131,11 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var mockDataRepository = Substitute.For<IDataRepository>();
             var mockLogger = Substitute.For<ILogger<SourceMetadataService>>();
 
-            var entity1 = new Entity(SyncTable.EntityName);
-            entity1.Attributes[SyncTable.Columns.Name] = "account";
+            var entity1 = new Entity(pg_synctable.EntityLogicalName);
+            entity1.Attributes[pg_synctable.Fields.pg_name] = "account";
 
-            var entity2 = new Entity(SyncTable.EntityName);
-            entity2.Attributes[SyncTable.Columns.Name] = "contact";
+            var entity2 = new Entity(pg_synctable.EntityLogicalName);
+            entity2.Attributes[pg_synctable.Fields.pg_name] = "contact";
 
             mockDataRepository.GetActiveSyncTables().Returns(new List<Entity> { entity1, entity2 });
 
@@ -161,11 +161,11 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var mockDataRepository = Substitute.For<IDataRepository>();
             var mockLogger = Substitute.For<ILogger<SourceMetadataService>>();
 
-            var entityWithName = new Entity(SyncTable.EntityName);
-            entityWithName.Attributes[SyncTable.Columns.Name] = "account";
+            var entityWithName = new Entity(pg_synctable.EntityLogicalName);
+            entityWithName.Attributes[pg_synctable.Fields.pg_name] = "account";
 
-            var entityWithNullName = new Entity(SyncTable.EntityName);
-            entityWithNullName.Attributes[SyncTable.Columns.Name] = null;
+            var entityWithNullName = new Entity(pg_synctable.EntityLogicalName);
+            entityWithNullName.Attributes[pg_synctable.Fields.pg_name] = null;
 
             mockDataRepository.GetActiveSyncTables().Returns(new List<Entity> { entityWithName, entityWithNullName });
 
