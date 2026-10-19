@@ -38,7 +38,7 @@
                     <row>
                       <cell id="{505cbbfe-b0f6-4209-921a-9ece520d50ee}" locklevel="0" colspan="1" rowspan="1">
                         <labels>
-                          <label description="Last Synchronization Date" languagecode="1033" />
+                          <label description="Last Schema Synchronization Date" languagecode="1033" />
                         </labels>
                         <control id="pg_lastsynchronizationdate" classid="{5B773807-9FB2-42DB-97C3-7A91EFF8ADFF}" datafieldname="pg_lastsynchronizationdate" disabled="true" />
                       </cell>
