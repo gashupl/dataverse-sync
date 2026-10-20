@@ -68,5 +68,25 @@ namespace Pg.DataverseSync.Engine.Source
             return records;
         }
 
+        public List<pg_synchronizationdetails> GetSyncDetails(string tableName, pg_TargetRepositorySet targetRepositorySet)
+        {
+            var context = new DataverseContext(service);
+
+            var syncDetails =
+                (from sd in context.pg_synchronizationdetailsSet
+                 join st in context.pg_synctableSet
+                     on sd.pg_synctableId.Id equals st.Id
+                 where st.pg_name == tableName
+                     && sd.pg_targetrepository == targetRepositorySet
+                 select new pg_synchronizationdetails
+                 {
+                     Id = sd.Id,
+                     pg_checksum = sd.pg_checksum,
+                     pg_lastsynchronizationdate = sd.pg_lastsynchronizationdate,
+                 }  )
+                .ToList();
+
+            return syncDetails;
+        }
     }
 }
