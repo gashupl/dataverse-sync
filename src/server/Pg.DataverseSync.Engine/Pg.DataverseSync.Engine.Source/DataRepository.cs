@@ -29,6 +29,16 @@ namespace Pg.DataverseSync.Engine.Source
             return syncTables;
         }
 
+        public pg_synctable? GetSyncTable(string name)
+        {
+            using var context = new DataverseContext(service);
+
+            return (from st in context.pg_synctableSet
+                    where st.pg_name == name
+                    select st)
+                .FirstOrDefault();
+        }
+
         public List<Entity> GetRecords(string tableName, List<string> columns, FilterExpression? filter)
         {
             var records = new List<Entity>();
@@ -70,7 +80,7 @@ namespace Pg.DataverseSync.Engine.Source
 
         public List<pg_synchronizationdetails> GetSyncDetails(string tableName, pg_TargetRepositorySet targetRepositorySet)
         {
-            var context = new DataverseContext(service);
+            using var context = new DataverseContext(service);
 
             var syncDetails =
                 (from sd in context.pg_synchronizationdetailsSet
@@ -88,5 +98,7 @@ namespace Pg.DataverseSync.Engine.Source
 
             return syncDetails;
         }
+
+ 
     }
 }

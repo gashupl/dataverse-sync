@@ -435,5 +435,62 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             Assert.Equal("page2", result[1].pg_checksum);
             mockService.Received(2).Execute(Arg.Any<RetrieveMultipleRequest>());
         }
+
+        [Fact]
+        public void GetSyncTable_ExistingName_ReturnsSyncTable()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var syncTable = new pg_synctable(Guid.NewGuid())
+            {
+                pg_name = "account"
+            };
+
+            var entityCollection = new EntityCollection(new List<Entity> { syncTable })
+            {
+                MoreRecords = false
+            };
+
+            mockService.Execute(Arg.Any<RetrieveMultipleRequest>()).Returns(
+                new RetrieveMultipleResponse { Results = { ["EntityCollection"] = entityCollection } });
+
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var result = repository.GetSyncTable("account");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(syncTable.Id, result.Id);
+            Assert.Equal("account", result.pg_name);
+            mockService.Received(1).Execute(Arg.Any<RetrieveMultipleRequest>());
+        }
+
+        [Fact]
+        public void GetSyncTable_UnknownName_ReturnsNull()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var emptyCollection = new EntityCollection(new List<Entity>())
+            {
+                MoreRecords = false
+            };
+
+            mockService.Execute(Arg.Any<RetrieveMultipleRequest>()).Returns(
+                new RetrieveMultipleResponse { Results = { ["EntityCollection"] = emptyCollection } });
+
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var result = repository.GetSyncTable("unknown");
+
+            // Assert
+            Assert.Null(result);
+            mockService.Received(1).Execute(Arg.Any<RetrieveMultipleRequest>());
+        }
     }
 }

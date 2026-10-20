@@ -7,6 +7,8 @@ namespace Pg.DataverseSync.Engine.Application.Data
     public interface IDataRepository
     {
         List<Entity> GetActiveSyncTables();
+
+        pg_synctable? GetSyncTable(string name); 
         List<Entity> GetRecords(string tableName, List<string> columns, FilterExpression? filter);
 
         List<pg_synchronizationdetails> GetSyncDetails(string tableName, pg_TargetRepositorySet targetRepositorySet);
