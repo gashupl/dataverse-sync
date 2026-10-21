@@ -99,6 +99,32 @@ namespace Pg.DataverseSync.Engine.Source
             return syncDetails;
         }
 
- 
+        public Guid CreateRecord(Entity record)
+        {
+            LogIfEnabled(LogLevel.Information, "Creating record in table {TableName}...", record.LogicalName);
+
+            var id = service.Create(record);
+
+            LogIfEnabled(LogLevel.Information, "Created record {RecordId} in table {TableName}.", id, record.LogicalName);
+            return id;
+        }
+
+        public void UpdateRecord(Entity record)
+        {
+            LogIfEnabled(LogLevel.Information, "Updating record {RecordId} in table {TableName}...", record.Id, record.LogicalName);
+
+            service.Update(record);
+
+            LogIfEnabled(LogLevel.Information, "Updated record {RecordId} in table {TableName}.", record.Id, record.LogicalName);
+        }
+
+        public void DeleteRecord(Guid id, string tableName)
+        {
+            LogIfEnabled(LogLevel.Information, "Deleting record {RecordId} from table {TableName}...", id, tableName);
+
+            service.Delete(tableName, id);
+
+            LogIfEnabled(LogLevel.Information, "Deleted record {RecordId} from table {TableName}.", id, tableName);
+        }
     }
 }

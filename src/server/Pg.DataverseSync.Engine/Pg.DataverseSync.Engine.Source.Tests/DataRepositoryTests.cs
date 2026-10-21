@@ -492,5 +492,69 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             Assert.Null(result);
             mockService.Received(1).Execute(Arg.Any<RetrieveMultipleRequest>());
         }
+
+        [Fact]
+        public void CreateRecord_ValidRecord_LogsTwiceAndReturnsId()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var entity = new Entity("account");
+            entity.Attributes["name"] = "Contoso";
+
+            var expectedId = Guid.NewGuid();
+            mockService.Create(entity).Returns(expectedId);
+
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var result = repository.CreateRecord(entity);
+
+            // Assert
+            Assert.Equal(expectedId, result);
+            mockLogger.Received(2).IsEnabled(LogLevel.Information);
+            mockService.Received(1).Create(entity);
+        }
+
+        [Fact]
+        public void UpdateRecord_ValidRecord_LogsTwiceAndUpdatesRecord()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var entity = new Entity("account", Guid.NewGuid());
+            entity.Attributes["name"] = "Contoso Updated";
+
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var exception = Record.Exception(() => repository.UpdateRecord(entity));
+
+            // Assert
+            Assert.Null(exception);
+            mockLogger.Received(2).IsEnabled(LogLevel.Information);
+            mockService.Received(1).Update(entity);
+        }
+
+        [Fact]
+        public void DeleteRecord_ValidId_LogsTwiceAndDeletesRecord()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var id = Guid.NewGuid();
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var exception = Record.Exception(() => repository.DeleteRecord(id, "account"));
+
+            // Assert
+            Assert.Null(exception);
+            mockLogger.Received(2).IsEnabled(LogLevel.Information);
+            mockService.Received(1).Delete("account", id);
+        }
     }
 }
