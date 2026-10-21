@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Xrm.Sdk;
 using Pg.DataverseSync.Engine.Application.Data;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 using Pg.DataverseSync.Engine.Core.Model;
@@ -59,6 +60,62 @@ namespace Pg.DataverseSync.Engine.Application
                 var message = "An error occurred while reading metadata for tables.";
                 LogIfEnabled(LogLevel.Error, ex, message);
                 throw new ApplicationServiceException(message, ex);
+            }
+        }
+
+        public SyncDetailsModificationResult UpsertSyncDetails(string tableName, string checksum)
+        {
+            var targetRepositorySet = pg_TargetRepositorySet.MicrosoftSqlServer;
+
+            try
+            {
+                var existingDetails = _dataRepository.GetSyncDetails(tableName, targetRepositorySet).FirstOrDefault();
+
+                if (existingDetails != null)
+                {
+                    _dataRepository.UpdateRecord(new pg_synchronizationdetails(existingDetails.Id)
+                    {
+                        pg_checksum = checksum,
+                        pg_lastsynchronizationdate = DateTime.UtcNow
+                    });
+
+                    return new SyncDetailsModificationResult { Success = ModificationResult.Success };
+                }
+
+                var syncTable = _dataRepository.GetSyncTable(tableName);
+
+                if (syncTable == null)
+                {
+                    var notFoundMessage = $"Sync table '{tableName}' was not found.";
+                    LogIfEnabled(LogLevel.Warning, notFoundMessage);
+
+                    return new SyncDetailsModificationResult
+                    {
+                        Success = ModificationResult.Failure,
+                        Message = notFoundMessage
+                    };
+                }
+
+                _dataRepository.CreateRecord(new pg_synchronizationdetails
+                {
+                    pg_checksum = checksum,
+                    pg_lastsynchronizationdate = DateTime.UtcNow,
+                    pg_targetrepository = targetRepositorySet,
+                    pg_synctableId = new EntityReference(pg_synctable.EntityLogicalName, syncTable.Id)
+                });
+
+                return new SyncDetailsModificationResult { Success = ModificationResult.Success };
+            }
+            catch (Exception ex)
+            {
+                var message = "An error occurred while upserting sync details for table {TableName}.";
+                LogIfEnabled(LogLevel.Error, ex, message, tableName);
+
+                return new SyncDetailsModificationResult
+                {
+                    Success = ModificationResult.Failure,
+                    Message = ex.Message
+                };
             }
         }
     }

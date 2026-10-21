@@ -181,6 +181,115 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             mockDataRepository.Received(1).GetActiveSyncTables();
         }
+
+        [Fact]
+        public void UpsertSyncDetails_ExistingDetails_UpdatesRecordAndReturnsSuccess()
+        {
+            // Arrange
+            var mockMetadataRepo = Substitute.For<IMetadataRepository>();
+            var mockDataRepository = Substitute.For<IDataRepository>();
+            var mockLogger = Substitute.For<ILogger<SourceMetadataService>>();
+
+            var detailsId = Guid.NewGuid();
+            var existingDetails = new pg_synchronizationdetails(detailsId)
+            {
+                pg_checksum = "old-checksum"
+            };
+
+            mockDataRepository.GetSyncDetails("account", pg_TargetRepositorySet.MicrosoftSqlServer)
+                .Returns(new List<pg_synchronizationdetails> { existingDetails });
+
+            var service = new SourceMetadataService(mockMetadataRepo, mockDataRepository, mockLogger);
+
+            // Act
+            var result = service.UpsertSyncDetails("account", "new-checksum");
+
+            // Assert
+            Assert.Equal(ModificationResult.Success, result.Success);
+            mockDataRepository.Received(1).UpdateRecord(Arg.Is<Entity>(e =>
+                e.Id == detailsId && ((pg_synchronizationdetails)e).pg_checksum == "new-checksum"));
+            mockDataRepository.DidNotReceive().CreateRecord(Arg.Any<Entity>());
+            mockDataRepository.DidNotReceive().GetSyncTable(Arg.Any<string>());
+        }
+
+        [Fact]
+        public void UpsertSyncDetails_NoExistingDetails_CreatesRecordLinkedToSyncTableAndReturnsSuccess()
+        {
+            // Arrange
+            var mockMetadataRepo = Substitute.For<IMetadataRepository>();
+            var mockDataRepository = Substitute.For<IDataRepository>();
+            var mockLogger = Substitute.For<ILogger<SourceMetadataService>>();
+
+            var syncTableId = Guid.NewGuid();
+            var syncTable = new pg_synctable(syncTableId)
+            {
+                pg_name = "account"
+            };
+
+            mockDataRepository.GetSyncDetails("account", pg_TargetRepositorySet.MicrosoftSqlServer)
+                .Returns(new List<pg_synchronizationdetails>());
+            mockDataRepository.GetSyncTable("account").Returns(syncTable);
+
+            var service = new SourceMetadataService(mockMetadataRepo, mockDataRepository, mockLogger);
+
+            // Act
+            var result = service.UpsertSyncDetails("account", "new-checksum");
+
+            // Assert
+            Assert.Equal(ModificationResult.Success, result.Success);
+            mockDataRepository.Received(1).CreateRecord(Arg.Is<Entity>(e =>
+                ((pg_synchronizationdetails)e).pg_checksum == "new-checksum"
+                && ((pg_synchronizationdetails)e).pg_targetrepository == pg_TargetRepositorySet.MicrosoftSqlServer
+                && ((pg_synchronizationdetails)e).pg_synctableId.Id == syncTableId));
+            mockDataRepository.DidNotReceive().UpdateRecord(Arg.Any<Entity>());
+        }
+
+        [Fact]
+        public void UpsertSyncDetails_NoExistingDetailsAndSyncTableNotFound_ReturnsFailureWithoutCreating()
+        {
+            // Arrange
+            var mockMetadataRepo = Substitute.For<IMetadataRepository>();
+            var mockDataRepository = Substitute.For<IDataRepository>();
+            var mockLogger = Substitute.For<ILogger<SourceMetadataService>>();
+
+            mockDataRepository.GetSyncDetails("unknown", pg_TargetRepositorySet.MicrosoftSqlServer)
+                .Returns(new List<pg_synchronizationdetails>());
+            mockDataRepository.GetSyncTable("unknown").Returns((pg_synctable?)null);
+
+            var service = new SourceMetadataService(mockMetadataRepo, mockDataRepository, mockLogger);
+
+            // Act
+            var result = service.UpsertSyncDetails("unknown", "new-checksum");
+
+            // Assert
+            Assert.Equal(ModificationResult.Failure, result.Success);
+            Assert.Equal("Sync table 'unknown' was not found.", result.Message);
+            mockDataRepository.DidNotReceive().CreateRecord(Arg.Any<Entity>());
+            mockDataRepository.DidNotReceive().UpdateRecord(Arg.Any<Entity>());
+        }
+
+        [Fact]
+        public void UpsertSyncDetails_RepositoryThrows_ReturnsFailureWithExceptionMessage()
+        {
+            // Arrange
+            var mockMetadataRepo = Substitute.For<IMetadataRepository>();
+            var mockDataRepository = Substitute.For<IDataRepository>();
+            var mockLogger = Substitute.For<ILogger<SourceMetadataService>>();
+
+            mockDataRepository.GetSyncDetails("account", pg_TargetRepositorySet.MicrosoftSqlServer)
+                .Throws(new Exception("Dataverse unavailable"));
+
+            var service = new SourceMetadataService(mockMetadataRepo, mockDataRepository, mockLogger);
+
+            // Act
+            var result = service.UpsertSyncDetails("account", "new-checksum");
+
+            // Assert
+            Assert.Equal(ModificationResult.Failure, result.Success);
+            Assert.Equal("Dataverse unavailable", result.Message);
+            mockDataRepository.DidNotReceive().CreateRecord(Arg.Any<Entity>());
+            mockDataRepository.DidNotReceive().UpdateRecord(Arg.Any<Entity>());
+        }
     }
 }
 
