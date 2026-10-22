@@ -63,10 +63,9 @@ namespace Pg.DataverseSync.Engine.Application
             }
         }
 
-        public SyncDetailsModificationResult UpsertSyncDetails(string tableName, string checksum)
-        {
-            var targetRepositorySet = pg_TargetRepositorySet.MicrosoftSqlServer;
 
+        public SyncDetailsModificationResult UpsertSyncDetails(string tableName, string checksum, pg_TargetRepositorySet targetRepositorySet)
+        {
             try
             {
                 var existingDetails = _dataRepository.GetSyncDetails(tableName, targetRepositorySet).FirstOrDefault();

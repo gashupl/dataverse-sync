@@ -202,7 +202,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var service = new SourceMetadataService(mockMetadataRepo, mockDataRepository, mockLogger);
 
             // Act
-            var result = service.UpsertSyncDetails("account", "new-checksum");
+            var result = service.UpsertSyncDetails("account", "new-checksum", pg_TargetRepositorySet.MicrosoftSqlServer);
 
             // Assert
             Assert.Equal(ModificationResult.Success, result.Success);
@@ -233,7 +233,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var service = new SourceMetadataService(mockMetadataRepo, mockDataRepository, mockLogger);
 
             // Act
-            var result = service.UpsertSyncDetails("account", "new-checksum");
+            var result = service.UpsertSyncDetails("account", "new-checksum", pg_TargetRepositorySet.MicrosoftSqlServer);
 
             // Assert
             Assert.Equal(ModificationResult.Success, result.Success);
@@ -259,7 +259,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var service = new SourceMetadataService(mockMetadataRepo, mockDataRepository, mockLogger);
 
             // Act
-            var result = service.UpsertSyncDetails("unknown", "new-checksum");
+            var result = service.UpsertSyncDetails("unknown", "new-checksum", pg_TargetRepositorySet.MicrosoftSqlServer);
 
             // Assert
             Assert.Equal(ModificationResult.Failure, result.Success);
@@ -282,7 +282,7 @@ namespace Pg.DataverseSync.Engine.Application.Tests
             var service = new SourceMetadataService(mockMetadataRepo, mockDataRepository, mockLogger);
 
             // Act
-            var result = service.UpsertSyncDetails("account", "new-checksum");
+            var result = service.UpsertSyncDetails("account", "new-checksum", pg_TargetRepositorySet.MicrosoftSqlServer);
 
             // Assert
             Assert.Equal(ModificationResult.Failure, result.Success);

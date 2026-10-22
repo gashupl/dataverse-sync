@@ -8,6 +8,6 @@ namespace Pg.DataverseSync.Engine.Application
 
         List<Table>? GetTables(List<string> tableNames);
 
-        SyncDetailsModificationResult UpsertSyncDetails(string tableName, string checksum); 
+        SyncDetailsModificationResult UpsertSyncDetails(string tableName, string checksum, pg_TargetRepositorySet targetRepositorySet); 
     }
 }
