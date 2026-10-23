@@ -1,0 +1,41 @@
+<appaction uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddNewStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2">
+  <appmoduleid>
+    <uniquename>pg_DataverseSyncAdministration</uniquename>
+  </appmoduleid>
+  <buttonaccessibilitytext default="New {EntityLogicalNameMarker}">
+    <label description="New {EntityLogicalNameMarker}" languagecode="1033" />
+  </buttonaccessibilitytext>
+  <buttonlabeltext default="New {EntityLogicalNameMarker}">
+    <label description="New {EntityLogicalNameMarker}" languagecode="1033" />
+  </buttonlabeltext>
+  <buttontooltipdescription default="Add a related {EntityLogicalNameMarker} to this record.">
+    <label description="Add a related {EntityLogicalNameMarker} to this record." languagecode="1033" />
+  </buttontooltipdescription>
+  <buttontooltiptitle default="Add New {EntityLogicalNameMarker}">
+    <label description="Add New {EntityLogicalNameMarker}" languagecode="1033" />
+  </buttontooltiptitle>
+  <context>1</context>
+  <contextentity>
+    <logicalname>pg_synchronizationdetails</logicalname>
+  </contextentity>
+  <contextvalue>pg_synchronizationdetails</contextvalue>
+  <fonticon>$clientsvg:Add</fonticon>
+  <hidden>1</hidden>
+  <iscustomizable>1</iscustomizable>
+  <isdisabled>0</isdisabled>
+  <isgrouptitlehidden>0</isgrouptitlehidden>
+  <location>2</location>
+  <name>Mscrm.SubGrid.{!EntityLogicalName}.AddNewStandard</name>
+  <onclickeventjavascriptfunctionname>XrmCore.Commands.Open.addNewFromSubGridStandard</onclickeventjavascriptfunctionname>
+  <onclickeventjavascriptparameters>[{"type":8,"value":null},{"type":2,"value":null},{"type":4,"value":null},{"type":5,"value":null},{"type":12,"value":null}]</onclickeventjavascriptparameters>
+  <onclickeventjavascriptwebresourceid>
+    <webresourceid>adea1aea-b2aa-e611-80d6-00155d88c343</webresourceid>
+  </onclickeventjavascriptwebresourceid>
+  <onclickeventtype>2</onclickeventtype>
+  <origin>2</origin>
+  <sequence>100100020.0000000000</sequence>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+  <type>0</type>
+  <visibilitytype>2</visibilitytype>
+</appaction>
