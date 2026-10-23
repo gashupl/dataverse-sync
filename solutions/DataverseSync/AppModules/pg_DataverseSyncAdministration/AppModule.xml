@@ -10,6 +10,7 @@
   <ClientType>4</ClientType>
   <NavigationType>0</NavigationType>
   <AppModuleComponents>
+    <AppModuleComponent type="1" schemaName="pg_synchronizationdetails" />
     <AppModuleComponent type="1" schemaName="pg_synctable" />
     <AppModuleComponent type="62" schemaName="pg_DataverseSyncAdministration" />
   </AppModuleComponents>
