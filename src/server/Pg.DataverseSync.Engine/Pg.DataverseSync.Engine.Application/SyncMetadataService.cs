@@ -80,13 +80,18 @@ namespace Pg.DataverseSync.Engine.Application
                     try
                     {
                         var modificationResult = _targetSchemaService.UpsertTargetTable(sourceTable);
-
-                        _sourceMetadataService.UpsertSyncDetails(synchronizedTableName, currentChecksum, _targetRepositorySet);
-
                         if (modificationResult.Success != SchemaModificationResult.Success)
                         {
-                            result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false, 
+                            result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false,
                                 TableSyncOperationCode.None, modificationResult.Message));
+                            continue;
+                        }
+
+                        var syncDetailsModificationResult =_sourceMetadataService.UpsertSyncDetails(synchronizedTableName, currentChecksum, _targetRepositorySet);        
+                        if(syncDetailsModificationResult.Success != ModificationResult.Success)
+                        {
+                            result.TablesSyncResult.Add(new TableSyncResult(synchronizedTableName, false,
+                                TableSyncOperationCode.None, syncDetailsModificationResult.Message));
                             continue;
                         }
 
