@@ -14,7 +14,7 @@ namespace Pg.DataverseSync.Engine.Application
         private readonly ITargetSchemaService _targetSchemaService;
         private readonly IDataRepository _dataRepository;
 
-        private pg_TargetRepositorySet _targetRepositorySet = pg_TargetRepositorySet.MicrosoftSqlServer; //TODO: Make this configurable
+        private readonly pg_TargetRepositorySet _targetRepositorySet = pg_TargetRepositorySet.MicrosoftSqlServer; //TODO: Make this configurable
 
         public SyncMetadataService(ISourceMetadataService sourceMetadataService,
             ITargetSchemaService targetSchemaService,
