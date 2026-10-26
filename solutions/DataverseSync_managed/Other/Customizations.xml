@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26093.160" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26093.00160">
+<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26093.160" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26094.00159">
   <Entities />
   <Roles />
   <Workflows />
@@ -16,6 +16,89 @@
   <AppModules />
   <EntityDataProviders />
   <CanvasApps />
+  <appaction_appactionrule_classicrulesset>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddExistingStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.AddExisting!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddExistingStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.AppendSelected!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddExistingStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.AppendToPrimary!0">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddExistingStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.AppendToPrimary!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddExistingStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.CanWriteSelected!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddExistingStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.EntityFormIsEnabled!0">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddExistingStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.IsEntityAvailableForUserInMocaOffline!0">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddExistingStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.IsRelationshipEnabledInMocaOffline!0">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddExistingStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.ShowForOneToManyGrids!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddNewStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.AppendSelected!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddNewStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.AppendToPrimary!0">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddNewStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.AppendToPrimary!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddNewStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.CreateSelectedEntityPermission!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddNewStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.EntityFormIsEnabled!0">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddNewStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.HideAddNewForChildEntities!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddNewStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.IsEntityAvailableForUserInMocaOffline!0">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddNewStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.ShowForOneToManyGrids!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.NewRecord!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.CreateSelectedEntityPermission!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.NewRecord!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.HideAddressEntities!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.NewRecord!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.HideNewForChildEntities!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.NewRecord!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.IsEntityAvailableForUserInMocaOffline!0">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.NewRecord!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.IsNotActivityPointer!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.NewRecord!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.IsValidForHierarchyPageInUC!0">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.NewRecord!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.IsValidForHierarchyView!0">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.NewRecord!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.PrimaryIsNotActivityHomePageGrid!0">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.NewRecord!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.SelectedEntityIsNotBPFEntity!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+    <appaction_appactionrule_classicrules appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.NewRecord!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" appactionruleid.uniquename="msdyn_Mscrm.ShowForNonRelationshipBoundGrids!1">
+      <iscustomizable>1</iscustomizable>
+    </appaction_appactionrule_classicrules>
+  </appaction_appactionrule_classicrulesset>
   <Languages>
     <Language>1033</Language>
   </Languages>
