@@ -20,13 +20,23 @@ namespace Pg.DataverseSync.Engine.Source
 
             var filter = new FilterExpression(LogicalOperator.And);
             filter.AddCondition(pg_synctable.Fields.StateCode, 
-                ConditionOperator.Equal, pg_synctable_statecode.Active);
+                ConditionOperator.Equal, (int)pg_synctable_statecode.Active);
 
             var syncTables = this.GetRecords(pg_synctable.EntityLogicalName, new List<string> { pg_synctable.Fields.pg_name },
                 filter);
 
             LogIfEnabled(LogLevel.Information, "GetActiveSyncTables method completed");
             return syncTables;
+        }
+
+        public pg_synctable? GetSyncTable(string name)
+        {
+            using var context = new DataverseContext(service);
+
+            return (from st in context.pg_synctableSet
+                    where st.pg_name == name
+                    select st)
+                .FirstOrDefault();
         }
 
         public List<Entity> GetRecords(string tableName, List<string> columns, FilterExpression? filter)
@@ -68,5 +78,53 @@ namespace Pg.DataverseSync.Engine.Source
             return records;
         }
 
+        public List<pg_synchronizationdetails> GetSyncDetails(string tableName, pg_TargetRepositorySet targetRepositorySet)
+        {
+            using var context = new DataverseContext(service);
+
+            var syncDetails =
+                (from sd in context.pg_synchronizationdetailsSet
+                 join st in context.pg_synctableSet
+                     on sd.pg_synctableId.Id equals st.Id
+                 where st.pg_name == tableName
+                     && sd.pg_targetrepository == targetRepositorySet
+                 select new pg_synchronizationdetails
+                 {
+                     Id = sd.Id,
+                     pg_checksum = sd.pg_checksum,
+                     pg_lastsynchronizationdate = sd.pg_lastsynchronizationdate,
+                 }  )
+                .ToList();
+
+            return syncDetails;
+        }
+
+        public Guid CreateRecord(Entity record)
+        {
+            LogIfEnabled(LogLevel.Information, "Creating record in table {TableName}...", record.LogicalName);
+
+            var id = service.Create(record);
+
+            LogIfEnabled(LogLevel.Information, "Created record {RecordId} in table {TableName}.", id, record.LogicalName);
+            return id;
+        }
+
+        public void UpdateRecord(Entity record)
+        {
+            LogIfEnabled(LogLevel.Information, "Updating record {RecordId} in table {TableName}...", record.Id, record.LogicalName);
+
+            service.Update(record);
+
+            LogIfEnabled(LogLevel.Information, "Updated record {RecordId} in table {TableName}.", record.Id, record.LogicalName);
+        }
+
+        public void DeleteRecord(Guid id, string tableName)
+        {
+            LogIfEnabled(LogLevel.Information, "Deleting record {RecordId} from table {TableName}...", id, tableName);
+
+            service.Delete(tableName, id);
+
+            LogIfEnabled(LogLevel.Information, "Deleted record {RecordId} from table {TableName}.", id, tableName);
+        }
     }
 }

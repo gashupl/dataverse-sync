@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using NSubstitute;
 using Pg.DataverseSync.Engine.Core.Model;
@@ -326,6 +327,234 @@ namespace Pg.DataverseSync.Engine.Source.Tests
             // Assert
             Assert.NotNull(result);
             Assert.Empty(result);
+        }
+
+        [Fact]
+        public void GetSyncDetails_MatchingRecords_ReturnsSyncDetails()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var details1 = new pg_synchronizationdetails(Guid.NewGuid())
+            {
+                pg_checksum = "checksum1",
+                pg_targetrepository = pg_TargetRepositorySet.MicrosoftSqlServer
+            };
+
+            var details2 = new pg_synchronizationdetails(Guid.NewGuid())
+            {
+                pg_checksum = "checksum2",
+                pg_targetrepository = pg_TargetRepositorySet.MicrosoftSqlServer
+            };
+
+            var entityCollection = new EntityCollection(new List<Entity> { details1, details2 })
+            {
+                MoreRecords = false
+            };
+
+            mockService.Execute(Arg.Any<RetrieveMultipleRequest>()).Returns(new RetrieveMultipleResponse { Results = { ["EntityCollection"] = entityCollection } });
+
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var result = repository.GetSyncDetails("account", pg_TargetRepositorySet.MicrosoftSqlServer);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+            Assert.Contains(result, d => d.pg_checksum == "checksum1");
+            Assert.Contains(result, d => d.pg_checksum == "checksum2");
+            mockService.Received(1).Execute(Arg.Any<RetrieveMultipleRequest>());
+        }
+
+        [Fact]
+        public void GetSyncDetails_NoMatchingRecords_ReturnsEmptyList()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var emptyCollection = new EntityCollection(new List<Entity>())
+            {
+                MoreRecords = false
+            };
+
+            mockService.Execute(Arg.Any<RetrieveMultipleRequest>()).Returns(new RetrieveMultipleResponse { Results = { ["EntityCollection"] = emptyCollection } });
+
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var result = repository.GetSyncDetails("nonexistent", pg_TargetRepositorySet.MicrosoftSqlServer);
+            // Assert
+            Assert.NotNull(result);
+            Assert.Empty(result);
+            mockService.Received(1).Execute(Arg.Any<RetrieveMultipleRequest>());
+        }
+
+        [Fact]
+        public void GetSyncDetails_MultiplePages_ReturnsAllRecords()        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var details1 = new pg_synchronizationdetails(Guid.NewGuid())
+            {
+                pg_checksum = "page1"
+            };
+
+            var details2 = new pg_synchronizationdetails(Guid.NewGuid())
+            {
+                pg_checksum = "page2"
+            };
+
+            var firstPage = new EntityCollection(new List<Entity> { details1 })
+            {
+                MoreRecords = true,
+                PagingCookie = "<cookie page=\"1\"/>"
+            };
+
+            var secondPage = new EntityCollection(new List<Entity> { details2 })
+            {
+                MoreRecords = false
+            };
+
+            mockService.Execute(Arg.Any<RetrieveMultipleRequest>()).Returns(
+                new RetrieveMultipleResponse { Results = { ["EntityCollection"] = firstPage } },
+                new RetrieveMultipleResponse { Results = { ["EntityCollection"] = secondPage } });
+
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var result = repository.GetSyncDetails("account", pg_TargetRepositorySet.MicrosoftSqlServer);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(2, result.Count);
+            Assert.Equal("page1", result[0].pg_checksum);
+            Assert.Equal("page2", result[1].pg_checksum);
+            mockService.Received(2).Execute(Arg.Any<RetrieveMultipleRequest>());
+        }
+
+        [Fact]
+        public void GetSyncTable_ExistingName_ReturnsSyncTable()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var syncTable = new pg_synctable(Guid.NewGuid())
+            {
+                pg_name = "account"
+            };
+
+            var entityCollection = new EntityCollection(new List<Entity> { syncTable })
+            {
+                MoreRecords = false
+            };
+
+            mockService.Execute(Arg.Any<RetrieveMultipleRequest>()).Returns(
+                new RetrieveMultipleResponse { Results = { ["EntityCollection"] = entityCollection } });
+
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var result = repository.GetSyncTable("account");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(syncTable.Id, result.Id);
+            Assert.Equal("account", result.pg_name);
+            mockService.Received(1).Execute(Arg.Any<RetrieveMultipleRequest>());
+        }
+
+        [Fact]
+        public void GetSyncTable_UnknownName_ReturnsNull()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var emptyCollection = new EntityCollection(new List<Entity>())
+            {
+                MoreRecords = false
+            };
+
+            mockService.Execute(Arg.Any<RetrieveMultipleRequest>()).Returns(
+                new RetrieveMultipleResponse { Results = { ["EntityCollection"] = emptyCollection } });
+
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var result = repository.GetSyncTable("unknown");
+
+            // Assert
+            Assert.Null(result);
+            mockService.Received(1).Execute(Arg.Any<RetrieveMultipleRequest>());
+        }
+
+        [Fact]
+        public void CreateRecord_ValidRecord_LogsTwiceAndReturnsId()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var entity = new Entity("account");
+            entity.Attributes["name"] = "Contoso";
+
+            var expectedId = Guid.NewGuid();
+            mockService.Create(entity).Returns(expectedId);
+
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var result = repository.CreateRecord(entity);
+
+            // Assert
+            Assert.Equal(expectedId, result);
+            mockLogger.Received(2).IsEnabled(LogLevel.Information);
+            mockService.Received(1).Create(entity);
+        }
+
+        [Fact]
+        public void UpdateRecord_ValidRecord_LogsTwiceAndUpdatesRecord()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var entity = new Entity("account", Guid.NewGuid());
+            entity.Attributes["name"] = "Contoso Updated";
+
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var exception = Record.Exception(() => repository.UpdateRecord(entity));
+
+            // Assert
+            Assert.Null(exception);
+            mockLogger.Received(2).IsEnabled(LogLevel.Information);
+            mockService.Received(1).Update(entity);
+        }
+
+        [Fact]
+        public void DeleteRecord_ValidId_LogsTwiceAndDeletesRecord()
+        {
+            // Arrange
+            var mockService = Substitute.For<IOrganizationService>();
+            var mockLogger = Substitute.For<ILogger<DataRepository>>();
+
+            var id = Guid.NewGuid();
+            var repository = new DataRepository(mockService, mockLogger);
+
+            // Act
+            var exception = Record.Exception(() => repository.DeleteRecord(id, "account"));
+
+            // Assert
+            Assert.Null(exception);
+            mockLogger.Received(2).IsEnabled(LogLevel.Information);
+            mockService.Received(1).Delete("account", id);
         }
     }
 }

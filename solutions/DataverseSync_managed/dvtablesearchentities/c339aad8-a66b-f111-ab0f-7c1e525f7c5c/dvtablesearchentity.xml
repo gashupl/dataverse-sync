@@ -1,0 +1,9 @@
+<dvtablesearchentity dvtablesearchentityid="c339aad8-a66b-f111-ab0f-7c1e525f7c5c">
+  <dvtablesearch>
+    <dvtablesearchid>c239aad8-a66b-f111-ab0f-7c1e525f7c5c</dvtablesearchid>
+  </dvtablesearch>
+  <entitylogicalname>pg_synctable</entitylogicalname>
+  <iscustomizable>1</iscustomizable>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</dvtablesearchentity>
