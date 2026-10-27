@@ -62,6 +62,7 @@ export function TableList({ tables: tablesProp, loading, error, saving, onSave }
               <th>Name</th>
               <th>Schema Name</th>
               <th>Synchronized</th>
+              <th>Details</th>
             </tr>
           </thead>
           <tbody>
@@ -75,6 +76,9 @@ export function TableList({ tables: tablesProp, loading, error, saving, onSave }
                     checked={table.IsSynchronized}
                     onChange={(e) => handleToggle(table.SchemaName, e.target.checked)}
                   />
+                </td>
+                <td>
+                  <button disabled={!table.IsSynchronized}>Show</button>
                 </td>
               </tr>
             ))}
