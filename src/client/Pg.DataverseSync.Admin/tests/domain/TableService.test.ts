@@ -29,8 +29,8 @@ describe('TableService.createList', () => {
     const result = TableService.createList(unsync, emptySync)
 
     expect(result).toEqual([
-      { Name: 'Account', SchemaName: 'account', IsSynchronized: false },
-      { Name: 'Contact', SchemaName: 'contact', IsSynchronized: false },
+      { Name: 'Account', SchemaName: 'account', IsSynchronized: false, SyncTableId: '' },
+      { Name: 'Contact', SchemaName: 'contact', IsSynchronized: false, SyncTableId: '' },
     ])
   })
 
@@ -47,8 +47,8 @@ describe('TableService.createList', () => {
     const result = TableService.createList(unsync, sync)
 
     expect(result).toEqual([
-      { Name: 'Opportunity', SchemaName: 'opportunity', IsSynchronized: true },
-      { Name: 'Lead', SchemaName: 'lead', IsSynchronized: true },
+      { Name: 'Opportunity', SchemaName: 'opportunity', IsSynchronized: true, SyncTableId: '' },
+      { Name: 'Lead', SchemaName: 'lead', IsSynchronized: true, SyncTableId: '' },
     ])
   })
 
@@ -103,7 +103,7 @@ describe('TableService.createList', () => {
     const result = TableService.createList(unsync, nullSync)
 
     expect(result).toEqual([
-      { Name: 'Account', SchemaName: 'account', IsSynchronized: false },
+      { Name: 'Account', SchemaName: 'account', IsSynchronized: false, SyncTableId: '' },
     ])
   })
 })
