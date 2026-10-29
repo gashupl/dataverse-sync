@@ -6,10 +6,11 @@ import { Pg_synchronizationdetailsesService } from '../generated/services/Pg_syn
 
 interface SynchronizationDetailsProps {
   readonly syncTableId: string;
+  readonly tableName: string;
   readonly onClose: () => void;
 }
 
-export function SynchronizationDetails({ syncTableId, onClose }: SynchronizationDetailsProps) {
+export function SynchronizationDetails({ syncTableId, tableName, onClose }: SynchronizationDetailsProps) {
   const [records, setRecords] = useState<Pg_synchronizationdetailses[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +53,7 @@ export function SynchronizationDetails({ syncTableId, onClose }: Synchronization
   return (
     <div className="sync-details-overlay">
       <div className="sync-details-modal">
-        <h3>Synchronization Details</h3>
+        <h3>Synchronization details for {tableName} table</h3>
 
         {loading && <p>Loading...</p>}
 

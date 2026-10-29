@@ -14,7 +14,7 @@ interface TableListProps {
 export function TableList({ tables: tablesProp, loading, error, saving, onSave }: TableListProps) {
   const [tables, setTables] = useState<Table[]>(tablesProp); 
   const [pendingChanges, setPendingChanges] = useState<Map<string, boolean>>(new Map());
-  const [selectedSyncTableId, setSelectedSyncTableId] = useState<string | null>(null);
+  const [selectedTable, setSelectedTable] = useState<Table | null>(null);
 
   useEffect(() => {
     setTables(tablesProp); 
@@ -82,7 +82,7 @@ export function TableList({ tables: tablesProp, loading, error, saving, onSave }
                 <td>
                   <button
                     disabled={!tablesProp.find(t => t.SchemaName === table.SchemaName)?.IsSynchronized}
-                    onClick={() => setSelectedSyncTableId(table.SyncTableId)}>
+                    onClick={() => setSelectedTable(table)}>
                     Show
                   </button>
                 </td>
@@ -91,10 +91,11 @@ export function TableList({ tables: tablesProp, loading, error, saving, onSave }
           </tbody>
         </table>
       </div>
-      {selectedSyncTableId && (
+      {selectedTable && (
         <SynchronizationDetails
-          syncTableId={selectedSyncTableId}
-          onClose={() => setSelectedSyncTableId(null)}
+          syncTableId={selectedTable.SyncTableId}
+          tableName={selectedTable.Name}
+          onClose={() => setSelectedTable(null)}
         />
       )}
     </div>
