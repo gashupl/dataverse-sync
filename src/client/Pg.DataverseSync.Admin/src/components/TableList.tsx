@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './TableList.css'
 import type { Table } from '../domain/model/Table'
+import { SynchronizationDetails } from './SynchronizationDetails'
 
 interface TableListProps {
   readonly tables: Table[];
@@ -13,6 +14,7 @@ interface TableListProps {
 export function TableList({ tables: tablesProp, loading, error, saving, onSave }: TableListProps) {
   const [tables, setTables] = useState<Table[]>(tablesProp); 
   const [pendingChanges, setPendingChanges] = useState<Map<string, boolean>>(new Map());
+  const [selectedSyncTableId, setSelectedSyncTableId] = useState<string | null>(null);
 
   useEffect(() => {
     setTables(tablesProp); 
@@ -78,13 +80,23 @@ export function TableList({ tables: tablesProp, loading, error, saving, onSave }
                   />
                 </td>
                 <td>
-                  <button disabled={!table.IsSynchronized}>Show</button>
+                  <button
+                    disabled={!table.IsSynchronized}
+                    onClick={() => setSelectedSyncTableId(table.SyncTableId)}>
+                    Show
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      {selectedSyncTableId && (
+        <SynchronizationDetails
+          syncTableId={selectedSyncTableId}
+          onClose={() => setSelectedSyncTableId(null)}
+        />
+      )}
     </div>
   )
 }
