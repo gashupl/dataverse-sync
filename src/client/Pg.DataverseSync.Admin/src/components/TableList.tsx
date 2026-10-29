@@ -81,7 +81,7 @@ export function TableList({ tables: tablesProp, loading, error, saving, onSave }
                 </td>
                 <td>
                   <button
-                    disabled={!table.IsSynchronized}
+                    disabled={!tablesProp.find(t => t.SchemaName === table.SchemaName)?.IsSynchronized}
                     onClick={() => setSelectedSyncTableId(table.SyncTableId)}>
                     Show
                   </button>
