@@ -12,12 +12,12 @@
 }
 
 .sync-details-modal {
-  background-color: #242424;
-  color: rgba(255, 255, 255, 0.87);
-  border: 1px solid #444;
+  background-color: #ffffff;
+  color: #213547;
+  border: 1px solid #ccc;
   border-radius: 8px;
   width: 100%;
-  max-width: 500px;
+  max-width: 760px;
   padding: 1.5rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
@@ -27,6 +27,29 @@
 .sync-details-modal h3 {
   margin-top: 0;
   margin-bottom: 1.25rem;
+}
+
+.sync-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  text-align: left;
+}
+
+.sync-details-table th,
+.sync-details-table td {
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  vertical-align: top;
+}
+
+.sync-details-table th {
+  white-space: nowrap;
+  background-color: #f9f9f9;
+}
+
+.sync-details-table td {
+  word-break: break-all;
 }
 
 .sync-details-actions {
