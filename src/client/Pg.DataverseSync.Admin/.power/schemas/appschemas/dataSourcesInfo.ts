@@ -37,6 +37,13 @@ export const dataSourcesInfo = {
       }
     }
   },
+  "pg_synchronizationdetailses": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "pg_synchronizationdetailsid",
+    "dataSourceType": "Dataverse",
+    "apis": {}
+  },
   "pg_synctables": {
     "tableId": "",
     "version": "",
