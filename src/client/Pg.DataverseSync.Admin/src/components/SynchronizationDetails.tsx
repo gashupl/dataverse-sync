@@ -43,7 +43,7 @@ export function SynchronizationDetails({ syncTableId, tableName, onClose }: Sync
       }
     }
 
-    load();
+    void load();
 
     return () => {
       ignore = true;
