@@ -41,3 +41,6 @@ Use a single empty line to visually separate logically distinct sections within 
 
 ## Avoid deprecated APIs
 Do not use deprecated APIs (e.g. the global `React.FormEvent` namespace access instead of importing the `FormEvent` type). Prefer the current, non-deprecated equivalent. If a deprecated API appears to be the only viable option, ask the user for confirmation before using it.
+
+## Testing
+Run your test suite using the command: npm run test every time after completing applying changes. If any tests fail, investigate and resolve the issues before reporting task completion. 

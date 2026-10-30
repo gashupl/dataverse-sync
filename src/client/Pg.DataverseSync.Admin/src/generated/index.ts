@@ -8,6 +8,7 @@ export * as CommonModels from './models/CommonModels';
 export * as EnvironmentvariabledefinitionsModel from './models/EnvironmentvariabledefinitionsModel';
 export * as EnvironmentvariablevaluesModel from './models/EnvironmentvariablevaluesModel';
 export * as Pg_gettablesModel from './models/Pg_gettablesModel';
+export * as Pg_synchronizationdetailsesModel from './models/Pg_synchronizationdetailsesModel';
 export * as Pg_synctablesModel from './models/Pg_synctablesModel';
 export * as ServiceendpointsModel from './models/ServiceendpointsModel';
 
@@ -15,5 +16,6 @@ export * as ServiceendpointsModel from './models/ServiceendpointsModel';
 export * from './services/EnvironmentvariabledefinitionsService';
 export * from './services/EnvironmentvariablevaluesService';
 export * from './services/Pg_gettablesService';
+export * from './services/Pg_synchronizationdetailsesService';
 export * from './services/Pg_synctablesService';
 export * from './services/ServiceendpointsService';

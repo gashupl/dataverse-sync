@@ -36,6 +36,11 @@
           "entitySetName": "environmentvariablevalues",
           "logicalName": "environmentvariablevalue",
           "isHidden": false
+        },
+        "synchronizationdetails": {
+          "entitySetName": "pg_synchronizationdetailses",
+          "logicalName": "pg_synchronizationdetails",
+          "isHidden": false
         }
       },
       "environmentVariableName": ""

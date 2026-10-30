@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import './TableList.css'
 import type { Table } from '../domain/model/Table'
+import { SynchronizationDetails } from './SynchronizationDetails'
+import { ServiceEndpointDetails } from './ServiceEndpointDetails'
 
 interface TableListProps {
   readonly tables: Table[];
@@ -13,6 +15,7 @@ interface TableListProps {
 export function TableList({ tables: tablesProp, loading, error, saving, onSave }: TableListProps) {
   const [tables, setTables] = useState<Table[]>(tablesProp); 
   const [pendingChanges, setPendingChanges] = useState<Map<string, boolean>>(new Map());
+  const [selectedTable, setSelectedTable] = useState<Table | null>(null);
 
   useEffect(() => {
     setTables(tablesProp); 
@@ -46,15 +49,18 @@ export function TableList({ tables: tablesProp, loading, error, saving, onSave }
       {error && (
         <div className="table-list-error">Error: {error}</div>
       )}
-      <div>
-        <button
-          onClick={() => onSave(pendingChanges)}
-          disabled={pendingChanges.size === 0 || saving}>
-          Update Synchronization Settings
-        </button>
-        {saving && <span style={{ marginLeft: '0.75rem' }}>Saving changes...</span>}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+        <h2>Tables synchronization settings ({tables.length})</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <button
+            onClick={() => onSave(pendingChanges)}
+            disabled={pendingChanges.size === 0 || saving}>
+            Update Synchronization Settings
+          </button>
+          {saving && <span style={{ marginLeft: '0.75rem' }}>Saving changes...</span>}
+          <ServiceEndpointDetails />
+        </div>
       </div>
-      <h4>Tables synchronization settings ({tables.length})</h4>
       <div className="table-list-scroll">
         <table>
           <thead>
@@ -62,6 +68,7 @@ export function TableList({ tables: tablesProp, loading, error, saving, onSave }
               <th>Name</th>
               <th>Schema Name</th>
               <th>Synchronized</th>
+              <th>Details</th>
             </tr>
           </thead>
           <tbody>
@@ -76,11 +83,25 @@ export function TableList({ tables: tablesProp, loading, error, saving, onSave }
                     onChange={(e) => handleToggle(table.SchemaName, e.target.checked)}
                   />
                 </td>
+                <td>
+                  <button
+                    disabled={!tablesProp.find(t => t.SchemaName === table.SchemaName)?.IsSynchronized}
+                    onClick={() => setSelectedTable(table)}>
+                    Show
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      {selectedTable && (
+        <SynchronizationDetails
+          syncTableId={selectedTable.SyncTableId}
+          tableName={selectedTable.Name}
+          onClose={() => setSelectedTable(null)}
+        />
+      )}
     </div>
   )
 }

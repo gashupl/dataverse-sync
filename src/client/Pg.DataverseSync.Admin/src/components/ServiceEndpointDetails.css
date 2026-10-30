@@ -1,17 +1,11 @@
 .service-endpoint-details-container {
-  margin-bottom: 1.5rem;
   text-align: left;
 }
 
 .service-endpoint-info {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
-  padding: 0.75rem 1rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
 }
 
 .service-endpoint-label {
@@ -109,11 +103,6 @@
 }
 
 @media (prefers-color-scheme: light) {
-  .service-endpoint-info {
-    background-color: #f9f9f9;
-    border-color: #e0e0e0;
-  }
-
   .service-endpoint-modal {
     background-color: #ffffff;
     color: #213547;

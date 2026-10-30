@@ -24,6 +24,7 @@ export class TableService {
       Name: t.pg_name,
       SchemaName: t.pg_name,
       IsSynchronized: true,
+      SyncTableId: t.pg_synctableid
     })); 
 
     console.log(synchronizedTables); 
@@ -31,7 +32,8 @@ export class TableService {
     const allTables: Table[] = all.map((t) => ({
       Name: t.Name,
       SchemaName: t.SchemaName,
-      IsSynchronized: synchronizedTables.some((s) => s.SchemaName === t.SchemaName),
+      IsSynchronized: synchronizedTables.some((s) => s.SchemaName === t.SchemaName), 
+      SyncTableId: synchronizedTables.find((s) => s.SchemaName === t.SchemaName)?.SyncTableId ?? '',
     })); 
 
 
