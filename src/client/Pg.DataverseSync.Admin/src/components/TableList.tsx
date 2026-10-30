@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './TableList.css'
 import type { Table } from '../domain/model/Table'
 import { SynchronizationDetails } from './SynchronizationDetails'
+import { ServiceEndpointDetails } from './ServiceEndpointDetails'
 
 interface TableListProps {
   readonly tables: Table[];
@@ -48,15 +49,18 @@ export function TableList({ tables: tablesProp, loading, error, saving, onSave }
       {error && (
         <div className="table-list-error">Error: {error}</div>
       )}
-      <div>
-        <button
-          onClick={() => onSave(pendingChanges)}
-          disabled={pendingChanges.size === 0 || saving}>
-          Update Synchronization Settings
-        </button>
-        {saving && <span style={{ marginLeft: '0.75rem' }}>Saving changes...</span>}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+        <h2>Tables synchronization settings ({tables.length})</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <button
+            onClick={() => onSave(pendingChanges)}
+            disabled={pendingChanges.size === 0 || saving}>
+            Update Synchronization Settings
+          </button>
+          {saving && <span style={{ marginLeft: '0.75rem' }}>Saving changes...</span>}
+          <ServiceEndpointDetails />
+        </div>
       </div>
-      <h4>Tables synchronization settings ({tables.length})</h4>
       <div className="table-list-scroll">
         <table>
           <thead>
