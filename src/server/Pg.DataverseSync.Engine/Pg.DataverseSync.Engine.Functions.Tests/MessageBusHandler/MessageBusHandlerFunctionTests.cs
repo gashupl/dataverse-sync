@@ -7,9 +7,10 @@ using NSubstitute.ExceptionExtensions;
 using Pg.DataverseSync.Engine.Application.ExecutionContext;
 using Pg.DataverseSync.Engine.Core.ContextConstraints;
 using Pg.DataverseSync.Engine.Core.Exceptions;
+using Pg.DataverseSync.Engine.Functions.MessageBusHandler;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Pg.DataverseSync.Engine.Functions.Tests
+namespace Pg.DataverseSync.Engine.Functions.Tests.MessageBusHandler
 {
     [ExcludeFromCodeCoverage]
     public class MessageBusHandlerFunctionTests

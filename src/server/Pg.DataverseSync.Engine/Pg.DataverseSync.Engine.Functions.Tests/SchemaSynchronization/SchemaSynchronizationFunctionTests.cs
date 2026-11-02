@@ -3,9 +3,10 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Pg.DataverseSync.Engine.Application;
 using Pg.DataverseSync.Engine.Core.Schema;
+using Pg.DataverseSync.Engine.Functions.SchemaSynchronization.SchemaSynchronization;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Pg.DataverseSync.Engine.Functions.Tests
+namespace Pg.DataverseSync.Engine.Functions.Tests.SchemaSynchronization
 {
     [ExcludeFromCodeCoverage]
     public class SchemaSynchronizationFunctionTests
@@ -107,8 +108,8 @@ namespace Pg.DataverseSync.Engine.Functions.Tests
             syncMetadataService.Execute().Returns(syncResult);
             dataLoadService.LoadInitialData("account").Returns(
             [
-                new Pg.DataverseSync.Engine.Target.TargetRecordModificationResult { Success = true },
-                new Pg.DataverseSync.Engine.Target.TargetRecordModificationResult { Success = false, Message = "Insert failed" }
+                new Target.TargetRecordModificationResult { Success = true },
+                new Target.TargetRecordModificationResult { Success = false, Message = "Insert failed" }
             ]);
 
             var function = new SchemaSynchronizationFunction(syncMetadataService, dataLoadService, logger);

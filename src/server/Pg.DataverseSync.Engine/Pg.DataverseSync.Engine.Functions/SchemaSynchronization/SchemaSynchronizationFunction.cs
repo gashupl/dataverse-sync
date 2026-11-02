@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Pg.DataverseSync.Engine.Application;
 using Pg.DataverseSync.Engine.Core.Schema;
 
-namespace Pg.DataverseSync.Engine.Functions;
+namespace Pg.DataverseSync.Engine.Functions.SchemaSynchronization.SchemaSynchronization;
 
 public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchronizationFunction>
 {
