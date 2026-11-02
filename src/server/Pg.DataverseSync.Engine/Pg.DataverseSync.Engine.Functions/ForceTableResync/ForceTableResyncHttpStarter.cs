@@ -21,6 +21,15 @@ public class ForceTableResyncHttpStarter : LoggingServiceBase<ForceTableResyncHt
         [DurableClient] DurableTaskClient client,
         string tableName)
     {
+        if (string.IsNullOrWhiteSpace(tableName))
+        {
+            LogIfEnabled(LogLevel.Warning, "Resync request rejected. Required parameter {ParameterName} is missing.", nameof(tableName));
+
+            var badRequest = req.CreateResponse(HttpStatusCode.BadRequest);
+            await badRequest.WriteStringAsync($"Missing required parameter '{nameof(tableName)}'.");
+            return badRequest;
+        }
+
         var instanceId = ForceTableResyncInstanceId.For(tableName);
         var existing = await client.GetInstanceAsync(instanceId);
 

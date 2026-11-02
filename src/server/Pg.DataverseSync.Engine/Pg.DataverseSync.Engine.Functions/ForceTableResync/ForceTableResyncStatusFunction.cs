@@ -23,7 +23,9 @@ public class ForceTableResyncStatusFunction : LoggingServiceBase<ForceTableResyn
         var instanceId = ForceTableResyncInstanceId.For(tableName);
         var existing = await client.GetInstanceAsync(instanceId);
 
-        var isRunning = existing is { RuntimeStatus: OrchestrationRuntimeStatus.Running or OrchestrationRuntimeStatus.Pending or OrchestrationRuntimeStatus.Suspended };
+        var isRunning = existing is 
+            { RuntimeStatus: OrchestrationRuntimeStatus.Running 
+                or OrchestrationRuntimeStatus.Pending or OrchestrationRuntimeStatus.Suspended };
 
         LogIfEnabled(LogLevel.Information, "Resync status for table {TableName} requested. IsRunning: {IsRunning}", tableName, isRunning);
 

@@ -21,6 +21,24 @@ public class ForceTableResyncHttpStarterTests
     }
 
     [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task Run_MissingTableName_ReturnsBadRequestAndDoesNotStartOrchestration(string? tableName)
+    {
+        var (request, response) = HttpTestHelper.CreateRequest();
+        var client = Substitute.For<DurableTaskClient>("test");
+
+        var result = await _starter.Run(request, client, tableName!);
+
+        Assert.Equal(HttpStatusCode.BadRequest, result.StatusCode);
+        Assert.Contains("tableName", response.ReadBody());
+        await client.DidNotReceiveWithAnyArgs().GetInstanceAsync(default!, default, default);
+        await client.DidNotReceiveWithAnyArgs().ScheduleNewOrchestrationInstanceAsync(
+            default, default, default, default);
+    }
+
+    [Theory]
     [InlineData(OrchestrationRuntimeStatus.Running)]
     [InlineData(OrchestrationRuntimeStatus.Pending)]
     [InlineData(OrchestrationRuntimeStatus.Suspended)]
