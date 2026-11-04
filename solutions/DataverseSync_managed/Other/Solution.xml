@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ImportExportXml version="9.2.26093.160" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26093.160" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26094.00159">
+<ImportExportXml version="9.2.26101.177" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26101.177" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26101.00177">
   <SolutionManifest>
     <UniqueName>DataverseSync</UniqueName>
     <LocalizedNames>
@@ -112,8 +112,8 @@
         <Dependent type="80" schemaName="pg_DataverseSyncAdministration" displayName="DataverseSync Administration" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="66" schemaName="Microsoft.PowerApps.PowerAppsOneGrid" displayName="Microsoft.PowerApps.PowerAppsOneGrid" solution="BaseCustomControlsCore (9.0.2609.3003)">
-          <package appName="Base Custom Controls" version="9.0.2609.3003">BaseCustomControlsCore (9.0.2609.3003)</package>
+        <Required type="66" schemaName="Microsoft.PowerApps.PowerAppsOneGrid" displayName="Microsoft.PowerApps.PowerAppsOneGrid" solution="BaseCustomControlsCore (9.0.2609.4005)">
+          <package appName="Base Custom Controls" version="9.0.2609.4005">BaseCustomControlsCore (9.0.2609.4005)</package>
         </Required>
         <Dependent type="60" displayName="Information" parentDisplayName="Synchronized Table" id="{44dd0c47-6ffd-4f23-85fd-11a9cf3ae195}" />
       </MissingDependency>
@@ -280,8 +280,8 @@
         <Dependent type="appaction_appactionrule_classicrules" displayName="appactionid.uniquename=pg__Mscrm.SubGrid.%7B!EntityLogicalName%7D.AddNewStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2,appactionruleid.uniquename=msdyn_Mscrm.ShowForOneToManyGrids!1" id.appactionid.uniquename="pg__Mscrm.SubGrid.{!EntityLogicalName}.AddNewStandard!pg_DataverseSyncAdministration!pg_synchronizationdetails!2" id.appactionruleid.uniquename="msdyn_Mscrm.ShowForOneToManyGrids!1" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="SettingDefinition" displayName="AppChannel" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.20)" id.uniquename="AppChannel">
-          <package appName="PowerAppsAppFramework Package" version="1.0.0.26">PowerAppsAppFramework_Anchor (1.0.0.26)</package>
+        <Required type="SettingDefinition" displayName="AppChannel" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.27)" id.uniquename="AppChannel">
+          <package appName="PowerAppsAppFramework Package" version="1.0.0.27">PowerAppsAppFramework_Anchor (1.0.0.27)</package>
         </Required>
         <Dependent type="AppSetting" displayName="parentappmoduleid.uniquename=pg_DataverseSyncAdministration,settingdefinitionid.uniquename=AppChannel" id.parentappmoduleid.uniquename="pg_DataverseSyncAdministration" id.settingdefinitionid.uniquename="AppChannel" />
       </MissingDependency>
