@@ -15,6 +15,8 @@ jobs:
     env:
       SOLUTION_NAME: DataverseSync
       SOLUTION_FOLDER: solutions
+      ADMIN_APP_FOLDER: src\client\Pg.DataverseSync.Admin
+      node-version: 24
       
     steps:
       - name: Checkout repository
@@ -33,7 +35,40 @@ jobs:
           Write-Host "Environment URL provided: $('${{ vars.DATAVERSE_SOURCE_URL }}' -ne '')"
           Write-Host "Client ID provided: $('${{ vars.DEVOPS_APPID }}' -ne '')"
           Write-Host "Tenant ID provided: $('${{ vars.DATAVERSE_TENANT_ID }}' -ne '')"
-          Write-Host "Client Secret provided: $('${{ secrets.DEVOPS_SECRET }}' -ne '')"
+
+# Start 
+# This is set of tasks responsible for building and pushing Power Plaform Code App into Dataverse instance before exporting solution
+#This is required to make sure files names in the solution are consist with the built ones
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node-version }}
+
+      - name: Install Power Apps CLI
+        run: npm install --global @microsoft/power-apps-cli
+
+      - name: Install npm dependencies (Admin App)
+        run: |
+          cd ${{ env.ADMIN_APP_FOLDER }}
+          npm install
+
+      - name: Build npm project (Admin App)
+        run: |
+          cd ${{ env.ADMIN_APP_FOLDER }}
+          npm run build   
+
+      - name: Push Admin App to Power Platform
+        env:
+          PA_CLI_USE_SP_AUTH: 'true'
+          PA_CLI_SP_CLIENT_ID: ${{ vars.DEVOPS_APPID }}
+          PA_CLI_SP_CLIENT_SECRET: ${{ secrets.DEVOPS_SECRET }}
+          PA_CLI_SP_TENANT_ID: ${{ vars.DATAVERSE_TENANT_ID }}
+        run: |
+          cd ${{ env.ADMIN_APP_FOLDER }}
+          pa app push --non-interactive
+
+#End of Power Platform Code App build and push section
 
       - name: Export managed solution from Dataverse
         uses: microsoft/powerplatform-actions/export-solution@v1
