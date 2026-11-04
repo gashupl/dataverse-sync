@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <CanvasApp xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Name>pg_dataversesyncadminmodern_eda1d</Name>
-  <AppVersion>2026-09-21T06:02:29Z</AppVersion>
+  <AppVersion>2026-11-04T08:31:35Z</AppVersion>
   <Status>Ready</Status>
   <CreatedByClientVersion>0.0.0.0</CreatedByClientVersion>
   <MinClientVersion>0.0.0.0</MinClientVersion>
@@ -15,7 +15,7 @@
   <Publisher xsi:nil="true"></Publisher>
   <AuthorizationReferences>[]</AuthorizationReferences>
   <ConnectionReferences>{}</ConnectionReferences>
-  <DatabaseReferences>{"default.cds":{"databaseDetails":{"referenceType":"Environmental","environmentName":"default.cds","overrideValues":{"status":"NotSpecified","environmentVariableName":""}},"dataSources":{"synchronizedtables":{"entitySetName":"pg_synctables","logicalName":"pg_synctable"},"environment_39a902ba":{"entitySetName":"Environment","logicalName":"environment_39a902ba"},"serviceendpoints":{"entitySetName":"serviceendpoints","logicalName":"serviceendpoint"},"environmentvariabledefinitions":{"entitySetName":"environmentvariabledefinitions","logicalName":"environmentvariabledefinition"},"environmentvariablevalues":{"entitySetName":"environmentvariablevalues","logicalName":"environmentvariablevalue"}}}}</DatabaseReferences>
+  <DatabaseReferences>{"default.cds":{"databaseDetails":{"referenceType":"Environmental","environmentName":"default.cds","overrideValues":{"status":"NotSpecified","environmentVariableName":""}},"dataSources":{"synchronizedtables":{"entitySetName":"pg_synctables","logicalName":"pg_synctable"},"environment_39a902ba":{"entitySetName":"Environment","logicalName":"environment_39a902ba"},"serviceendpoints":{"entitySetName":"serviceendpoints","logicalName":"serviceendpoint"},"environmentvariabledefinitions":{"entitySetName":"environmentvariabledefinitions","logicalName":"environmentvariabledefinition"},"environmentvariablevalues":{"entitySetName":"environmentvariablevalues","logicalName":"environmentvariablevalue"},"synchronizationdetails":{"entitySetName":"pg_synchronizationdetailses","logicalName":"pg_synchronizationdetails"}}}}</DatabaseReferences>
   <AppComponents>[]</AppComponents>
   <AppComponentDependencies>[]</AppComponentDependencies>
   <CanConsumeAppPass>1</CanConsumeAppPass>
@@ -24,12 +24,12 @@
   <AdminControlBypassConsent>0</AdminControlBypassConsent>
   <EmbeddedApp xsi:nil="true"></EmbeddedApp>
   <IntroducedVersion>1.0</IntroducedVersion>
-  <CdsDependencies>{"cdsdependencies":[{"logicalname":"pg_synctable","componenttype":1},{"logicalname":"serviceendpoint","componenttype":1},{"logicalname":"environmentvariabledefinition","componenttype":1},{"logicalname":"environmentvariablevalue","componenttype":1}]}</CdsDependencies>
+  <CdsDependencies>{"cdsdependencies":[{"logicalname":"pg_synctable","componenttype":1},{"logicalname":"serviceendpoint","componenttype":1},{"logicalname":"environmentvariabledefinition","componenttype":1},{"logicalname":"environmentvariablevalue","componenttype":1},{"logicalname":"pg_synchronizationdetails","componenttype":1}]}</CdsDependencies>
   <IsCustomizable>1</IsCustomizable>
   <CodeAppPackageUris>
     <CodeAppPackageUri>/CanvasApps/pg_dataversesyncadminmodern_eda1d_CodeAppPackages/index.html_ContentType_text/html</CodeAppPackageUri>
-    <CodeAppPackageUri>/CanvasApps/pg_dataversesyncadminmodern_eda1d_CodeAppPackages/assets/index-DlvT3s8I.js_ContentType_application/javascript</CodeAppPackageUri>
-    <CodeAppPackageUri>/CanvasApps/pg_dataversesyncadminmodern_eda1d_CodeAppPackages/assets/index-QPJfZRYh.css_ContentType_text/css</CodeAppPackageUri>
+    <CodeAppPackageUri>/CanvasApps/pg_dataversesyncadminmodern_eda1d_CodeAppPackages/assets/index-Bm4TXqSk.js_ContentType_application/javascript</CodeAppPackageUri>
+    <CodeAppPackageUri>/CanvasApps/pg_dataversesyncadminmodern_eda1d_CodeAppPackages/assets/index-D_enXJrm.css_ContentType_text/css</CodeAppPackageUri>
     <CodeAppPackageUri>/CanvasApps/pg_dataversesyncadminmodern_eda1d_CodeAppPackages/vite.svg_ContentType_image/svg+xml</CodeAppPackageUri>
   </CodeAppPackageUris>
 </CanvasApp>
