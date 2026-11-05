@@ -8,7 +8,7 @@ using Pg.DataverseSync.Engine.Target;
 
 namespace Pg.DataverseSync.Engine.Application.Tests
 {
-    public class SyncMetadataServiceTests
+    public class SyncMetadataServiceExecuteTests
     {
         [Fact]
         public void Execute_TargetTableDoesNotExist_CreatesTargetTableAndReturnsSuccess()
