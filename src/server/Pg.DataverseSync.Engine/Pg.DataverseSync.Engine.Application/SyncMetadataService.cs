@@ -96,16 +96,6 @@ namespace Pg.DataverseSync.Engine.Application
                         "An error occurred while retrieving source tables metadata.", ex);
                 }
 
-                try
-                {
-                    _targetSchemaService.TargetTableExists(tableName);
-                }
-                catch (Exception ex)
-                {
-                    throw new ApplicationServiceException(
-                        "An error occurred while checking target schema for synchronized tables.", ex);
-                }
-
                 var result = new SyncMetadataResult();
                 result.TablesSyncResult.Add(SynchronizeTable(tableName, sourceTable, true));
 
