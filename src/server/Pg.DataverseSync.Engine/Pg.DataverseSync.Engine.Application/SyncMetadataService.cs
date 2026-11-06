@@ -115,6 +115,44 @@ namespace Pg.DataverseSync.Engine.Application
                 throw new ApplicationServiceException(message, ex);
             }
         }
+        public PurgeTableResult PurgeTable(string tableName)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(tableName);
+
+            LogIfEnabled(LogLevel.Information, "Purging table {TableName}...", tableName);
+
+            try
+            {
+                if (_targetSchemaService.TargetTableExists(tableName))
+                {
+                    var targetDeleteResult = _targetSchemaService.DeleteTargetTable(tableName);
+                    if (targetDeleteResult.Success != SchemaModificationResult.Success)
+                    {
+                        var errorMessage = targetDeleteResult.Message ?? "Failed to delete table from target database.";
+                        LogIfEnabled(LogLevel.Warning, "Purge failed for table {TableName}. {ErrorMessage}", tableName, errorMessage);
+                        return new PurgeTableResult(tableName, false, errorMessage);
+                    }
+                }
+
+                var syncDetails = _dataRepository.GetSyncDetails(tableName, _targetRepositorySet);
+                foreach (var syncDetail in syncDetails)
+                {
+                    _dataRepository.DeleteRecord(syncDetail.Id, pg_synchronizationdetails.EntityLogicalName);
+                }
+
+                LogIfEnabled(LogLevel.Information,
+                    "Purge completed for table {TableName}. Removed {SyncDetailsCount} synchronization detail record(s).",
+                    tableName,
+                    syncDetails.Count);
+
+                return new PurgeTableResult(tableName, true);
+            }
+            catch (Exception ex)
+            {
+                LogIfEnabled(LogLevel.Error, ex, "Purge failed for table {TableName}.", tableName);
+                return new PurgeTableResult(tableName, false, ex.Message);
+            }
+        }
 
         private TableSyncResult SynchronizeTable(string synchronizedTableName, Table? sourceTable, bool targetExistenceKnown)
         {

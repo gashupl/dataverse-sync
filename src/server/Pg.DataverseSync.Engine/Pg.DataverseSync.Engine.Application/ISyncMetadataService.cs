@@ -5,5 +5,7 @@
         SyncMetadataResult Execute();
 
         SyncMetadataResult Execute(string tableName);
+
+        PurgeTableResult PurgeTable(string tableName); 
     }
 }

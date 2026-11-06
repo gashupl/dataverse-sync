@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Pg.DataverseSync.Engine.Core.Model;
+using Pg.DataverseSync.Engine.Core.Schema;
 using Pg.DataverseSync.Engine.Target;
 
 namespace Pg.DataverseSync.Engine.Application
@@ -42,5 +43,22 @@ namespace Pg.DataverseSync.Engine.Application
             }
         }
 
+        public TargetSchemaModificationResult DeleteTargetTable(string tableName)
+        {
+            try
+            {
+                return _schemaRepository.DeleteTable(tableName);
+            }
+            catch (Exception ex)
+            {
+                LogIfEnabled(LogLevel.Error, ex, "An error occurred while deleting table {TableName}.", tableName);
+                return new TargetSchemaModificationResult
+                {
+                    Success = SchemaModificationResult.Failure,
+                    OperationCode = TableSyncOperationCode.Delete,
+                    Message = ex.Message
+                };
+            }
+        }
     }
 }

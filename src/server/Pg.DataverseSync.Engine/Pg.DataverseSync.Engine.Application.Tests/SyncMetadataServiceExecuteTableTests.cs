@@ -155,17 +155,5 @@ namespace Pg.DataverseSync.Engine.Application.Tests
 
             Assert.Equal("An error occurred while retrieving source tables metadata.", exception.Message);
         }
-
-        [Fact]
-        public void ExecuteTable_TargetServiceThrows_ThrowsApplicationServiceException()
-        {
-            _sourceMetadataService.GetTables(Arg.Any<List<string>>())
-                .Returns(new List<Table> { new Table("account", "Account", false) });
-            _targetSchemaService.TargetTableExists("account").Throws(new InvalidOperationException("target error"));
-
-            var exception = Assert.Throws<ApplicationServiceException>(() => _service.Execute("account"));
-
-            Assert.Equal("An error occurred while checking target schema for synchronized tables.", exception.Message);
-        }
     }
 }

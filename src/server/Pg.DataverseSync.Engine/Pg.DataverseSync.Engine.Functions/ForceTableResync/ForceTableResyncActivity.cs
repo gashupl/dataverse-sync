@@ -29,6 +29,7 @@ public class ForceTableResyncActivity : LoggingServiceBase<ForceTableResyncActiv
     {
         LogIfEnabled(LogLevel.Information, "Resync activity started for table {TableName}", tableName);
 
+        //TODO: Remove target table and synchronization details records fro dataverse
         var result = _syncMetadataService.Execute(tableName);
 
         if (result?.TablesSyncResult == null)
