@@ -55,11 +55,13 @@ namespace Pg.DataverseSync.Engine.Application
                 tableName);
 
             var results = LoadRecords(tableName, records);
+            var successfulRecordsCount = results.Count(r => r.Success);
 
             LogIfEnabled(LogLevel.Information,
-                "Initial data load finished for table '{TableName}'. Processed {RecordCount} records.",
+                "Initial data load finished for table '{TableName}'. Successful records: {SuccessfulRecordCount}, Failed records: {FailedRecordCount}.",
                 tableName,
-                results.Count);
+                successfulRecordsCount,
+                results.Count - successfulRecordsCount);
 
             return results;
         }

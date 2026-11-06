@@ -2,6 +2,8 @@
 {
     public interface ISyncMetadataService
     {
-        SyncMetadataResult Execute(); 
+        SyncMetadataResult Execute();
+
+        SyncMetadataResult Execute(string tableName);
     }
 }
