@@ -14,6 +14,12 @@ public class ForceTableResyncActivityTests
     private readonly IDataLoadService _dataLoadService = Substitute.For<IDataLoadService>();
     private readonly ILogger<ForceTableResyncActivity> _logger = Substitute.For<ILogger<ForceTableResyncActivity>>();
 
+    public ForceTableResyncActivityTests()
+    {
+        _syncMetadataService.PurgeTable(Arg.Any<string>())
+            .Returns(callInfo => new PurgeTableResult(callInfo.ArgAt<string>(0), true));
+    }
+
     private ForceTableResyncActivity CreateActivity()
     {
         return new ForceTableResyncActivity(_syncMetadataService, _dataLoadService, _logger);
@@ -139,6 +145,30 @@ public class ForceTableResyncActivityTests
 
         await CreateActivity().Run("account");
 
+        _dataLoadService.DidNotReceive().LoadInitialData(Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task Run_PurgeFails_DoesNotExecuteSyncOrLoadInitialData()
+    {
+        _syncMetadataService.PurgeTable("account").Returns(new PurgeTableResult("account", false, "purge failed"));
+
+        await CreateActivity().Run("account");
+
+        _syncMetadataService.Received(1).PurgeTable("account");
+        _syncMetadataService.DidNotReceive().Execute(Arg.Any<string>());
+        _dataLoadService.DidNotReceive().LoadInitialData(Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task Run_NullPurgeResult_DoesNotExecuteSyncOrLoadInitialData()
+    {
+        _syncMetadataService.PurgeTable("account").Returns((PurgeTableResult)null!);
+
+        await CreateActivity().Run("account");
+
+        _syncMetadataService.Received(1).PurgeTable("account");
+        _syncMetadataService.DidNotReceive().Execute(Arg.Any<string>());
         _dataLoadService.DidNotReceive().LoadInitialData(Arg.Any<string>());
     }
 }

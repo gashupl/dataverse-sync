@@ -29,7 +29,13 @@ public class ForceTableResyncActivity : LoggingServiceBase<ForceTableResyncActiv
     {
         LogIfEnabled(LogLevel.Information, "Resync activity started for table {TableName}", tableName);
 
-        //TODO: Remove target table and synchronization details records fro dataverse
+        var purgeResult = _syncMetadataService.PurgeTable(tableName); 
+        if(purgeResult == null || !purgeResult.IsPurged)
+        {
+            LogIfEnabled(LogLevel.Error, "Failed to purge table {TableName}. Error: {ErrorMessage}", tableName, purgeResult?.ErrorMessage ?? "Unknown error.");
+            return;
+        }   
+
         var result = _syncMetadataService.Execute(tableName);
 
         if (result?.TablesSyncResult == null)
