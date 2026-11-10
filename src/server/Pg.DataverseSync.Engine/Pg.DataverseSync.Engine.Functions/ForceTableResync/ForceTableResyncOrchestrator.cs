@@ -1,21 +1,26 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask;
 using Microsoft.Extensions.Logging;
+using Pg.DataverseSync.Engine.Application;
+using Pg.DataverseSync.Engine.Target.SqlServer;
 
 namespace Pg.DataverseSync.Engine.Functions.ForceTableResync;
 
-public class ForceTableResyncOrchestrator
+public class ForceTableResyncOrchestrator : LoggingServiceBase<ForceTableResyncOrchestrator>
 {
+    public ForceTableResyncOrchestrator(ILogger<ForceTableResyncOrchestrator> logger) : base(logger)
+    {
+    }
+
     [Function(nameof(ForceTableResyncOrchestrator))]
     public async Task Run([OrchestrationTrigger] TaskOrchestrationContext context)
     {
-        var logger = context.CreateReplaySafeLogger<ForceTableResyncOrchestrator>();
         var tableName = context.GetInput<string>()!;
 
-        logger.LogInformation("Resync orchestration started for table {TableName}", tableName);
+        LogIfEnabled(LogLevel.Information, "Resync orchestration started for table {TableName}", tableName);
 
         await context.CallActivityAsync(nameof(ForceTableResyncActivity), tableName);
 
-        logger.LogInformation("Resync orchestration completed for table {TableName}", tableName);
+        LogIfEnabled(LogLevel.Information, "Resync orchestration completed for table {TableName}", tableName);
     }
 }

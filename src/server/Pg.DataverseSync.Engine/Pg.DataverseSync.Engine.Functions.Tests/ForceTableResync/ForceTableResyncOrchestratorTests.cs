@@ -13,11 +13,9 @@ public class ForceTableResyncOrchestratorTests
     public async Task Run_CallsActivityWithTableName()
     {
         var context = Substitute.For<TaskOrchestrationContext>();
-        var logger = Substitute.For<ILogger>();
+        var logger = Substitute.For<ILogger<ForceTableResyncOrchestrator>>();
         context.GetInput<string>().Returns("account");
-        context.CreateReplaySafeLogger(Arg.Any<string>()).Returns(logger);
-        context.CreateReplaySafeLogger(Arg.Any<Type>()).Returns(logger);
-        var orchestrator = new ForceTableResyncOrchestrator();
+        var orchestrator = new ForceTableResyncOrchestrator(logger);
 
         await orchestrator.Run(context);
 

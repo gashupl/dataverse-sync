@@ -83,7 +83,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                     using (var command = new SqlCommand($"DROP TABLE [{tableName}]", connection))
                     {
                         command.ExecuteNonQuery();
-                        _logger.LogInformation("Table '{TableName}' deleted successfully.", tableName);
+                        LogIfEnabled(LogLevel.Information, "Table '{TableName}' deleted successfully.", tableName);
                     }
 
                     return new TargetSchemaModificationResult
@@ -94,7 +94,7 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Failed to delete table '{TableName}': {ErrorMessage}", tableName, ex.Message);
+                    LogIfEnabled(LogLevel.Error, "Failed to delete table '{TableName}': {ErrorMessage}", tableName, ex.Message);    
                     return new TargetSchemaModificationResult
                     {
                         Success = SchemaModificationResult.Failure,
