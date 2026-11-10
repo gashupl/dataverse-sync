@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Pg.DataverseSync.Engine.Application;
 using Pg.DataverseSync.Engine.Core.Schema;
 
-namespace Pg.DataverseSync.Engine.Functions;
+namespace Pg.DataverseSync.Engine.Functions.SchemaSynchronization.SchemaSynchronization;
 
 public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchronizationFunction>
 {
@@ -25,11 +25,11 @@ public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchroniz
 
     [Function(nameof(SchemaSynchronizationFunction))]
     public void Run(
-#if DEBUG
-        [TimerTrigger("%SchemaSyncSchedule%", RunOnStartup = true)] TimerInfo timer)
-#else
+//#if DEBUG
+//      [TimerTrigger("%SchemaSyncSchedule%", RunOnStartup = true)] TimerInfo timer)
+//#else
         [TimerTrigger("%SchemaSyncSchedule%")] TimerInfo timer)
-#endif
+//#endif
     {
         LogIfEnabled(LogLevel.Information, "SchemaSynchronizationFunction triggered at: {UtcNow}", DateTime.UtcNow);
 
@@ -50,7 +50,11 @@ public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchroniz
 
             if (table.OperationCode == TableSyncOperationCode.Create)
             {
-                ProcessInitialDataLoad(table.TableName);
+                LogIfEnabled(LogLevel.Information,
+                    "Table {TableName} was created in the target database. Performing initial data load...",
+                    table.TableName);
+
+                _dataLoadService.LoadInitialData(table.TableName);
             }
         }
 
@@ -63,28 +67,5 @@ public class SchemaSynchronizationFunction : LoggingServiceBase<SchemaSynchroniz
         LogIfEnabled(LogLevel.Information,
             "Schema synchronization completed. Succeeded: {SucceededCount}, Failed: {FailedCount}.",
             succeeded.Count, failed.Count);
-    }
-
-    private void ProcessInitialDataLoad(string tableName)
-    {
-        LogIfEnabled(LogLevel.Information,
-            "Table {TableName} was created in the target database. Performing initial data load...",
-            tableName);
-
-        var results = _dataLoadService.LoadInitialData(tableName);
-        var successfulRecordsCount = results.Count(r => r.Success);
-        var failedRecords = results.Where(r => !r.Success).ToList();
-        var failedRecordsCount = failedRecords.Count; 
-
-        LogIfEnabled(LogLevel.Information,
-            "Table {TableName} initial data load completed. Successful records: {SuccessfulRecordCount}, Failed records: {FailedRecordCount}.",
-            tableName,
-            successfulRecordsCount,
-            failedRecordsCount);
-
-        foreach (var item in failedRecords.Where(r => !String.IsNullOrEmpty(r.Message)))
-        {
-            LogIfEnabled(LogLevel.Error, item?.Message!); 
-        }
     }
 }

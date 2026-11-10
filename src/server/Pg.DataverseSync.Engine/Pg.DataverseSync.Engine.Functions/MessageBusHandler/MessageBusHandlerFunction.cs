@@ -6,7 +6,7 @@ using Pg.DataverseSync.Engine.Application;
 using Pg.DataverseSync.Engine.Application.ExecutionContext;
 using Pg.DataverseSync.Engine.Core.Exceptions;
 
-namespace Pg.DataverseSync.Engine.Functions;
+namespace Pg.DataverseSync.Engine.Functions.MessageBusHandler;
 
 public class MessageBusHandlerFunction : LoggingServiceBase<MessageBusHandlerFunction>
 {

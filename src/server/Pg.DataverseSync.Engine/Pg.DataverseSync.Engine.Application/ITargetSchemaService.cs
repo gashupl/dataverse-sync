@@ -9,5 +9,6 @@ namespace Pg.DataverseSync.Engine.Application
 
         TargetSchemaModificationResult UpsertTargetTable(Table table);
 
+        TargetSchemaModificationResult DeleteTargetTable(string tableName);
     }
 }

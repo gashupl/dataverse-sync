@@ -71,6 +71,40 @@ namespace Pg.DataverseSync.Engine.Target.SqlServer
             }
         }
 
+        public TargetSchemaModificationResult DeleteTable(string tableName)
+        {
+            LogIfEnabled(LogLevel.Information, "Deleting table '{TableName}' from target database...", tableName);
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (var command = new SqlCommand($"DROP TABLE [{tableName}]", connection))
+                    {
+                        command.ExecuteNonQuery();
+                        LogIfEnabled(LogLevel.Information, "Table '{TableName}' deleted successfully.", tableName);
+                    }
+
+                    return new TargetSchemaModificationResult
+                    {
+                        Success = SchemaModificationResult.Success,
+                        OperationCode = TableSyncOperationCode.Delete
+                    };
+                }
+                catch (Exception ex)
+                {
+                    LogIfEnabled(LogLevel.Error, "Failed to delete table '{TableName}': {ErrorMessage}", tableName, ex.Message);    
+                    return new TargetSchemaModificationResult
+                    {
+                        Success = SchemaModificationResult.Failure,
+                        OperationCode = TableSyncOperationCode.Delete,
+                        Message = ex.Message
+                    };
+                }
+            }
+        }
+
         public TargetSchemaModificationResult UpdateTable(Table sourceTable)
         {
             SqlTable targetTable;

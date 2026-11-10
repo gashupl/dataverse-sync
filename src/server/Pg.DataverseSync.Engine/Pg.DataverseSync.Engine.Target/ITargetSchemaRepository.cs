@@ -9,5 +9,7 @@ namespace Pg.DataverseSync.Engine.Target
         TargetSchemaModificationResult CreateTable(Table sourceTable);
 
         TargetSchemaModificationResult UpdateTable(Table sourceTable);
+
+        TargetSchemaModificationResult DeleteTable(string tableName);
     }
 }
