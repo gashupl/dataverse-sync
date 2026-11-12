@@ -1,0 +1,28 @@
+name: Azure infrastructure apply changes
+
+on:
+  workflow_call:
+    inputs:      
+      environment:
+        required: true
+        type: string
+        default: 'test'
+        description: 'Azure environment to deploy to (e.g. dev, test, prod)'
+      subscription-id:
+        required: true
+        type: string
+        default: ''
+        description: 'Azure subscription ID to deploy to'
+
+permissions:
+  contents: read    # Required to access repository contents
+
+jobs:
+  deploy-azure-infrastructure:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

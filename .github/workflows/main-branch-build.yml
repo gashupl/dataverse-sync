@@ -63,10 +63,27 @@ jobs:
       environment: 'dev'
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
+  deploy-azure-ioc-validate-plan:
+    if: ${{ inputs.release-azure-infrastructure }}
+    needs: build
+    uses: ./.github/workflows/_template-azure-ioc-validate-plan.yml
+    secrets: inherit  # Pass all secrets to reusable workflow
+    with:
+      environment: 'dev'
+      subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+  deploy-azure-ioc-apply:
+    if: ${{ !cancelled() && needs.build.result == 'success'&& inputs.release-azure-infrastructure && needs.deploy-azure-ioc-validate-plan.result == 'success' }}
+    needs: [build, deploy-azure-ioc-validate-plan]
+    uses: ./.github/workflows/_template-azure-ioc-apply.yml
+    secrets: inherit  # Pass all secrets to reusable workflow
+    with:
+      environment: 'dev'
+      subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      
   deploy-azure-code:
-    # Requires build success; if deploy-azure-infrastructure didn't run it's ignored, otherwise it must have succeeded
-    if: ${{ !cancelled() && needs.build.result == 'success' && inputs.release-azure-code && (needs.deploy-azure-infrastructure-legacy.result == 'success' || needs.deploy-azure-infrastructure-legacy.result == 'skipped') }}
-    needs: [build, deploy-azure-infrastructure-legacy]
+    if: ${{ inputs.release-azure-code }}
+    needs: [build]
     uses: ./.github/workflows/_template-azure-code-release.yml
     secrets: inherit  # Pass all secrets to reusable workflow
     with:
