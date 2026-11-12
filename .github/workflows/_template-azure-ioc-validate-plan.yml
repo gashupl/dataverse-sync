@@ -18,7 +18,7 @@ permissions:
   contents: read    # Required to access repository contents
 
 jobs:
-  deploy-azure-infrastructure:
+  azure-ioc-validate-plan:
     runs-on: windows-latest
 
     steps:
