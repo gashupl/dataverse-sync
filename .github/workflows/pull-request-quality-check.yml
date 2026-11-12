@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    uses: ./.github/workflows/build-template.yml
+    uses: ./.github/workflows/_template-build.yml
     secrets: inherit
     with:
       node-version: '24'
