@@ -51,15 +51,15 @@ jobs:
     with:
       target-dataverse-url: ${{ vars.DATAVERSE_TARGET_URL }}
 
-  deploy-azure-infrastructure-legacy:
-    name: Deploy Azure infrastructure (legacy)
-    if: ${{ inputs.release-azure-infrastructure }}
-    needs: build
-    uses: ./.github/workflows/_template-azure-infrastructure-release.yml
-    secrets: inherit  # Pass all secrets to reusable workflow
-    with:
-      environment: 'dev'
-      subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+  # deploy-azure-infrastructure-legacy:
+  #   name: Deploy Azure infrastructure (legacy)
+  #   if: ${{ inputs.release-azure-infrastructure }}
+  #   needs: build
+  #   uses: ./.github/workflows/_template-azure-infrastructure-release.yml
+  #   secrets: inherit  # Pass all secrets to reusable workflow
+  #   with:
+  #     environment: 'dev'
+  #     subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
   deploy-azure-ioc-validate-plan:
     name: Validate Azure infrastructure plan
