@@ -27,8 +27,8 @@ permissions:
   pull-requests: write  # Allows reporting results on PRs
 
 env:
-  TERRAFORM_VERSION: '1.10.5'
-  TERRAFORM_WORKING_DIRECTORY: 'config/azure-templates'
+  TERRAFORM_VERSION: &terraform_version '1.10.5'
+  TERRAFORM_WORKING_DIRECTORY: &terraform_working_directory 'config/azure-templates'
 
 jobs:
   build:
@@ -70,8 +70,8 @@ jobs:
     with:
       environment: 'dev'
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      terraform-version: ${{ env.TERRAFORM_VERSION }}
-      terraform-working-directory: ${{ env.TERRAFORM_WORKING_DIRECTORY }}
+      terraform-version: *terraform_version
+      terraform-working-directory: *terraform_working_directory
 
   deploy-azure-ioc-apply:
     name: Apply Azure infrastructure plan
@@ -82,8 +82,9 @@ jobs:
     with:
       environment: 'dev'
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      # terraform-version: ${{ env.TERRAFORM_VERSION }}
-      # terraform-working-directory: ${{ env.TERRAFORM_WORKING_DIRECTORY }}
+      #terraform-version: *terraform_version
+      #terraform-working-directory: *terraform_working_directory
+
   deploy-azure-code:
     name: Deploy Azure code
     if: ${{ inputs.release-azure-code }}
