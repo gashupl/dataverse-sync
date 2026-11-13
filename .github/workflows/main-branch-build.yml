@@ -25,7 +25,11 @@ permissions:
   contents: read  # Allows reading repository contents
   checks: write  # Allows writing test reports
   pull-requests: write  # Allows reporting results on PRs
-  
+
+env:
+  TERRAFORM_VERSION: '1.10.5'
+  TERRAFORM_WORKING_DIRECTORY: 'config/azure-templates'
+
 jobs:
   build:
     name: Build and test
@@ -66,6 +70,8 @@ jobs:
     with:
       environment: 'dev'
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      terraform-version: ${{ env.TERRAFORM_VERSION }}
+      terraform-working-directory: ${{ env.TERRAFORM_WORKING_DIRECTORY }}
 
   deploy-azure-ioc-apply:
     name: Apply Azure infrastructure plan
@@ -76,7 +82,8 @@ jobs:
     with:
       environment: 'dev'
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      
+      # terraform-version: ${{ env.TERRAFORM_VERSION }}
+      # terraform-working-directory: ${{ env.TERRAFORM_WORKING_DIRECTORY }}
   deploy-azure-code:
     name: Deploy Azure code
     if: ${{ inputs.release-azure-code }}

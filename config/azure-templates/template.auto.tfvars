@@ -1,0 +1,6 @@
+location          = "West Europe"
+resourceGroupName = "rg-dev-pgaszewski"
+functionAppName   = "func-dvsync-engine"
+serviceBusName    = "sb-dvsync-engine"
+dotnetVersion     = "10"
+environmentSuffix = "dev"
