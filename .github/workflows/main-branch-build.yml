@@ -28,6 +28,7 @@ permissions:
   
 jobs:
   build:
+    name: Build and test
     uses: ./.github/workflows/_template-build.yml
     secrets: inherit
     with:
@@ -38,6 +39,7 @@ jobs:
 
   # Additional job that extends the base build
   deploy-powerplatform-solution:
+    name: Deploy Power Platform solution
     if: ${{ inputs.release-powerplatform-solution }}
     needs: build
     uses: ./.github/workflows/_template-power-platform-release.yml
@@ -46,6 +48,7 @@ jobs:
       target-dataverse-url: ${{ vars.DATAVERSE_TARGET_URL }}
 
   deploy-azure-infrastructure-legacy:
+    name: Deploy Azure infrastructure (legacy)
     if: ${{ inputs.release-azure-infrastructure }}
     needs: build
     uses: ./.github/workflows/_template-azure-infrastructure-release.yml
@@ -55,6 +58,7 @@ jobs:
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
   deploy-azure-ioc-validate-plan:
+    name: Validate Azure infrastructure plan
     if: ${{ inputs.release-azure-infrastructure }}
     needs: build
     uses: ./.github/workflows/_template-azure-ioc-validate-plan.yml
@@ -64,6 +68,7 @@ jobs:
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
   deploy-azure-ioc-apply:
+    name: Apply Azure infrastructure plan
     if: ${{ !cancelled() && needs.build.result == 'success'&& inputs.release-azure-infrastructure && needs.deploy-azure-ioc-validate-plan.result == 'success' }}
     needs: [build, deploy-azure-ioc-validate-plan]
     uses: ./.github/workflows/_template-azure-ioc-apply.yml
@@ -73,6 +78,7 @@ jobs:
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
       
   deploy-azure-code:
+    name: Deploy Azure code
     if: ${{ inputs.release-azure-code }}
     needs: [build]
     uses: ./.github/workflows/_template-azure-code-release.yml
