@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   deploy-pp-solution:
+    name: Execute
     runs-on: windows-latest
 
     env:

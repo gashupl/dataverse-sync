@@ -33,6 +33,7 @@ on:
 jobs:
 
   build:
+    name: Execute
     runs-on: windows-latest
 
     env:

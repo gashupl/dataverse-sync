@@ -21,6 +21,7 @@ permissions:
 
 jobs:
   deploy-azure-code:
+    name: Execute
     runs-on: windows-latest
 
     env:

@@ -19,6 +19,7 @@ permissions:
 
 jobs:
   azure-ioc-apply:
+    name: Execute
     runs-on: windows-latest
 
     steps:

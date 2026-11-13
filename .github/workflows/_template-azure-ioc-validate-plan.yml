@@ -19,6 +19,7 @@ permissions:
 
 jobs:
   azure-ioc-validate-plan:
+    name: Execute
     runs-on: windows-latest
 
     steps:
