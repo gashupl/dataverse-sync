@@ -38,6 +38,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ inputs.terraform-version }}
+          terraform_wrapper: false
 
       - name: Azure CLI Login
         uses: azure/login@v2
@@ -93,6 +94,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ inputs.terraform-version }}
+          terraform_wrapper: false
 
       - name: Azure CLI Login
         uses: azure/login@v2
