@@ -51,7 +51,7 @@ jobs:
       - name: Download Terraform plan artifact
         uses: actions/download-artifact@v4
         with:
-          name: terraform-plan
+          name: terraform-plan-${{ inputs.environment }}
           path: ${{ runner.temp }}/terraform-plan
 
       - name: Publish Terraform plan summary
@@ -72,6 +72,7 @@ jobs:
       - name: Terraform apply
         working-directory: ${{ inputs.terraform-working-directory }}
         env:
+          TF_ENVIRONMENT: ${{ inputs.environment }}
           SPN_CLIENT_ID: ${{ vars.AZURE_SUBSCRIPTION_CONTRIBUTOR_CLIENT_ID }}
           SPN_CLIENT_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_CONTRIBUTOR_SECRET }}
           SPN_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
@@ -98,7 +99,7 @@ jobs:
           }
           Copy-Item -LiteralPath $planPath -Destination 'tfplan' -Force
 
-          terraform init -input=false
+          terraform init -input=false "-backend-config=key=$env:TF_ENVIRONMENT.tfstate"
           if ($LASTEXITCODE -ne 0) {
             throw "terraform init failed with exit code $LASTEXITCODE."
           }

@@ -1,4 +1,11 @@
 terraform {
+  # The state key is environment-specific and is passed with -backend-config="key=<environment>.tfstate"
+  backend "azurerm" {
+    resource_group_name  = "rg-dev-pgaszewski"
+    storage_account_name = "sadvsyncterraformstate"
+    container_name       = "tfstate"
+  }
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -18,11 +25,6 @@ provider "azurerm" {
 
 variable "location" {
   description = "The location/region for the resources"
-  type        = string
-}
-
-variable "resourceGroupName" {
-  description = "The existing resource group to deploy into (Bicep receives this through deployment scope)"
   type        = string
 }
 
@@ -52,11 +54,13 @@ variable "environmentSuffix" {
 }
 
 locals {
-  full_function_app_name = "${var.functionAppName}-${var.environmentSuffix}"
-  full_service_bus_name  = "${var.serviceBusName}-${var.environmentSuffix}"
-  storage_account_name   = "st${replace(local.full_function_app_name, "-", "")}${var.environmentSuffix}"
-  app_insights_name      = "appi-${local.full_function_app_name}"
-  app_service_plan_name  = "asp-${local.full_function_app_name}"
+  resource_group_name      = "rg${var.environmentSuffix}-pgaszewski"
+  full_resource_group_name = "rg${var.environmentSuffix}-pgaszewski"
+  full_function_app_name   = "${var.functionAppName}-${var.environmentSuffix}"
+  full_service_bus_name    = "${var.serviceBusName}-${var.environmentSuffix}"
+  storage_account_name     = "st${replace(local.full_function_app_name, "-", "")}${var.environmentSuffix}"
+  app_insights_name        = "appi-${local.full_function_app_name}"
+  app_service_plan_name    = "asp-${local.full_function_app_name}"
 
   storage_blob_data_contributor_role_id = "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
 }
@@ -75,7 +79,7 @@ resource "azurerm_storage_account" "function_app" {
 }
 
 data "azurerm_resource_group" "current" {
-  name = var.resourceGroupName
+  name = local.resource_group_name
 }
 
 resource "azurerm_application_insights" "function_app" {

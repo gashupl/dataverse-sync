@@ -72,7 +72,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
             throw "terraform fmt failed with exit code $LASTEXITCODE."
           }
-          terraform init -input=false
+          terraform init -input=false -backend=false
           if ($LASTEXITCODE -ne 0) {
             throw "terraform init failed with exit code $LASTEXITCODE."
           }
@@ -104,6 +104,7 @@ jobs:
       - name: Terraform plan
         working-directory: ${{ inputs.terraform-working-directory }}
         env:
+          TF_ENVIRONMENT: ${{ inputs.environment }}
           SPN_CLIENT_ID: ${{ vars.AZURE_SUBSCRIPTION_CONTRIBUTOR_CLIENT_ID }}
           SPN_CLIENT_SECRET: ${{ secrets.AZURE_SUBSCRIPTION_CONTRIBUTOR_SECRET }}
           SPN_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
@@ -124,11 +125,11 @@ jobs:
           }
           $env:ARM_SUBSCRIPTION_ID = $subscriptionId.Trim()
 
-          terraform init -input=false
+          terraform init -input=false "-backend-config=key=$env:TF_ENVIRONMENT.tfstate"
           if ($LASTEXITCODE -ne 0) {
             throw "terraform init failed with exit code $LASTEXITCODE."
           }
-          terraform plan -input=false -lock-timeout=300s -out=tfplan
+          terraform plan -input=false -lock-timeout=300s "-var=environmentSuffix=$env:TF_ENVIRONMENT" -out=tfplan
           if ($LASTEXITCODE -ne 0) {
             throw "terraform plan failed with exit code $LASTEXITCODE."
           }
@@ -145,5 +146,5 @@ jobs:
       - name: Publish Terraform plan artifact
         uses: actions/upload-artifact@v4
         with:
-          name: terraform-plan
+          name: terraform-plan-${{ inputs.environment }}
           path: ${{ runner.temp }}/terraform-plan/
