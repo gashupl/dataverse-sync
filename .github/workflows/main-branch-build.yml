@@ -82,8 +82,8 @@ jobs:
     with:
       environment: 'dev'
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      #terraform-version: *terraform_version
-      #terraform-working-directory: *terraform_working_directory
+      terraform-version: *terraform_version
+      terraform-working-directory: *terraform_working_directory
 
   deploy-azure-code:
     name: Deploy Azure code
