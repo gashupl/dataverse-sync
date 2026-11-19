@@ -54,8 +54,8 @@ variable "environmentSuffix" {
 }
 
 locals {
-  resource_group_name      = "rg${var.environmentSuffix}-pgaszewski"
-  full_resource_group_name = "rg${var.environmentSuffix}-pgaszewski"
+  resource_group_name      = "rg-${var.environmentSuffix}-pgaszewski"
+  full_resource_group_name = "rg-${var.environmentSuffix}-pgaszewski"
   full_function_app_name   = "${var.functionAppName}-${var.environmentSuffix}"
   full_service_bus_name    = "${var.serviceBusName}-${var.environmentSuffix}"
   storage_account_name     = "st${replace(local.full_function_app_name, "-", "")}${var.environmentSuffix}"
