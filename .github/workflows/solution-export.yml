@@ -20,12 +20,12 @@ jobs:
       
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Power Platform CLI
-        uses: microsoft/powerplatform-actions/actions-install@v1
+        uses: microsoft/powerplatform-actions/actions-install@6e91314a9c6e694ea5c894fe8c40e09d73aa892b # v1
         with:
           add-tools-to-path: true
 
@@ -41,7 +41,7 @@ jobs:
 #This is required to make sure files names in the solution are consist with the built ones
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3
         with:
           node-version: ${{ env.node-version }}
 
@@ -71,7 +71,7 @@ jobs:
 #End of Power Platform Code App build and push section
 
       - name: Export managed solution from Dataverse
-        uses: microsoft/powerplatform-actions/export-solution@v1
+        uses: microsoft/powerplatform-actions/export-solution@6e91314a9c6e694ea5c894fe8c40e09d73aa892b # v1
         with:
           app-id: ${{ vars.DEVOPS_APPID }}
           tenant-id: ${{ vars.DATAVERSE_TENANT_ID}}
@@ -82,7 +82,7 @@ jobs:
           managed: true
 
       - name: Export unmanaged solution from Dataverse
-        uses: microsoft/powerplatform-actions/export-solution@v1
+        uses: microsoft/powerplatform-actions/export-solution@6e91314a9c6e694ea5c894fe8c40e09d73aa892b # v1
         with:
           app-id: ${{ vars.DEVOPS_APPID }}
           tenant-id: ${{ vars.DATAVERSE_TENANT_ID}}
@@ -99,7 +99,7 @@ jobs:
           }
 
       - name: Unpack unmanaged solution
-        uses: microsoft/powerplatform-actions/unpack-solution@v1
+        uses: microsoft/powerplatform-actions/unpack-solution@6e91314a9c6e694ea5c894fe8c40e09d73aa892b # v1
         with:
           solution-file: ${{ env.SOLUTION_NAME }}.zip
           solution-folder: ${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}
@@ -107,7 +107,7 @@ jobs:
           overwrite-files: true
 
       - name: Unpack managed solution  
-        uses: microsoft/powerplatform-actions/unpack-solution@v1
+        uses: microsoft/powerplatform-actions/unpack-solution@6e91314a9c6e694ea5c894fe8c40e09d73aa892b # v1
         with:
           solution-file: ${{ env.SOLUTION_NAME }}_managed.zip
           solution-folder: ${{ env.SOLUTION_FOLDER }}/${{ env.SOLUTION_NAME }}_managed
@@ -150,7 +150,7 @@ jobs:
           }
 
       - name: Create Pull Request
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
         with:
           script: |
             const { data: pullRequest } = await github.rest.pulls.create({
