@@ -25,10 +25,15 @@ permissions:
   contents: read  # Allows reading repository contents
   checks: write  # Allows writing test reports
   pull-requests: write  # Allows reporting results on PRs
-  
+
+env:
+  TERRAFORM_VERSION: &terraform_version '1.10.5'
+  TERRAFORM_WORKING_DIRECTORY: &terraform_working_directory 'config/azure-templates'
+
 jobs:
   build:
-    uses: ./.github/workflows/build-template.yml
+    name: Build and test
+    uses: ./.github/workflows/_template-build.yml
     secrets: inherit
     with:
       node-version: '24'
@@ -38,27 +43,43 @@ jobs:
 
   # Additional job that extends the base build
   deploy-powerplatform-solution:
+    name: Deploy Power Platform solution
     if: ${{ inputs.release-powerplatform-solution }}
     needs: build
-    uses: ./.github/workflows/power-platform-release-template.yml
+    uses: ./.github/workflows/_template-power-platform-release.yml
     secrets: inherit  # Pass all secrets to reusable workflow
     with:
       target-dataverse-url: ${{ vars.DATAVERSE_TARGET_URL }}
 
-  deploy-azure-infrastructure:
+  deploy-azure-ioc-validate-plan:
+    name: Validate Azure infrastructure plan
     if: ${{ inputs.release-azure-infrastructure }}
     needs: build
-    uses: ./.github/workflows/azure-infrastructure-release-template.yml
+    uses: ./.github/workflows/_template-azure-ioc-validate-plan.yml
     secrets: inherit  # Pass all secrets to reusable workflow
     with:
       environment: 'dev'
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      terraform-version: *terraform_version
+      terraform-working-directory: *terraform_working_directory
+
+  deploy-azure-ioc-apply:
+    name: Apply Azure infrastructure plan
+    if: ${{ !cancelled() && needs.build.result == 'success'&& inputs.release-azure-infrastructure && needs.deploy-azure-ioc-validate-plan.result == 'success' }}
+    needs: [build, deploy-azure-ioc-validate-plan]
+    uses: ./.github/workflows/_template-azure-ioc-apply.yml
+    secrets: inherit  # Pass all secrets to reusable workflow
+    with:
+      environment: 'dev'
+      subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      terraform-version: *terraform_version
+      terraform-working-directory: *terraform_working_directory
 
   deploy-azure-code:
-    # Requires build success; if deploy-azure-infrastructure didn't run it's ignored, otherwise it must have succeeded
-    if: ${{ !cancelled() && needs.build.result == 'success' && inputs.release-azure-code && (needs.deploy-azure-infrastructure.result == 'success' || needs.deploy-azure-infrastructure.result == 'skipped') }}
-    needs: [build, deploy-azure-infrastructure]
-    uses: ./.github/workflows/azure-code-release-template.yml
+    name: Deploy Azure code
+    if: ${{ !cancelled() && inputs.release-azure-code && needs.build.result == 'success' && (!inputs.release-azure-infrastructure || needs.deploy-azure-ioc-apply.result == 'success') }}
+    needs: [build, deploy-azure-ioc-apply]
+    uses: ./.github/workflows/_template-azure-code-release.yml
     secrets: inherit  # Pass all secrets to reusable workflow
     with:
       environment: 'dev'

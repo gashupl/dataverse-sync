@@ -15,7 +15,8 @@ permissions:
   contents: read   # Required to access repository contents
 
 jobs:
-  deploy-solution:
+  deploy-pp-solution:
+    name: Execute
     runs-on: windows-latest
 
     env:
@@ -23,31 +24,23 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Power Platform CLI
-        uses: microsoft/powerplatform-actions/actions-install@v1
+        uses: microsoft/powerplatform-actions/actions-install@6e91314a9c6e694ea5c894fe8c40e09d73aa892b # v1
         with:
           add-tools-to-path: true
 
       - name: Download solution artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: DataverseSync
+          name: DataverseSyncSolution
           path: ./artifacts
 
-      - name: Debug authentication variables
-        run: |
-          Write-Host "Checking authentication variables..."
-          Write-Host "Environment URL provided: $('${{ vars.DATAVERSE_TARGET_URL }}' -ne '')"
-          Write-Host "Client ID provided: $('${{ vars.DEVOPS_APPID }}' -ne '')"
-          Write-Host "Tenant ID provided: $('${{ vars.DATAVERSE_TENANT_ID }}' -ne '')"
-          Write-Host "Client Secret provided: $('${{ secrets.DEVOPS_SECRET }}' -ne '')"
-
       - name: Import managed solution to Dataverse
-        uses: microsoft/powerplatform-actions/import-solution@v1
+        uses: microsoft/powerplatform-actions/import-solution@6e91314a9c6e694ea5c894fe8c40e09d73aa892b # v1
         with:
           app-id: ${{ vars.DEVOPS_APPID }}
           tenant-id: ${{ vars.DATAVERSE_TENANT_ID}}
