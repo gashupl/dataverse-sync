@@ -39,14 +39,6 @@ jobs:
           name: DataverseSyncSolution
           path: ./artifacts
 
-      - name: Debug authentication variables
-        run: |
-          Write-Host "Checking authentication variables..."
-          Write-Host "Environment URL provided: $('${{ vars.DATAVERSE_TARGET_URL }}' -ne '')"
-          Write-Host "Client ID provided: $('${{ vars.DEVOPS_APPID }}' -ne '')"
-          Write-Host "Tenant ID provided: $('${{ vars.DATAVERSE_TENANT_ID }}' -ne '')"
-          Write-Host "Client Secret provided: $('${{ secrets.DEVOPS_SECRET }}' -ne '')"
-
       - name: Import managed solution to Dataverse
         uses: microsoft/powerplatform-actions/import-solution@6e91314a9c6e694ea5c894fe8c40e09d73aa892b # v1
         with:

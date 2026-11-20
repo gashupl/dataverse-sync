@@ -105,11 +105,13 @@ jobs:
       - name: Run SonarQube Analysis (without quality gate wait)
         if: ${{ inputs.run-sonar-analysis && !inputs.sonar-qualitygate-wait }}
         shell: powershell
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin `
             /k:"gashupl_dataverse-sync" `
             /o:"gashupl" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.token="$env:SONAR_TOKEN" `
             /d:sonar.sources="src\server,src\client" `
             /d:sonar.exclusions="src\client\Pg.DataverseSync.Admin\src\generated\**,src\server\Pg.DataverseSync\Pg.DataverseSync.Model\**,src\server\Pg.DataverseSync.Engine\Pg.DataverseSync.Engine.Core\Model\**" `
             /d:sonar.coverage.exclusions="src\client\**,src\server\Pg.DataverseSync\Pg.DataverseSync.Model\**,src\server\Pg.DataverseSync.Engine\Pg.DataverseSync.Engine.Core\Model\**" `
@@ -118,11 +120,13 @@ jobs:
       - name: Run SonarQube Analysis (with quality gate wait)
         if: ${{ inputs.run-sonar-analysis && inputs.sonar-qualitygate-wait }}
         shell: powershell
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin `
             /k:"gashupl_dataverse-sync" `
             /o:"gashupl" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.token="$env:SONAR_TOKEN" `
             /d:sonar.sources="src\server,src\client" `
             /d:sonar.exclusions="src\client\Pg.DataverseSync.Admin\src\generated\**,src\server\Pg.DataverseSync\Pg.DataverseSync.Model\**,src\server\Pg.DataverseSync.Engine\Pg.DataverseSync.Engine.Core\Model\**" `
             /d:sonar.coverage.exclusions="src\client\**,src\server\Pg.DataverseSync\Pg.DataverseSync.Model\**,src\server\Pg.DataverseSync.Engine\Pg.DataverseSync.Engine.Core\Model\**" `
@@ -224,8 +228,10 @@ jobs:
           
       - name: End SonarQube analysis
         if: ${{ inputs.run-sonar-analysis }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="$env:SONAR_TOKEN"
         
       - name: Setup Power Platform CLI
         if: ${{ inputs.artifacts-build-upload }}
